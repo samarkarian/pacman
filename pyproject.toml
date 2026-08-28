@@ -1,0 +1,18 @@
+[project]
+name = "pacman"
+version = "0.1.0"
+description = "A Pac-Man clone in Python."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flake8>=7.3.0",
+    "mazegenerator",
+    "mypy>=2.3.1",
+    "pygame>=2.6.1",
+]
+
+[tool.uv.sources]
+mazegenerator = { path = "./mazegenerator-2.1.0-py3-none-any.whl" }
+
+[tool.mypy]
+exclude = ['\.venv']
