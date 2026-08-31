@@ -69,14 +69,9 @@ class PacmanGame:
         Équivalent de mlx_put_image_to_window() et gestion du buffer.
         """
         self.screen.fill((0, 0, 0))
-        print(time)
-        if time % 800 >= 399:
-            self.screen.blit(self.sprites['player'][0], (0, 0))
-            self.screen.blit(self.sprites['ghost_cyan'][0], (400, 400))
-
-        else:
-            self.screen.blit(self.sprites['player'][1], (0, 0))
-            self.screen.blit(self.sprites['ghost_cyan'][1], (400, 400))
+        frame_index = (time // 400) % 2
+        self.screen.blit(self.sprites['player'][frame_index], (0, 0))
+        self.screen.blit(self.sprites['ghost_cyan'][frame_index], (400, 400))
 
 
         
