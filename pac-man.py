@@ -125,7 +125,7 @@ class PacmanGame:
 def main() -> None:
     try:
         maze_gen = MazeGenerator(
-            size=(5,5),
+            size=(15,15),
             entry_cell=(0,0),
             exit_cell=(2,4),
             perfect=True,

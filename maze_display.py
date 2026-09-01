@@ -10,7 +10,7 @@ class MazeDisplayer:
     def load_wall_sprites(self):
         try:
             for n in range(16):
-                self.wall_sprites[f'wall_{n}'] = pygame.image.load(f"sprites/walls/walls_64/wall_by64_{n}.png")
+                self.wall_sprites[f'wall_{n}'] = pygame.image.load(f"sprites/walls/walls_64*64/wall_by64_{n}.png")
         except Exception as e:
             print(e)
 
