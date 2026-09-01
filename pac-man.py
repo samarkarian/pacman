@@ -86,18 +86,19 @@ class PacmanGame:
         frame_index = (time // 400) % 2
 
 
-        draw_x = 0 + offset_x
-        draw_y = 0 + offset_y
-        current_sprite = self.sprites['player'][frame_index]
+        # draw_x = 0 + offset_x
+        # draw_y = 0 + offset_y
+        # current_sprite = self.sprites['player'][frame_index]
             
-        self.screen.blit(current_sprite, (draw_x, draw_y))
+        # self.screen.blit(current_sprite, (draw_x, draw_y))
 
-        draw_x = 400 + offset_x
+        draw_x = 600 + offset_x
         draw_y = 400 + offset_y
         current_sprite = self.sprites['ghost_cyan'][frame_index]
             
         self.screen.blit(current_sprite, (draw_x, draw_y))
-        
+
+        self.mazedisplayer.render_walls(offset_x, offset_y)
         pygame.display.flip()
 
 
@@ -124,13 +125,11 @@ class PacmanGame:
 def main() -> None:
     try:
         maze_gen = MazeGenerator(
-            size=(20,20),
+            size=(5,5),
             entry_cell=(0,0),
-            exit_cell=(19,18),
-            perfect=False,
-            seed=0)
-
-        maze_grid = maze_gen.maze
+            exit_cell=(2,4),
+            perfect=True,
+            seed=42)
 
         maze_gen.generate()
         game = PacmanGame(maze_gen)
