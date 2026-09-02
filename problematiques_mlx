@@ -1,1 +1,0 @@
-mlx ne permet pas de zoom, donc pour regler la taille du maze on va probablement devoir generer plusieurs tailles predefinies de tilesets, et mettre une option "zoom" dans le menu
