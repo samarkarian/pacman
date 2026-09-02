@@ -4,9 +4,9 @@ import pygame
 
 
 class Renderer(ABC):
-    def __init__(self, screen, size: int = 64):
+    def __init__(self, screen, asset_size: int):
         self.sprites: dict = {}
-        self.size: int = size
+        self.asset_size: int = asset_size
         self.screen = screen
 
     @abstractmethod
@@ -19,8 +19,8 @@ class Renderer(ABC):
 
 
 class Entity(Renderer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, screen, asset_size: int):
+        super().__init__(screen, asset_size)
         self.posx: int
         self.posy: int
 
@@ -30,7 +30,7 @@ class Entity(Renderer):
         """
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}_{self.size}/{self.__class__.__name__}_frame_{sprite}.png")
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}_{self.asset_size}/{self.__class__.__name__}_frame_{sprite}.png")
         except Exception as e:
             print(e)
 
@@ -46,15 +46,14 @@ class Entity(Renderer):
         current_sprite = self.sprites[frame_index]
 
         self.screen.blit(current_sprite, (draw_x, draw_y))
-        return super().render(self.size)
+        # return super().render(self.size)
 
 
 class Ghost(Entity):
-    def __init__(self, posx: int, posy: int):
-        super().__init__()
+    def __init__(self, posx: int, posy: int, screen, asset_size: int):
+        super().__init__(screen, asset_size)
         self.posx = posx
         self.posy = posy
-        self.load_sprites()
 
     def load_sprites(self):
         super().load_sprites()

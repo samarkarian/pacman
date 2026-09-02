@@ -1,7 +1,7 @@
 import sys
 import pygame
 from maze_display import MazeDisplayer
-
+from Entity_factory import Entity_factory
 
 class GameLoop:
     """
@@ -13,11 +13,14 @@ class GameLoop:
 
         self.width: int = 1080
         self.height: int = 1080
+        self.asset_size: int = 64
+        self.animation_speed: int = 400
         self.is_running: bool = False
 
         self.screen: pygame.Surface = pygame.display.set_mode((self.width, self.height))
 
-        self.mazedisplayer = MazeDisplayer(mazegen, self.screen)
+        self.entities = []
+        self.mazedisplayer = MazeDisplayer(mazegen, self.screen, self.asset_size)
 
         self.player_x = 0
         self.player_y = 0
@@ -47,6 +50,8 @@ class GameLoop:
         """fonction appelant le load_sprites() de toutes les entites
         """
         self.mazedisplayer.load_sprites()
+        for e in self.entities:
+            e.load_sprites()
 
     def render(self) -> None:
         """
@@ -55,9 +60,15 @@ class GameLoop:
         self.screen.fill((0, 0, 0))
         offset = (self.player_x, self.player_y)
         self.mazedisplayer.render(offset)
+        for e in self.entities:
+            e.render(self.animation_speed, offset)
         pygame.display.flip()
         pygame.display.flip()
 
+    def future_menu_function(self):
+        factory = Entity_factory(self.asset_size, self.screen)
+        self.entities = factory.generate_entities()
+        self.load_sprites()
 
     def run(self) -> None:
         """
@@ -66,7 +77,8 @@ class GameLoop:
         self.is_running = True
         
         clock = pygame.time.Clock()
-        self.load_sprites()
+        self.future_menu_function()
+
         while self.is_running:
             self.handle_events()
             self.render()
