@@ -16,7 +16,7 @@ def main() -> None:
         print(f"Error: cannot read config file '{path}'")
         sys.exit(1)
 
-    json_load(content)
+    config = json_load(content)
 
     return None
 
