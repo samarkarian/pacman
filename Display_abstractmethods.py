@@ -35,7 +35,7 @@ class Entity(Renderer):
             print(e)
 
     @abstractmethod
-    def render(self, animation_speed: int = 400, offset: Tuple[int, int] = (0, 0)):
+    def render(self, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
         """rendu automatique avec 2 frames pour l'animation en deux temps
         """
         time = pygame.time.get_ticks()
@@ -64,5 +64,5 @@ class Ghost(Entity):
         except Exception as e:
             print(e)
 
-    def render(self, animation_speed: int = 400, offset: Tuple[int, int] = (0, 0)):
+    def render(self, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
         super().render(animation_speed, offset)

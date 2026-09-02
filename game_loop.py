@@ -44,6 +44,11 @@ class GameLoop:
                     self.player_x += 50
                 elif event.key == pygame.K_RIGHT:
                     self.player_x -= 50
+                # elif event.key == pygame.K_0:
+                #     self.asset_size: int = 64
+                # elif event.key == pygame.K_1:
+                #     self.asset_size: int = 32
+
 
 
     def load_sprites(self):
@@ -66,7 +71,10 @@ class GameLoop:
         pygame.display.flip()
 
     def future_menu_function(self):
+        """fonction de menu a rajouter, pernmettant notamment de reload de la taille 32 a 64
+        """
         factory = Entity_factory(self.asset_size, self.screen)
+        # factory = Entity_factory(32, self.screen)
         self.entities = factory.generate_entities()
         self.load_sprites()
 
