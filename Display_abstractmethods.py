@@ -30,7 +30,7 @@ class Entity(Renderer):
         """
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}_{self.asset_size}/{self.__class__.__name__}_frame_{sprite}.png")
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/{self.__class__.__name__}_{self.asset_size}/{self.__class__.__name__}_{self.asset_size}_frame_{sprite}.png")
         except Exception as e:
             print(e)
 
@@ -46,17 +46,23 @@ class Entity(Renderer):
         current_sprite = self.sprites[frame_index]
 
         self.screen.blit(current_sprite, (draw_x, draw_y))
-        # return super().render(self.size)
 
 
 class Ghost(Entity):
-    def __init__(self, posx: int, posy: int, screen, asset_size: int):
+    def __init__(self, posx: int, posy: int, screen, asset_size: int, color: str):
         super().__init__(screen, asset_size)
         self.posx = posx
         self.posy = posy
+        self.color = color
 
     def load_sprites(self):
-        super().load_sprites()
+        try:
+            for sprite in range(2):
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/\
+{self.__class__.__name__}_{self.color}/{self.__class__.__name__}_{self.color}_{self.asset_size}/\
+{self.__class__.__name__}_{self.color}_{self.asset_size}_frame_{sprite}.png")
+        except Exception as e:
+            print(e)
 
     def render(self, animation_speed: int = 400, offset: Tuple[int, int] = (0, 0)):
         super().render(animation_speed, offset)
