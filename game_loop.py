@@ -2,7 +2,7 @@ import sys
 import pygame
 from maze_display import MazeDisplayer
 from Entity_factory import Entity_factory
-
+# from Menu import Menu
 class GameLoop:
     """
     Classe principale gérant la fenêtre et la boucle de jeu, 
@@ -25,6 +25,9 @@ class GameLoop:
         self.player_x = 0
         self.player_y = 0
 
+        self.state = 'MENU'
+        # self.menu = Menu(self.screen)
+
     def handle_events(self) -> None:
         """
         Équivalent de mlx_hook() : capture des événements clavier et fenêtre.
@@ -44,10 +47,13 @@ class GameLoop:
                     self.player_x += 50
                 elif event.key == pygame.K_RIGHT:
                     self.player_x -= 50
-                # elif event.key == pygame.K_0:
-                #     self.asset_size: int = 64
-                # elif event.key == pygame.K_1:
-                #     self.asset_size: int = 32
+                elif event.key == pygame.K_SPACE:
+                    if self.state == 'GAME':
+                        print('A')
+                        self.state = 'MENU'
+                    else:
+                        print('B')
+                        self.state = 'GAME' #A supprimer une fois le menu fait
 
 
 
@@ -88,10 +94,47 @@ class GameLoop:
         self.future_menu_function()
 
         while self.is_running:
-            self.handle_events()
-            self.render()
+            if self.state == 'MENU':
+                self.handle_events()
+                self.render()
+                print(self.state)
 
-            clock.tick(60)
+            elif self.state == 'GAME':
+                self.handle_events()
+                self.render()
+                print(self.state)
+
+        clock.tick(60)
 
         pygame.quit()
         sys.exit(0)
+
+
+# class GameLoop:
+#     def __init__(self, initial_scene: Scene, width: int = 1080, height: int = 1080) -> None:
+#         pygame.init()
+#         self.screen = pygame.display.set_mode((width, height))
+#         self.clock = pygame.time.Clock()
+#         self.is_running = True
+#         self.current_scene = initial_scene
+
+#     def change_scene(self, next_scene: Scene) -> None:
+#         self.current_scene = next_scene
+
+#     def run(self) -> None:
+#         while self.is_running:
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     self.is_running = False
+#                 else:
+#                     self.current_scene.handle_event(event)
+
+#             self.current_scene.update()
+
+#             self.screen.fill((0, 0, 0))
+#             self.current_scene.render(self.screen)
+#             pygame.display.flip()
+
+#             self.clock.tick(60)
+
+#         pygame.quit()
