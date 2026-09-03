@@ -108,18 +108,26 @@ from Entity_factory import Entity_factory
 
 #         pygame.quit()
 #         sys.exit(0)
-from Scene import Scene
+from Scene import Scene, SceneID
+from Game_scene import GameScene
+from MenuScene import MenuScene
 
 class GameLoop:
-    def __init__(self, initial_scene: Scene, width: int = 1080, height: int = 1080) -> None:
+    def __init__(self, mazegen, width: int = 1080, height: int = 1080) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.is_running = True
-        self.current_scene = initial_scene
+        self.current_scene = MenuScene()
+        self.mazegen = mazegen
 
-    def change_scene(self, next_scene: Scene) -> None:
-        self.current_scene = next_scene
+    def change_scene(self, target: SceneID) -> None:
+        if target == SceneID.MENU:
+            self.current_scene = MenuScene()
+        elif target == SceneID.GAME:
+            self.current_scene = GameScene(self.mazegen)
+        elif target == SceneID.QUIT:
+            self.is_running = False
 
     def run(self) -> None:
         while self.is_running:
@@ -127,9 +135,13 @@ class GameLoop:
                 if event.type == pygame.QUIT:
                     self.is_running = False
                 else:
-                    self.current_scene.handle_event(event)
+                    action = self.current_scene.handle_event(event)
+                    if action:
+                        self.change_scene(action)
 
-            self.current_scene.update()
+            action = self.current_scene.update()
+            if action:
+                self.switch_scene(action)
 
             self.screen.fill((0, 0, 0))
             self.current_scene.render(self.screen)

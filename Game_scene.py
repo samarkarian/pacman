@@ -1,5 +1,6 @@
 from maze_display import MazeDisplayer
-from Scene import Scene
+from Scene import Scene, SceneID
+from typing import Optional
 import pygame
 
 class GameScene(Scene):
@@ -18,13 +19,13 @@ class GameScene(Scene):
         for e in self.entities:
             e.load_sprites()
 
-    def handle_event(self, event: pygame.event.Event) -> None:
+    def handle_event(self, event: pygame.event.Event) -> Optional[Scene]:
         if event.type == pygame.QUIT:
             self.is_running = False
         
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.is_running = False
+            if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
+                return SceneID.MENU
             elif event.key == pygame.K_UP:
                 self.player_y += 50
             elif event.key == pygame.K_DOWN:

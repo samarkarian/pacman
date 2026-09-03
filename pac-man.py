@@ -3,7 +3,7 @@ from game_loop import GameLoop
 import sys
 from json_loader import json_load
 
-from GameScene import GameScene
+from Game_scene import GameScene
 def main() -> None:
 
     try:
@@ -29,8 +29,7 @@ def main() -> None:
             seed=42)
 
         maze_gen.generate()
-        scn = GameScene(mazegen=maze_gen)
-        game = GameLoop(initial_scene=scn)
+        game = GameLoop(mazegen=maze_gen)
         game.run()
     except KeyboardInterrupt:
         sys.exit(1)

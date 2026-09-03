@@ -1,5 +1,28 @@
-# from typing import List
-# import pygame
+import pygame
+from Scene import Scene, SceneID
+from typing import Optional
+
+class MenuScene(Scene):
+    def __init__(self) -> None:
+        self.font = pygame.font.Font(None, 48)
+
+    def load_sprites(self):
+        pass
+
+    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+        if event.type == pygame.KEYDOWN:
+            if event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                return SceneID.GAME
+            elif event.key == pygame.K_ESCAPE:
+                return SceneID.QUIT
+        return None
+
+    def update(self) -> Optional[SceneID]:
+        return None
+
+    def render(self, screen: pygame.Surface) -> None:
+        text_surf = self.font.render("Appuyez sur ESPACE pour jouer", True, (255, 255, 255))
+        screen.blit(text_surf, (200, 200))
 
 # class Menu:
 #     def __init__(self, screen: pygame.Surface) -> None:
