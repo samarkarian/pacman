@@ -17,6 +17,47 @@ class Maze:
 
         return True
 
+    def can_move(self, x, y, direction) -> bool:
+
+        walkable = self.is_walkable(x, y)
+        if walkable is False:
+            return False
+
+        if direction == 'N':
+            if self.grid[y][x] & 1:
+                return False
+            walkable = self.is_walkable(x, y - 1)
+            if walkable is False:
+                return False
+            return True
+
+
+        if direction == 'E':
+            if self.grid[y][x] & 2:
+                return False
+            walkable = self.is_walkable(x + 1, y)
+            if walkable is False:
+                return False
+            return True
+
+        if direction == 'S':
+            if self.grid[y][x] & 4:
+                return False
+            walkable = self.is_walkable(x, y + 1)
+            if walkable is False:
+                return False
+            return True
+
+        if direction == 'W':
+            if self.grid[y][x] & 8:
+                return False
+            walkable = self.is_walkable(x - 1, y)
+            if walkable is False:
+                return False
+            return True
+
+        return False
+
 def generate_maze(width, height, seed):
 
     try:
@@ -57,12 +98,21 @@ if __name__ == "__main__":
 
     grid = generate_maze(19, 19, 42)
 
-    # for y in grid:
-    #     print(y)
+    for y in grid:
+        print(y)
 
     # if grid is not None:
         # display_walls(grid)
 
     mz = Maze(grid)
 
-    print(mz.is_walkable(6, 7))
+    x = -1
+    y = 1
+
+    north = 'N'
+    east = 'E'
+    south = 'S'
+    west = 'W'
+
+    mz.is_walkable(x, y)
+    print(mz.can_move(x, y, north))
