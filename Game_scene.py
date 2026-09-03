@@ -22,7 +22,7 @@ class GameScene(Scene):
     def handle_event(self, event: pygame.event.Event) -> Optional[Scene]:
         if event.type == pygame.QUIT:
             self.is_running = False
-        
+
         elif event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
                 return SceneID.MENU

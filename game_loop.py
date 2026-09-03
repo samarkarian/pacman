@@ -1,7 +1,52 @@
-import sys
+from Scene import SceneID
+from Game_scene import GameScene
+from MenuScene import MenuScene
 import pygame
-from maze_display import MazeDisplayer
-from Entity_factory import Entity_factory
+
+class GameLoop:
+    def __init__(self, mazegen, width: int = 1080, height: int = 1080) -> None:
+        pygame.init()
+        self.screen = pygame.display.set_mode((width, height))
+        self.clock = pygame.time.Clock()
+        self.is_running = True
+        self.current_scene = MenuScene()
+        self.mazegen = mazegen
+
+    def change_scene(self, target: SceneID) -> None:
+        if target == SceneID.MENU:
+            self.current_scene = MenuScene()
+        elif target == SceneID.GAME:
+            self.current_scene = GameScene(self.mazegen)
+        elif target == SceneID.QUIT:
+            self.is_running = False
+
+    def run(self) -> None:
+        while self.is_running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.is_running = False
+                else:
+                    action = self.current_scene.handle_event(event)
+                    if action:
+                        self.change_scene(action)
+
+            action = self.current_scene.update()
+            if action:
+                self.switch_scene(action)
+
+            self.screen.fill((0, 0, 0))
+            self.current_scene.render(self.screen)
+            pygame.display.flip()
+
+            self.clock.tick(60)
+
+        pygame.quit()
+
+
+
+# import sys
+# from maze_display import MazeDisplayer
+# from Entity_factory import Entity_factory
 # from Menu import Menu
 # class GameLoop:
 #     """
@@ -108,45 +153,3 @@ from Entity_factory import Entity_factory
 
 #         pygame.quit()
 #         sys.exit(0)
-from Scene import Scene, SceneID
-from Game_scene import GameScene
-from MenuScene import MenuScene
-
-class GameLoop:
-    def __init__(self, mazegen, width: int = 1080, height: int = 1080) -> None:
-        pygame.init()
-        self.screen = pygame.display.set_mode((width, height))
-        self.clock = pygame.time.Clock()
-        self.is_running = True
-        self.current_scene = MenuScene()
-        self.mazegen = mazegen
-
-    def change_scene(self, target: SceneID) -> None:
-        if target == SceneID.MENU:
-            self.current_scene = MenuScene()
-        elif target == SceneID.GAME:
-            self.current_scene = GameScene(self.mazegen)
-        elif target == SceneID.QUIT:
-            self.is_running = False
-
-    def run(self) -> None:
-        while self.is_running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.is_running = False
-                else:
-                    action = self.current_scene.handle_event(event)
-                    if action:
-                        self.change_scene(action)
-
-            action = self.current_scene.update()
-            if action:
-                self.switch_scene(action)
-
-            self.screen.fill((0, 0, 0))
-            self.current_scene.render(self.screen)
-            pygame.display.flip()
-
-            self.clock.tick(60)
-
-        pygame.quit()

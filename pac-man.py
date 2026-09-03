@@ -3,7 +3,6 @@ from game_loop import GameLoop
 import sys
 from json_loader import json_load
 
-from Game_scene import GameScene
 def main() -> None:
 
     try:
