@@ -31,7 +31,6 @@ class Maze:
                 return False
             return True
 
-
         if direction == 'E':
             if self.grid[y][x] & 2:
                 return False
@@ -57,6 +56,25 @@ class Maze:
             return True
 
         return False
+
+    def neighbors(self, x, y) -> list[tuple[int, int]]:
+
+        dir_dict = {
+            'N': (0, -1),
+            'E': (1, 0),
+            'S': (0, 1),
+            'W': (-1, 0)
+        }
+
+        neighbors_lst = []
+        for dir in dir_dict:
+            neighbor = self.can_move(x, y, dir)
+            if neighbor is True:
+                dx, dy = dir_dict[dir]
+                neighbors_lst.append((x + dx, y + dy))
+
+        return neighbors_lst
+
 
 def generate_maze(width, height, seed):
 
@@ -106,7 +124,7 @@ if __name__ == "__main__":
 
     mz = Maze(grid)
 
-    x = -1
+    x = 1
     y = 1
 
     north = 'N'
@@ -116,3 +134,4 @@ if __name__ == "__main__":
 
     mz.is_walkable(x, y)
     print(mz.can_move(x, y, north))
+    print(mz.neighbors(x, y))
