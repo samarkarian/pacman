@@ -17,6 +17,7 @@ def main() -> None:
         sys.exit(1)
 
     config = json_load(content)
+    print(config)
 
     return None
 

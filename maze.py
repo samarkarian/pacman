@@ -2,12 +2,12 @@ from mazegenerator import MazeGenerator
 
 
 class Maze:
-    def __init__(self, grid):
+    def __init__(self, grid: list[list[int]]) -> None:
         self.grid = grid
         self.height = len(grid)
         self.width = len(grid[0])
 
-    def is_walkable(self, x, y) -> bool:
+    def is_walkable(self, x: int, y: int) -> bool:
 
         if not 0 <= x < self.width or not 0 <= y < self.height:
             return False
@@ -17,7 +17,7 @@ class Maze:
 
         return True
 
-    def can_move(self, x, y, direction) -> bool:
+    def can_move(self, x: int, y: int, direction: str) -> bool:
 
         walkable = self.is_walkable(x, y)
         if walkable is False:
@@ -57,7 +57,7 @@ class Maze:
 
         return False
 
-    def neighbors(self, x, y) -> list[tuple[int, int]]:
+    def neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
 
         dir_dict = {
             'N': (0, -1),
@@ -75,18 +75,36 @@ class Maze:
 
         return neighbors_lst
 
+    def center(self) -> tuple[int, int]:
+        # Pas encore pris en compte si case 15 ou pas dans la limite du maze
+        return (self.width // 2, self.height // 2)
 
-def generate_maze(width, height, seed):
+    def corners(self) -> list[tuple[int, int]]:
+
+        return [
+            (0, 0),
+            (self.width - 1, 0),
+            (0, self.height - 1),
+            (self.width - 1, self.height - 1)
+        ]
+
+
+def generate_maze(
+    width: int,
+    height: int,
+    seed: int,
+) -> list[list[int]] | None:
 
     try:
         mg = MazeGenerator(size=(width, height), perfect=False, seed=seed)
-        return mg.maze
+        maze: list[list[int]] = mg.maze
+        return maze
     except Exception as err:
         print(f"Error: could not generate maze ({err})")
         return None
 
 
-def display_walls(grid):
+def display_walls(grid: list[list[int]]) -> None:
     height = len(grid)
     width = len(grid[0])
     lines = []
@@ -116,22 +134,24 @@ if __name__ == "__main__":
 
     grid = generate_maze(19, 19, 42)
 
-    for y in grid:
-        print(y)
+    if grid is not None:
+        for row in grid:
+            print(row)
 
-    # if grid is not None:
         # display_walls(grid)
 
-    mz = Maze(grid)
+        mz = Maze(grid)
 
-    x = 1
-    y = 1
+        x = 1
+        y = 1
 
-    north = 'N'
-    east = 'E'
-    south = 'S'
-    west = 'W'
+        north = 'N'
+        east = 'E'
+        south = 'S'
+        west = 'W'
 
-    mz.is_walkable(x, y)
-    print(mz.can_move(x, y, north))
-    print(mz.neighbors(x, y))
+        mz.is_walkable(x, y)
+        print(mz.can_move(x, y, north))
+        print(mz.neighbors(x, y))
+        print(mz.center())
+        print(mz.corners())
