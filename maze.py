@@ -9,7 +9,13 @@ class Maze:
 
     def is_walkable(self, x, y) -> bool:
 
-        print(grid)
+        if not 0 <= x < self.width or not 0 <= y < self.height:
+            return False
+
+        if self.grid[y][x] == 15:
+            return False
+
+        return True
 
 def generate_maze(width, height, seed):
 
@@ -49,10 +55,14 @@ def display_walls(grid):
 
 if __name__ == "__main__":
 
-    grid = generate_maze(4, 3, 42)
+    grid = generate_maze(19, 19, 42)
 
-    for y in grid:
-        print(y)
+    # for y in grid:
+    #     print(y)
 
-    if grid is not None:
-        display_walls(grid)
+    # if grid is not None:
+        # display_walls(grid)
+
+    mz = Maze(grid)
+
+    print(mz.is_walkable(6, 7))
