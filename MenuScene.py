@@ -1,128 +1,59 @@
-import pygame
-from Scene import Scene, SceneID
-from typing import Optional, List, Tuple, Callable
-
-class MenuScene(Scene):
-    def __init__(self) -> None:
-        self.items: List[MenuItem] = []
-        self.selected_index: int = 0
-        self.menu = Menu()
-        self.menu.add_item("Jouer", (400, 300), lambda: SceneID.GAME)
-        self.menu.add_item("Taille: 64px", (400, 380), self.toggle_asset_size)
-        self.menu.add_item("Quitter", (400, 460), lambda: SceneID.QUIT)
-
-    def add_item(self, text: str, pos: Tuple[int, int], action: Callable[[], None]) -> None:
-            self.items.append(MenuItem(text, pos, action))
-
-    # def load_sprites(self):
-    #     pass
-
-    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        if event.type == pygame.KEYDOWN:
-            if event.key in (pygame.K_RETURN, pygame.K_SPACE):
-                return SceneID.GAME
-            elif event.key == pygame.K_ESCAPE:
-                return SceneID.QUIT
-            elif event.key == pygame.K_UP:
-                self.selected_index = (self.selected_index - 1) % len(self.items)
-            elif event.key == pygame.K_DOWN:
-                self.selected_index = (self.selected_index + 1) % len(self.items)
-            elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
-                if self.items:
-                    self.items[self.selected_index].trigger()
-        return None
-
-    def toggle_asset_size(self) -> Optional[SceneID]:
-            # Logique de bascule 32 / 64
-            return None
-
-    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        return self.menu.handle_event(event)
-
-    def update(self) -> Optional[SceneID]:
-        return None
-
-    def render(self, screen: pygame.Surface) -> None:
-        self.menu.render(screen)
-
-class Menu:
-    """Widget autonome de menu utilisable dans n'importe quelle Scene."""
-    def __init__(self, font_size: int = 48) -> None:
-        self.font = pygame.font.Font(None, font_size)
-        self.items: List[MenuItem] = []
-        self.selected_index: int = 0
-
-    def add_item(self, text: str, pos: Tuple[int, int], action: Callable[[], Optional[SceneID]]) -> None:
-        self.items.append(MenuItem(text, pos, action))
-
-    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        if event.type != pygame.KEYDOWN or not self.items:
-            return None
-
-        if event.key == pygame.K_UP:
-            self.selected_index = (self.selected_index - 1) % len(self.items)
-        elif event.key == pygame.K_DOWN:
-            self.selected_index = (self.selected_index + 1) % len(self.items)
-        elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
-            return self.items[self.selected_index].trigger()
-        return None
-
-    def render(self, screen: pygame.Surface) -> None:
-        for idx, item in enumerate(self.items):
-            item.render(screen, idx == self.selected_index)
-
-
-
-# from typing import Callable, Dict, List, Optional, Tuple
 # import pygame
-# from scene import SceneID
+# from Scene import Scene, SceneID
+# from typing import Optional, List, Tuple, Callable
 
+# class MenuScene(Scene):
+#     def __init__(self) -> None:
+#         self.items: List[MenuItem] = []
+#         self.selected_index: int = 0
+#         self.menu = Menu()
+#         self.menu.add_item("Jouer", (400, 300), lambda: SceneID.GAME)
+#         self.menu.add_item("Taille: 64px", (400, 380), self.toggle_asset_size)
+#         self.menu.add_item("Quitter", (400, 460), lambda: SceneID.QUIT)
 
-# class MenuItem:
-#     def __init__(
-#         self,
-#         text: str,
-#         font: pygame.font.Font,
-#         pos: Tuple[int, int],
-#         action: Callable[[], Optional[SceneID]],
-#     ) -> None:
-#         self.text = text
-#         self.font = font
-#         self.pos = pos
-#         self.action = action
+#     def add_item(self, text: str, pos: Tuple[int, int], action: Callable[[], None]) -> None:
+#             self.items.append(MenuItem(text, pos, action))
 
-#     def render(self, screen: pygame.Surface, is_selected: bool) -> None:
-#         color = (255, 255, 0) if is_selected else (200, 200, 200)
-#         # Équivalent MLX de mlx_string_put
-#         surface = self.font.render(self.text, True, color)
-#         screen.blit(surface, self.pos)
+#     # def load_sprites(self):
+#     #     pass
 
-#     def trigger(self) -> Optional[SceneID]:
-#         return self.action()
+#     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+#         if event.type == pygame.KEYDOWN:
+#             if event.key in (pygame.K_RETURN, pygame.K_SPACE):
+#                 return SceneID.GAME
+#             elif event.key == pygame.K_ESCAPE:
+#                 return SceneID.QUIT
+#             elif event.key == pygame.K_UP:
+#                 self.selected_index = (self.selected_index - 1) % len(self.items)
+#             elif event.key == pygame.K_DOWN:
+#                 self.selected_index = (self.selected_index + 1) % len(self.items)
+#             elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+#                 if self.items:
+#                     self.items[self.selected_index].trigger()
+#         return None
 
+#     def toggle_asset_size(self) -> Optional[SceneID]:
+#             # Logique de bascule 32 / 64
+#             return None
 
+#     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+#         return self.menu.handle_event(event)
 
+#     def update(self) -> Optional[SceneID]:
+#         return None
 
+#     def render(self, screen: pygame.Surface) -> None:
+#         self.menu.render(screen)
 
-
-
-
-
-
-
-
-
-# class MenuPage:
-#     """Représente un onglet/sous-menu précis."""
-#     def __init__(self, title: str, font_size: int = 42) -> None:
-#         self.title = title
+# class Menu:
+#     """Widget autonome de menu utilisable dans n'importe quelle Scene."""
+#     def __init__(self, font_size: int = 48) -> None:
 #         self.font = pygame.font.Font(None, font_size)
-#         self.title_font = pygame.font.Font(None, int(font_size * 1.3))
 #         self.items: List[MenuItem] = []
 #         self.selected_index: int = 0
 
 #     def add_item(self, text: str, pos: Tuple[int, int], action: Callable[[], Optional[SceneID]]) -> None:
-#         self.items.append(MenuItem(text, self.font, pos, action))
+#         self.items.append(MenuItem(text, pos, action))
 
 #     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
 #         if event.type != pygame.KEYDOWN or not self.items:
@@ -137,117 +68,150 @@ class Menu:
 #         return None
 
 #     def render(self, screen: pygame.Surface) -> None:
-#         # Titre de l'onglet
-#         title_surf = self.title_font.render(self.title, True, (255, 180, 0))
-#         screen.blit(title_surf, (screen.get_width() // 2 - title_surf.get_width() // 2, 120))
-
-#         # Éléments sélectionnables
 #         for idx, item in enumerate(self.items):
 #             item.render(screen, idx == self.selected_index)
 
-# class MenuNavigator:
-#     def __init__(self) -> None:
-#         self.pages: Dict[str, MenuPage] = {}
-#         self.history: List[str] = []
 
-#     def register_page(self, name: str, page: MenuPage) -> None:
-#         self.pages[name] = page
+# class MenuItem:
+#     def __init__(self, text: str, pos: Tuple[int, int], action: Callable[[], None]) -> None:
+#         self.text: str = text
+#         self.font: pygame.font.Font = pygame.font.Font(None, 48)
+#         self.pos: Tuple[int, int] = pos
+#         self.action: Callable[[], None] = action
 
-#     def go_to(self, page_name: str) -> None:
-#         if page_name in self.pages:
-#             self.history.append(page_name)
-#             self.pages[page_name].selected_index = 0
+#     def render(self, screen: pygame.Surface, is_selected: bool) -> None:
+#         color = (255, 255, 0) if is_selected else (200, 200, 200)
+#         # Équivalent MLX de mlx_string_put
+#         surface = self.font.render(self.text, True, color)
+#         screen.blit(surface, self.pos)
 
-#     def go_back(self) -> bool:
-#         """Revient à l'onglet précédent. Renvoie False si on est déjà à la racine."""
-#         if len(self.history) > 1:
-#             self.history.pop()
-#             return True
-#         return False
+#     def trigger(self) -> Optional[SceneID]:
+#         return self.action()
 
-#     @property
-#     def current_page(self) -> MenuPage:
-#         return self.pages[self.history[-1]]
+from abc import ABC, abstractmethod
+from typing import List, Optional, Any, Tuple, Dict, Callable
+import pygame
+from Scene import SceneID, Scene
 
-# import pygame
-# from typing import Callable, Tuple
-
-class MenuItem:
-    def __init__(self, text: str, pos: Tuple[int, int], action: Callable[[], None]) -> None:
-        self.text: str = text
-        self.font: pygame.font.Font = pygame.font.Font(None, 48)
+class UIButton:
+    def __init__(
+        self,
+        name: str,
+        pos: Tuple[int, int],
+        action: Callable[[], Optional[SceneID]],
+        asset_size: int = 64,
+    ) -> None:
+        self.name: str = name
         self.pos: Tuple[int, int] = pos
-        self.action: Callable[[], None] = action
+        self.action: Callable[[], Optional[SceneID]] = action
+        self.asset_size: int = asset_size
+        self.sprites: Dict[int, pygame.Surface] = {}
+        self.load_sprites()
 
-    def render(self, screen: pygame.Surface, is_selected: bool) -> None:
-        color = (255, 255, 0) if is_selected else (200, 200, 200)
-        # Équivalent MLX de mlx_string_put
-        surface = self.font.render(self.text, True, color)
-        screen.blit(surface, self.pos)
+    def load_sprites(self) -> None:
+        """Charge la frame 0 (inactif) et la frame 1 (sélectionné)."""
+        try:
+            for frame in range(2):
+                path = (
+                    f"sprites/ui/{self.name}/{self.name}_{self.asset_size}/"
+                    f"{self.name}_{self.asset_size}_frame_{frame}.png"
+                )
+                self.sprites[frame] = pygame.image.load(path).convert_alpha()
+        except Exception as e:
+            print(f"Erreur de chargement pour {self.name}: {e}")
 
     def trigger(self) -> Optional[SceneID]:
         return self.action()
 
+    def render(self, screen: pygame.Surface, is_selected: bool) -> None:
+        frame_index = 1 if is_selected else 0
+        if frame_index in self.sprites:
+            screen.blit(self.sprites[frame_index], self.pos)
 
-# class MenuScene(Scene):
-#     def __init__(self, mazegen) -> None:
-#         self.mazegen = mazegen
-#         self.asset_size = 64
-#         self.navigator = MenuNavigator()
-        
-#         self._build_pages()
-#         self.navigator.go_to("MAIN")
+class MenuPage(ABC):
+    def __init__(self, scene_context: "MenuScene") -> None:
+        self.context = scene_context
+        self.buttons: List[UIButton] = []
+        self.selected_index: int = 0
+        self.build()
 
-#     def _build_pages(self) -> None:
-#         # 1. Page Principale
-#         main_page = MenuPage("MENU PRINCIPAL")
-#         main_page.add_item("Jouer", (450, 350), lambda: SceneID.GAME)
-#         main_page.add_item("Sélection du Niveau", (450, 420), lambda: self._open("LEVELS"))
-#         main_page.add_item("Options", (450, 490), lambda: self._open("OPTIONS"))
-#         main_page.add_item("Quitter", (450, 560), lambda: SceneID.QUIT)
-#         self.navigator.register_page("MAIN", main_page)
+    @abstractmethod
+    def build(self) -> None:
+        """Chaque page instancie ses propres SpriteButtons ici."""
+        pass
 
-#         # 2. Page Options
-#         opt_page = MenuPage("OPTIONS")
-#         opt_page.add_item("Taille des tuiles (32/64)", (380, 380), self._toggle_size)
-#         opt_page.add_item("Retour", (380, 460), self._back)
-#         self.navigator.register_page("OPTIONS", opt_page)
+    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+        if event.type != pygame.KEYDOWN or not self.buttons:
+            return None
 
-#         # 3. Page Sélection du niveau
-#         lvl_page = MenuPage("CHOIX DU NIVEAU")
-#         lvl_page.add_item("Labyrinthe 15x15", (420, 360), lambda: self._select_maze((15, 15)))
-#         lvl_page.add_item("Labyrinthe 25x25", (420, 430), lambda: self._select_maze((25, 25)))
-#         lvl_page.add_item("Retour", (420, 500), self._back)
-#         self.navigator.register_page("LEVELS", lvl_page)
+        if event.key == pygame.K_UP:
+            self.selected_index = (self.selected_index - 1) % len(self.buttons)
+        elif event.key == pygame.K_DOWN:
+            self.selected_index = (self.selected_index + 1) % len(self.buttons)
+        elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+            return self.buttons[self.selected_index].trigger()
+        return None
 
-#     def _open(self, target: str) -> Optional[SceneID]:
-#         self.navigator.go_to(target)
-#         return None
+    def render(self, screen: pygame.Surface) -> None:
+        for idx, btn in enumerate(self.buttons):
+            btn.render(screen, idx == self.selected_index)
 
-#     def _back(self) -> Optional[SceneID]:
-#         self.navigator.go_back()
-#         return None
+class MainMenuPage(MenuPage):
+    def build(self) -> None:
+        self.buttons.append(
+            UIButton(
+                name="play",
+                pos=(450, 300),
+                action=lambda: SceneID.GAME,
+                asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
+        self.buttons.append(
+                    UIButton(
+                        name="quit",
+                        pos=(450, 400),
+                        action=lambda: SceneID.QUIT,
+                        asset_size=self.context.game_data.get("asset_size", 64),
+                    )
+                )
 
-#     def _toggle_size(self) -> Optional[SceneID]:
-#         self.asset_size = 32 if self.asset_size == 64 else 64
-#         return None
+class MenuScene(Scene):
+    def __init__(self, initial_page_cls: type[MenuPage], **shared_data: Any) -> None:
+        self.game_data: Dict[str, Any] = shared_data
+        self.page_stack: List[MenuPage] = []
+        # Instanciation de la toute première page injectée
+        self.push_page(initial_page_cls(self))
 
-#     def _select_maze(self, size: Tuple[int, int]) -> Optional[SceneID]:
-#         self.mazegen.size = size
-#         self.mazegen.generate()
-#         return SceneID.GAME
+    def push_page(self, page: MenuPage) -> Optional[SceneID]:
+        self.page_stack.append(page)
+        return None
 
-#     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-#         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-#             # Échap revient à l'onglet parent, ou quitte si déjà à l'accueil
-#             if not self.navigator.go_back():
-#                 return SceneID.QUIT
-#             return None
+    def pop_page(self) -> Optional[SceneID]:
+        if len(self.page_stack) > 1:
+            self.page_stack.pop()
+            return None
+        return SceneID.QUIT
 
-#         return self.navigator.current_page.handle_event(event)
+    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            return self.pop_page()
+        if self.page_stack:
+            return self.page_stack[-1].handle_event(event)
+        return None
 
-#     def update(self) -> Optional[SceneID]:
-#         return None
+    def update(self) -> Optional[SceneID]:
+        return None
 
-#     def render(self, screen: pygame.Surface) -> None:
-#         self.navigator.current_page.render(screen)
+    def render(self, screen: pygame.Surface) -> None:
+        if self.page_stack:
+            self.page_stack[-1].render(screen)
+
+
+
+
+from typing import Callable, Optional, Tuple
+import pygame
+# En supposant que Renderer est dans le même module ou importé
+from Display_abstractmethods import Renderer
+
+

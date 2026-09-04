@@ -4,23 +4,22 @@ import pygame
 
 
 class Renderer(ABC):
-    def __init__(self, screen, asset_size: int):
+    def __init__(self, asset_size: int):
         self.sprites: dict = {}
         self.asset_size: int = asset_size
-        self.screen = screen
 
     @abstractmethod
     def load_sprites(self):
         pass
 
     @abstractmethod
-    def render(self, offset: Tuple[int, int]):
+    def render(self, screen, offset: Tuple[int, int]):
         pass
 
 
 class Entity(Renderer):
-    def __init__(self, screen, asset_size: int):
-        super().__init__(screen, asset_size)
+    def __init__(self, asset_size: int):
+        super().__init__(asset_size)
         self.posx: int
         self.posy: int
 
@@ -35,7 +34,7 @@ class Entity(Renderer):
             print(e)
 
     @abstractmethod
-    def render(self, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
+    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
         """rendu automatique avec 2 frames pour l'animation en deux temps
         """
         time = pygame.time.get_ticks()
@@ -45,12 +44,12 @@ class Entity(Renderer):
         draw_y = self.posy + offset[1]
         current_sprite = self.sprites[frame_index]
 
-        self.screen.blit(current_sprite, (draw_x, draw_y))
+        screen.blit(current_sprite, (draw_x, draw_y))
 
 
 class Ghost(Entity):
-    def __init__(self, posx: int, posy: int, screen, asset_size: int, color: str):
-        super().__init__(screen, asset_size)
+    def __init__(self, posx: int, posy: int, asset_size: int, color: str):
+        super().__init__(asset_size)
         self.posx = posx
         self.posy = posy
         self.color = color
@@ -64,5 +63,5 @@ class Ghost(Entity):
         except Exception as e:
             print(e)
 
-    def render(self, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
-        super().render(animation_speed, offset)
+    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
+        super().render(screen, animation_speed, offset)
