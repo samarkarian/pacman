@@ -151,7 +151,7 @@ if __name__ == "__main__":
         west = 'W'
 
         mz.is_walkable(x, y)
-        print(mz.can_move(x, y, north))
-        print(mz.neighbors(x, y))
-        print(mz.center())
-        print(mz.corners())
+        # print(mz.can_move(x, y, north))
+        # print(mz.neighbors(x, y))
+        # print(mz.center())
+        # print(mz.corners())
