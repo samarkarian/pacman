@@ -22,6 +22,26 @@ class PlayField:
                     continue
                 self.pacgums.add((x, y))
 
+    def eat_pacgum(self, x: int, y: int) -> bool:
+
+        if (x, y) in self.pacgums:
+            self.pacgums.remove((x, y))
+            return True
+        return False
+
+    def eat_super_pacgum(self, x: int, y: int) -> bool:
+
+        if (x, y) in self.super_pacgums:
+            self.super_pacgums.remove((x, y))
+            return True
+        return False
+
+    def is_level_complete(self) -> bool:
+
+        if bool(self.pacgums) is False:
+            return True
+        return False
+
 
 if __name__ == "__main__":
 
@@ -34,3 +54,5 @@ if __name__ == "__main__":
         print(pf.ghost_spawns)
         print(mz.is_walkable(9, 9))
         print(pf.pacgums)
+        print(pf.eat_pacgum(18, 8))
+        print(pf.is_level_complete())
