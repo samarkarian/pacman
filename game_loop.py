@@ -4,32 +4,29 @@ from MenuScene import MenuScene, MainMenuPage
 import pygame
 
 class GameLoop:
-    def __init__(self, mazegen, width: int = 1080, height: int = 1080) -> None:
+    def __init__(self, field, width: int = 1080, height: int = 1080) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.is_running = True
-        self.mazegen = mazegen
+        self.field = field
         self.asset_size: int = 64
 
         # Démarrage sur le MenuScene avec sa page initiale injectée
         self.current_scene = MenuScene(
             initial_page_cls=MainMenuPage,
             asset_size=self.asset_size,
-            mazegen=self.mazegen,
         )
-        self.mazegen = mazegen
 
     def change_scene(self, target: SceneID) -> None:
         if target == SceneID.MENU:
             self.current_scene = MenuScene(
                 initial_page_cls=MainMenuPage,
                 asset_size=self.asset_size,
-                mazegen=self.mazegen,
             )
         elif target == SceneID.GAME:
             self.current_scene = GameScene(
-                mazegen=self.mazegen,
+                field=self.field,
                 asset_size=self.asset_size,
             )
         elif target == SceneID.QUIT:

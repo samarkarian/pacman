@@ -4,8 +4,8 @@ from Display_abstractmethods import Renderer
 
 
 class MazeDisplayer(Renderer):
-    def __init__(self, mazegen, asset_size: int = 64):
-        self.maze_grid = mazegen.maze
+    def __init__(self, grid, asset_size: int = 64):
+        self.maze_grid = grid
         self.wall_sprites = {}
         self.asset_size = asset_size
 

@@ -4,9 +4,10 @@ from typing import Optional
 import pygame
 
 class GameScene(Scene):
-    def __init__(self, mazegen, asset_size: int = 64) -> None:
+    def __init__(self, field, asset_size: int = 64) -> None:
         self.asset_size = asset_size
-        self.mazedisplayer = MazeDisplayer(mazegen=mazegen, asset_size=asset_size)
+        self.field = field
+        self.mazedisplayer = MazeDisplayer(grid=field.maze.grid, asset_size=asset_size)
         self.player_x = 0
         self.player_y = 0
         self.entities = []  # Peuplé par la factory

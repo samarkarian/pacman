@@ -1,7 +1,7 @@
-from mazegenerator import MazeGenerator
 from game_loop import GameLoop
 import sys
 from json_loader import json_load
+from game import build_level
 
 def main() -> None:
 
@@ -18,23 +18,18 @@ def main() -> None:
         sys.exit(1)
 
     config = json_load(content)
-    print(config)
+    field = build_level(config, 0)
+    if field is None:
+        print("Error: could not build level")
+        sys.exit(1)
 
     try:
-        maze_gen = MazeGenerator(
-            size=(15,15),
-            entry_cell=(0,0),
-            exit_cell=(2,4),
-            perfect=True,
-            seed=42)
-
-        maze_gen.generate()
-        game = GameLoop(mazegen=maze_gen)
+        game = GameLoop(field=field)
         game.run()
     except KeyboardInterrupt:
         sys.exit(1)
-    except Exception as e:
-        print(e)
+    except Exception as err:
+        print(err)
 
     return None
 
