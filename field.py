@@ -43,16 +43,16 @@ class PlayField:
         return False
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    grid = generate_maze(19, 19, 42)
-    if grid is not None:
-        mz = Maze(grid)
-        pf = PlayField(mz)
+#     grid = generate_maze(19, 19, 42)
+#     if grid is not None:
+#         mz = Maze(grid)
+#         pf = PlayField(mz)
 
-        print(pf.player_spawn)
-        print(pf.ghost_spawns)
-        print(mz.is_walkable(9, 9))
-        print(pf.pacgums)
-        print(pf.eat_pacgum(18, 8))
-        print(pf.is_level_complete())
+#         print(pf.player_spawn)
+#         print(pf.ghost_spawns)
+#         print(mz.is_walkable(9, 9))
+#         print(pf.pacgums)
+#         print(pf.eat_pacgum(18, 8))
+#         print(pf.is_level_complete())

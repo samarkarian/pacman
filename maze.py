@@ -104,53 +104,53 @@ def generate_maze(
         return None
 
 
-def display_walls(grid: list[list[int]]) -> None:
-    height = len(grid)
-    width = len(grid[0])
-    lines = []
-    for y in range(height):
-        roof = ""
-        for x in range(width):
-            roof += "+"
-            roof += "-" if grid[y][x] & 1 else " "
-        roof += "+"
-        lines.append(roof)
-        body = ""
-        for x in range(width):
-            body += "|" if grid[y][x] & 8 else " "
-            body += " "
-        body += "|" if grid[y][width - 1] & 2 else " "
-        lines.append(body)
-    floor = ""
-    for x in range(width):
-        floor += "+"
-        floor += "-" if grid[height - 1][x] & 4 else " "
-    floor += "+"
-    lines.append(floor)
-    print("\n".join(lines))
+# def display_walls(grid: list[list[int]]) -> None:
+#     height = len(grid)
+#     width = len(grid[0])
+#     lines = []
+#     for y in range(height):
+#         roof = ""
+#         for x in range(width):
+#             roof += "+"
+#             roof += "-" if grid[y][x] & 1 else " "
+#         roof += "+"
+#         lines.append(roof)
+#         body = ""
+#         for x in range(width):
+#             body += "|" if grid[y][x] & 8 else " "
+#             body += " "
+#         body += "|" if grid[y][width - 1] & 2 else " "
+#         lines.append(body)
+#     floor = ""
+#     for x in range(width):
+#         floor += "+"
+#         floor += "-" if grid[height - 1][x] & 4 else " "
+#     floor += "+"
+#     lines.append(floor)
+#     print("\n".join(lines))
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    grid = generate_maze(19, 19, 42)
+#     grid = generate_maze(19, 19, 42)
 
-    if grid is not None:
-        for row in grid:
-            print(row)
+#     if grid is not None:
+#         for row in grid:
+#             print(row)
 
         # display_walls(grid)
 
-        mz = Maze(grid)
+        # mz = Maze(grid)
 
-        x = 1
-        y = 1
+        # x = 1
+        # y = 1
 
-        north = 'N'
-        east = 'E'
-        south = 'S'
-        west = 'W'
+        # north = 'N'
+        # east = 'E'
+        # south = 'S'
+        # west = 'W'
 
-        mz.is_walkable(x, y)
+        # mz.is_walkable(x, y)
         # print(mz.can_move(x, y, north))
         # print(mz.neighbors(x, y))
         # print(mz.center())
