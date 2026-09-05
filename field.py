@@ -1,5 +1,5 @@
 from maze import Maze
-from maze import generate_maze
+# from maze import generate_maze
 
 
 class PlayField:

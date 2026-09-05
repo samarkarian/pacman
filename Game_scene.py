@@ -1,5 +1,6 @@
 from maze_display import MazeDisplayer
 from Scene import Scene, SceneID
+from player import Player
 from typing import Optional
 import pygame
 
@@ -12,6 +13,7 @@ class GameScene(Scene):
         self.player_y = 0
         self.entities = []  # Peuplé par la factory
         self.load_sprites()
+        self.player = Player(field)
 
     def load_sprites(self):
         """fonction appelant le load_sprites() de toutes les entites
@@ -28,13 +30,13 @@ class GameScene(Scene):
             if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
                 return SceneID.MENU
             elif event.key == pygame.K_UP:
-                self.player_y += 50
+                self.player.move('N')
             elif event.key == pygame.K_DOWN:
-                self.player_y -= 50
+                self.player.move('S')
             elif event.key == pygame.K_LEFT:
-                self.player_x += 50
+                self.player.move('W')
             elif event.key == pygame.K_RIGHT:
-                self.player_x -= 50
+                self.player.move('E')
 
     def update(self) -> None:
         pass
@@ -44,3 +46,6 @@ class GameScene(Scene):
         self.mazedisplayer.render(screen=screen, offset=offset)
         for e in self.entities:
             e.render(screen, offset)
+        cx = self.player.x * self.asset_size + self.asset_size // 2 + offset[0]
+        cy = self.player.y * self.asset_size + self.asset_size // 2 + offset[1]
+        pygame.draw.circle(screen, (255, 255, 0), (cx, cy), self.asset_size // 2 - 4)
