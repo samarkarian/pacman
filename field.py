@@ -38,7 +38,7 @@ class PlayField:
 
     def is_level_complete(self) -> bool:
 
-        if bool(self.pacgums) is False:
+        if not self.pacgums and not self.super_pacgums:
             return True
         return False
 

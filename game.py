@@ -16,6 +16,40 @@ def build_level(config: Config, level_index: int) -> PlayField | None:
 
     return PlayField(maze)
 
+class Game:
+    def __init__(self, config: Config) -> None:
+
+        self.config = config
+        self.level_index = 0
+        self.score = 0
+        self.lives = config.lives
+        self.field = None
+
+    def start_level(self, level_index) -> bool:
+
+        play_field = build_level(self.config, level_index)
+
+        if play_field is None:
+            return False
+        self.field = play_field
+        self.level_index = level_index
+
+        return True
+
+    def add_score(self, eaten: str | None) -> None:
+
+        if eaten == 'pacgum':
+            self.score += self.config.points_per_pacgum
+        elif eaten == 'super_pacgum':
+            self.score += self.config.points_per_super_pacgum
+
+        return None
+
+    def next_level(self) -> bool:
+
+        return self.start_level(self.level_index + 1)
+
+
 # if __name__ == "__main__":
 
 #     grid = generate_maze(19, 19, 42)

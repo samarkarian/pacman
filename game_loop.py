@@ -4,12 +4,12 @@ from MenuScene import MenuScene, MainMenuPage
 import pygame
 
 class GameLoop:
-    def __init__(self, field, width: int = 1080, height: int = 1080) -> None:
+    def __init__(self, game, width: int = 1080, height: int = 1080) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((width, height))
         self.clock = pygame.time.Clock()
         self.is_running = True
-        self.field = field
+        self.game = game
         self.asset_size: int = 64
 
         # Démarrage sur le MenuScene avec sa page initiale injectée
@@ -26,7 +26,7 @@ class GameLoop:
             )
         elif target == SceneID.GAME:
             self.current_scene = GameScene(
-                field=self.field,
+                game=self.game,
                 asset_size=self.asset_size,
             )
         elif target == SceneID.QUIT:
