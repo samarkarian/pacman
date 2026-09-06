@@ -1,6 +1,7 @@
 from json_loader import Config
 from maze import Maze, generate_maze
 from field import PlayField
+from ghost import GhostIA
 
 def build_level(config: Config, level_index: int) -> PlayField | None:
 
@@ -24,6 +25,8 @@ class Game:
         self.score = 0
         self.lives = config.lives
         self.field = None
+        self.ghosts = []
+        self.vulnerable_count = 0
 
     def start_level(self, level_index) -> bool:
 
@@ -32,16 +35,24 @@ class Game:
         if play_field is None:
             return False
         self.field = play_field
+
+        self.vulnerable_count = 0
+
+        self.ghosts = []
+        for spawn in play_field.ghost_spawns:
+            self.ghosts.append(GhostIA(play_field, spawn))
+
         self.level_index = level_index
 
         return True
 
-    def add_score(self, eaten: str | None) -> None:
+    def eaten_effect(self, eaten: str | None) -> None:
 
         if eaten == 'pacgum':
             self.score += self.config.points_per_pacgum
         elif eaten == 'super_pacgum':
             self.score += self.config.points_per_super_pacgum
+            self.vulnerable_count = 30
 
         return None
 
@@ -49,12 +60,67 @@ class Game:
 
         return self.start_level(self.level_index + 1)
 
+    def reset(self) -> bool:
 
-# if __name__ == "__main__":
+        self.score = 0
+        self.lives = self.config.lives
 
-#     grid = generate_maze(19, 19, 42)
-#     conf = Config()
-#     mz = Maze(grid)
-#     pf = PlayField(mz)
+        return self.start_level(0)
 
-#     level = build_level(conf, 0)
+    def is_over(self) -> bool:
+
+        if self.lives <= 0:
+            return True
+        if self.field is None:
+            return False
+
+        last_index = len(self.config.level) - 1
+        if self.level_index == last_index:
+            return self.field.is_level_complete()
+        return False
+
+    def check_collision(self, player) -> bool:
+
+        for idx, ghost in enumerate(self.ghosts):
+            if (ghost.x, ghost.y) == (player.x, player.y):
+                if self.vulnerable_count != 0:
+                    self.score += self.config.points_per_ghost
+                    ghost.x, ghost.y = self.field.ghost_spawns[idx]
+                else:
+                    self.lives -= 1
+                    player.x, player.y = self.field.player_spawn
+                    player.direction = None
+                    player.next_direction = None
+                    spawns = self.field.ghost_spawns
+                    for caught, spawn in zip(self.ghosts, spawns):
+                        caught.x, caught.y = spawn
+                return True
+
+        return False
+
+
+if __name__ == "__main__":
+
+    grid = generate_maze(19, 19, 42)
+    conf = Config()
+    mz = Maze(grid)
+    pf = PlayField(mz)
+
+    level = build_level(conf, 0)
+    game = Game(conf)
+
+    from player import Player
+
+    player = Player(level)
+    print(player)
+    print(game.check_collision(player))
+
+    pl = (0, 4)
+    gh = [(0, 1), (0, 4), (0, 6)]
+
+    x, y = gh[1]
+    print(x, y)
+    for g in gh:
+        print(g)
+        if g == pl:
+            pass

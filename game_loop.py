@@ -1,5 +1,5 @@
 from Scene import SceneID
-from Game_scene import GameScene
+from Game_scene import GameScene, HUD_HEIGHT
 from MenuScene import MenuScene, MainMenuPage
 import pygame
 
@@ -18,6 +18,13 @@ class GameLoop:
             asset_size=self.asset_size,
         )
 
+    def compute_cell_size(self) -> int:
+        """Taille d'une cellule pour que tout le labyrinthe entre dans la fenetre."""
+        maze = self.game.field.maze
+        width, height = self.screen.get_size()
+        return min(width // maze.width,
+                   (height - HUD_HEIGHT) // maze.height)
+
     def change_scene(self, target: SceneID) -> None:
         if target == SceneID.MENU:
             self.current_scene = MenuScene(
@@ -25,9 +32,12 @@ class GameLoop:
                 asset_size=self.asset_size,
             )
         elif target == SceneID.GAME:
+            if self.game.is_over():
+                self.game.reset()
             self.current_scene = GameScene(
                 game=self.game,
                 asset_size=self.asset_size,
+                cell_size=self.compute_cell_size(),
             )
         elif target == SceneID.QUIT:
             self.is_running = False

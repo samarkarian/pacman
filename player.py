@@ -6,6 +6,8 @@ class Player:
 
         self.field = field
         self.x, self.y = field.player_spawn
+        self.direction = None
+        self.next_direction = None
 
     def move(self, direction: str) -> str | None:
 
@@ -28,27 +30,17 @@ class Player:
 
         return None
 
-# if __name__ == "__main__":
-#     from json_loader import Config
-#     from game import build_level
+    def set_direction(self, direction: str) -> None:
 
-#     field = build_level(Config(), 0)
-#     if field is not None:
-#         player = Player(field)
+        self.next_direction = direction
 
-#         print("spawn  :", player.x, player.y)      # (9, 9)
+    def step(self) -> str | None:
 
-#         player.move('N')
-#         print("apres N:", player.x, player.y)       # (9, 8)  couloir libre
+        maze = self.field.maze
+        if maze.can_move(self.x, self.y, self.next_direction):
+            self.direction = self.next_direction
 
-#         player.move('S')
-#         print("apres S:", player.x, player.y)       # (9, 9)  retour
+        if self.direction is None:
+            return None
 
-#         player.move('E')
-#         print("apres E:", player.x, player.y)       # (9, 9)  mur -> bloque
-
-#         player.move('W')
-#         print("apres W:", player.x, player.y)       # (9, 9)  mur -> bloque
-
-#         print([player.move(d) for d in "NNNWWWNWNNNWNNWSWNWW"])
-#         print(len(field.pacgums), len(field.super_pacgums))
+        return self.move(self.direction)
