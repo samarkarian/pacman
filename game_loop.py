@@ -1,45 +1,47 @@
 from Scene import SceneID
 from Game_scene import GameScene
-from MenuScene import MenuScene, MainMenuPage
+from MenuScene import MenuScene
+from Menu_pages import MainMenuPage
 import pygame
+import sys
+
 
 class GameLoop:
-    def __init__(self, mazegen, width: int = 1080, height: int = 1080) -> None:
+    RESOLUTIONS: dict[int, tuple[int, int]] = {
+        64: (1080, 1080),
+        32: (720, 720),
+    }
+
+    def __init__(self, mazegen) -> None:
         pygame.init()
-        self.screen = pygame.display.set_mode((width, height))
+        self.asset_size: int = 64
+        self.width, self.height = self.RESOLUTIONS[self.asset_size]
+        self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
         self.is_running = True
         self.mazegen = mazegen
-        self.asset_size: int = 64
+
 
         # Démarrage sur le MenuScene avec sa page initiale injectée
         self.current_scene = MenuScene(
             initial_page_cls=MainMenuPage,
             asset_size=self.asset_size,
             mazegen=self.mazegen,
+            gameloop=self,
         )
         self.mazegen = mazegen
 
-    # def change_scene(self, target: SceneID) -> None:
-    #     if target == SceneID.MENU:
-    #         self.current_scene = MenuScene(
-    #             initial_page_cls=MainMenuPage,
-    #             asset_size=self.asset_size,
-    #             mazegen=self.mazegen,
-    #         )
-    #     elif target == SceneID.GAME:
-    #         self.current_scene = GameScene(
-    #             mazegen=self.mazegen,
-    #             asset_size=self.asset_size,
-    #         )
-    #     elif target == SceneID.QUIT:
-    #         self.is_running = False
+    def set_resolution(self, asset_size: int) -> None:
+        """Met à jour la taille des tuiles et redimensionne la fenêtre."""
+        if asset_size not in self.RESOLUTIONS:
+            return
+        self.asset_size = asset_size
+        self.width, self.height = self.RESOLUTIONS[self.asset_size]
+        # Équivalent MLX de recréer mlx_new_window
+        self.screen = pygame.display.set_mode((self.width, self.height))
+
     def change_scene(self, target: SceneID) -> None:
         if target == SceneID.GAME:
-            # Récupération de la taille mise à jour par le menu
-            if isinstance(self.current_scene, MenuScene):
-                self.asset_size = self.current_scene.game_data.get("asset_size", self.asset_size)
-
             self.current_scene = GameScene(
                 mazegen=self.mazegen,
                 asset_size=self.asset_size,
@@ -47,6 +49,7 @@ class GameLoop:
         elif target == SceneID.MENU:
             self.current_scene = MenuScene(
                 initial_page_cls=MainMenuPage,
+                gameloop=self,
                 asset_size=self.asset_size,
                 mazegen=self.mazegen,
             )
@@ -74,6 +77,7 @@ class GameLoop:
             self.clock.tick(60)
 
         pygame.quit()
+        sys.exit(0)
 
 
 
