@@ -140,6 +140,13 @@ class MenuPage(ABC):
         """Chaque page instancie ses propres SpriteButtons ici."""
         pass
 
+    def rebuild(self) -> None:
+        """Vide et recrée les boutons avec la nouvelle taille."""
+        self.buttons.clear()
+        self.build()
+        if self.buttons:
+            self.selected_index = min(self.selected_index, len(self.buttons) - 1)
+
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
         if event.type != pygame.KEYDOWN or not self.buttons:
             return None
@@ -174,6 +181,47 @@ class MainMenuPage(MenuPage):
                         asset_size=self.context.game_data.get("asset_size", 64),
                     )
                 )
+        self.buttons.append(
+                UIButton(
+                    name="resize",
+                    pos=(450, 500),
+                    action=lambda: self.context.push_page(ResolutionPage(self.context)),
+                    asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
+
+class ResolutionPage(MenuPage):
+    def build(self) -> None:
+        current_size = self.context.game_data.get("asset_size", 64)
+
+        self.buttons.append(
+            UIButton(
+                name="small",
+                pos=(450, 300),
+                action=lambda: self._select_resolution(32),
+                asset_size=current_size,
+            )
+        )
+        self.buttons.append(
+            UIButton(
+                name="medium",
+                pos=(450, 400),
+                action=lambda: self._select_resolution(64),
+                asset_size=current_size,
+            )
+        )
+        self.buttons.append(
+            UIButton(
+                name="quit",
+                pos=(450, 500),
+                action=lambda: self.context.pop_page(),
+                asset_size=current_size,
+            )
+        )
+
+    def _select_resolution(self, size: int) -> Optional[SceneID]:
+        self.context.set_asset_size(size)
+        return self.context.pop_page()
 
 class MenuScene(Scene):
     def __init__(self, initial_page_cls: type[MenuPage], **shared_data: Any) -> None:
@@ -181,6 +229,12 @@ class MenuScene(Scene):
         self.page_stack: List[MenuPage] = []
         # Instanciation de la toute première page injectée
         self.push_page(initial_page_cls(self))
+
+    def set_asset_size(self, size: int) -> None:
+        """Met à jour la résolution et recharge les sprites de toutes les pages."""
+        self.game_data["asset_size"] = size
+        for page in self.page_stack:
+            page.rebuild()
 
     def push_page(self, page: MenuPage) -> Optional[SceneID]:
         self.page_stack.append(page)

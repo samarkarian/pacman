@@ -20,17 +20,35 @@ class GameLoop:
         )
         self.mazegen = mazegen
 
+    # def change_scene(self, target: SceneID) -> None:
+    #     if target == SceneID.MENU:
+    #         self.current_scene = MenuScene(
+    #             initial_page_cls=MainMenuPage,
+    #             asset_size=self.asset_size,
+    #             mazegen=self.mazegen,
+    #         )
+    #     elif target == SceneID.GAME:
+    #         self.current_scene = GameScene(
+    #             mazegen=self.mazegen,
+    #             asset_size=self.asset_size,
+    #         )
+    #     elif target == SceneID.QUIT:
+    #         self.is_running = False
     def change_scene(self, target: SceneID) -> None:
-        if target == SceneID.MENU:
+        if target == SceneID.GAME:
+            # Récupération de la taille mise à jour par le menu
+            if isinstance(self.current_scene, MenuScene):
+                self.asset_size = self.current_scene.game_data.get("asset_size", self.asset_size)
+
+            self.current_scene = GameScene(
+                mazegen=self.mazegen,
+                asset_size=self.asset_size,
+            )
+        elif target == SceneID.MENU:
             self.current_scene = MenuScene(
                 initial_page_cls=MainMenuPage,
                 asset_size=self.asset_size,
                 mazegen=self.mazegen,
-            )
-        elif target == SceneID.GAME:
-            self.current_scene = GameScene(
-                mazegen=self.mazegen,
-                asset_size=self.asset_size,
             )
         elif target == SceneID.QUIT:
             self.is_running = False
