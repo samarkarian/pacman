@@ -32,12 +32,10 @@ class GameLoop:
         self.mazegen = mazegen
 
     def set_resolution(self, asset_size: int) -> None:
-        """Met à jour la taille des tuiles et redimensionne la fenêtre."""
         if asset_size not in self.RESOLUTIONS:
             return
         self.asset_size = asset_size
         self.width, self.height = self.RESOLUTIONS[self.asset_size]
-        # Équivalent MLX de recréer mlx_new_window
         self.screen = pygame.display.set_mode((self.width, self.height))
 
     def change_scene(self, target: SceneID) -> None:

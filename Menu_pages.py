@@ -1,4 +1,3 @@
-from typing import List, Optional, Any, Tuple, Dict, Callable
 from Menu_classes import MenuPage
 from Scene import SceneID
 from Menu_classes import UIButton
@@ -34,8 +33,9 @@ class MainMenuPage(MenuPage):
                     pos=(center_x, int(gameloop.height * 0.61)),
                     action=lambda: self.context.push_page(ResolutionPage(self.context)),
                     asset_size=self.context.game_data.get("asset_size", 64),
+                )
             )
-        )
+
 
 class ResolutionPage(MenuPage):
     def build(self) -> None:

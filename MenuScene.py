@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import List, Optional, Any, Tuple, Dict, Callable
+from typing import List, Optional, Any, Dict
 import pygame
 from Scene import SceneID, Scene
 from Menu_classes import MenuPage
+
 
 class MenuScene(Scene):
     def __init__(self, initial_page_cls: type[MenuPage], **shared_data: Any) -> None:
