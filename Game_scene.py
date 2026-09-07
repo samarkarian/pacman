@@ -1,6 +1,7 @@
 from maze_display import MazeDisplayer
 from Scene import Scene, SceneID
 from player import Player
+from game import GHOST_STEP_MS
 from typing import Optional
 import pygame
 
@@ -8,7 +9,7 @@ PACGUM_COLOR = (255, 184, 151)
 
 HUD_HEIGHT = 40         # bande reservee en haut pour le score
 MOVE_DELAY = 150        # millisecondes entre deux cases du joueur
-GHOST_DELAY = 200       # les fantomes sont un peu plus lents
+GHOST_DELAY = GHOST_STEP_MS   # cadence definie dans game.py
 
 GHOST_COLORS = [
     (255, 0, 0),        # rouge
@@ -72,10 +73,12 @@ class GameScene(Scene):
         if now - self.last_ghost_move >= GHOST_DELAY:
             self.last_ghost_move = now
             for ghost in self.game.ghosts:
-                ghost.step()
+                ghost.step(self.player.x, self.player.y, self.game.vulnerable_count)
             self.game.check_collision(self.player)
             if self.game.vulnerable_count > 0:
                 self.game.vulnerable_count -= 1
+            if self.game.time_left > 0:
+                self.game.time_left -= 1
 
         if self.game.is_over():
             return SceneID.MENU
@@ -121,9 +124,11 @@ class GameScene(Scene):
 
     def render_hud(self, screen: pygame.Surface) -> None:
         """Score, vies et numero de niveau, en haut a gauche."""
+        seconds = self.game.time_left * GHOST_STEP_MS // 1000
         text = (f"Score {self.game.score}"
                 f"   Vies {self.game.lives}"
-                f"   Niveau {self.game.level_index + 1}")
+                f"   Niveau {self.game.level_index + 1}"
+                f"   Temps {seconds}")
         surface = self.font.render(text, True, (255, 255, 255))
         screen.blit(surface, (10, 10))
 

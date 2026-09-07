@@ -3,6 +3,13 @@ from maze import Maze, generate_maze
 from field import PlayField
 from ghost import GhostIA
 
+GHOST_STEP_MS = 200
+VULNERABLE_SECONDS = 6
+VULNERABLE_STEPS = VULNERABLE_SECONDS * 1000 // GHOST_STEP_MS
+
+RESPAWN_SECONDS = 5
+RESPAWN_STEPS = RESPAWN_SECONDS * 1000 // GHOST_STEP_MS
+
 def build_level(config: Config, level_index: int) -> PlayField | None:
 
     if not 0 <= level_index < len(config.level):
@@ -27,6 +34,7 @@ class Game:
         self.field = None
         self.ghosts = []
         self.vulnerable_count = 0
+        self.time_left = 0
 
     def start_level(self, level_index) -> bool:
 
@@ -37,6 +45,8 @@ class Game:
         self.field = play_field
 
         self.vulnerable_count = 0
+        self.time_left = (self.config.level_max_time * 1000
+                          // GHOST_STEP_MS)
 
         self.ghosts = []
         for spawn in play_field.ghost_spawns:
@@ -52,7 +62,7 @@ class Game:
             self.score += self.config.points_per_pacgum
         elif eaten == 'super_pacgum':
             self.score += self.config.points_per_super_pacgum
-            self.vulnerable_count = 30
+            self.vulnerable_count = VULNERABLE_STEPS
 
         return None
 
@@ -73,6 +83,8 @@ class Game:
             return True
         if self.field is None:
             return False
+        if self.time_left <= 0:
+            return True
 
         last_index = len(self.config.level) - 1
         if self.level_index == last_index:
@@ -82,10 +94,13 @@ class Game:
     def check_collision(self, player) -> bool:
 
         for idx, ghost in enumerate(self.ghosts):
+            if ghost.respawn_count != 0:
+                continue
             if (ghost.x, ghost.y) == (player.x, player.y):
                 if self.vulnerable_count != 0:
                     self.score += self.config.points_per_ghost
                     ghost.x, ghost.y = self.field.ghost_spawns[idx]
+                    ghost.start_respawn(RESPAWN_STEPS)
                 else:
                     self.lives -= 1
                     player.x, player.y = self.field.player_spawn
@@ -97,30 +112,3 @@ class Game:
                 return True
 
         return False
-
-
-if __name__ == "__main__":
-
-    grid = generate_maze(19, 19, 42)
-    conf = Config()
-    mz = Maze(grid)
-    pf = PlayField(mz)
-
-    level = build_level(conf, 0)
-    game = Game(conf)
-
-    from player import Player
-
-    player = Player(level)
-    print(player)
-    print(game.check_collision(player))
-
-    pl = (0, 4)
-    gh = [(0, 1), (0, 4), (0, 6)]
-
-    x, y = gh[1]
-    print(x, y)
-    for g in gh:
-        print(g)
-        if g == pl:
-            pass
