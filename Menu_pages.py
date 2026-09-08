@@ -1,0 +1,71 @@
+from Menu_classes import MenuPage
+from Scene import SceneID
+from Menu_classes import UIButton
+
+
+class MainMenuPage(MenuPage):
+    def build(self) -> None:
+        current_size = self.context.game_data.get("asset_size", 64)
+        gameloop = self.context.game_data.get("gameloop")
+        screen_w = gameloop.width if gameloop else 1080
+
+        center_x = (screen_w - current_size*3) // 2
+
+        self.buttons.append(
+            UIButton(
+                name="play",
+                pos=(center_x, gameloop.height * 0.35),
+                action=lambda: SceneID.GAME,
+                asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
+        self.buttons.append(
+                    UIButton(
+                        name="quit",
+                        pos=(center_x, int(gameloop.height * 0.48)),
+                        action=lambda: SceneID.QUIT,
+                        asset_size=self.context.game_data.get("asset_size", 64),
+                    )
+                )
+        self.buttons.append(
+                UIButton(
+                    name="resize",
+                    pos=(center_x, int(gameloop.height * 0.61)),
+                    action=lambda: self.context.push_page(ResolutionPage(self.context)),
+                    asset_size=self.context.game_data.get("asset_size", 64),
+                )
+            )
+
+
+class ResolutionPage(MenuPage):
+    def build(self) -> None:
+        current_size = self.context.game_data.get("asset_size", 64)
+        gameloop = self.context.game_data.get("gameloop")
+        screen_w = gameloop.width if gameloop else 1080
+
+        center_x = (screen_w - current_size*3) // 2
+
+        self.buttons.append(
+            UIButton(
+                name="small",
+                pos=(center_x, gameloop.height * 0.35),
+                action=lambda: self._select_resolution(32),
+                asset_size=current_size,
+            )
+        )
+        self.buttons.append(
+            UIButton(
+                name="medium",
+                pos=(center_x, int(gameloop.height * 0.48)),
+                action=lambda: self._select_resolution(64),
+                asset_size=current_size,
+            )
+        )
+        self.buttons.append(
+            UIButton(
+                name="quit",
+                pos=(center_x, int(gameloop.height * 0.61)),
+                action=lambda: self.context.pop_page(),
+                asset_size=current_size,
+            )
+        )

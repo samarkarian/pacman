@@ -1,6 +1,7 @@
-from json_loader import json_load
+from game_loop import GameLoop
 import sys
-
+from json_loader import json_load
+from game import Game
 
 def main() -> None:
 
@@ -17,7 +18,22 @@ def main() -> None:
         sys.exit(1)
 
     config = json_load(content)
+<<<<<<< HEAD
     print(config)
+=======
+    game = Game(config)
+    if not game.start_level(0):
+        print("Error: could not build level")
+        sys.exit(1)
+
+    try:
+        loop = GameLoop(game=game)
+        loop.run()
+    except KeyboardInterrupt:
+        sys.exit(1)
+    except Exception as err:
+        print(err)
+>>>>>>> origin/main
 
     return None
 

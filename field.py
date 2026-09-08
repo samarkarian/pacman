@@ -1,5 +1,9 @@
 from maze import Maze
+<<<<<<< HEAD
 from maze import generate_maze
+=======
+# from maze import generate_maze
+>>>>>>> origin/main
 
 
 class PlayField:
@@ -38,11 +42,16 @@ class PlayField:
 
     def is_level_complete(self) -> bool:
 
+<<<<<<< HEAD
         if bool(self.pacgums) is False:
+=======
+        if not self.pacgums and not self.super_pacgums:
+>>>>>>> origin/main
             return True
         return False
 
 
+<<<<<<< HEAD
 if __name__ == "__main__":
 
     grid = generate_maze(19, 19, 42)
@@ -56,3 +65,18 @@ if __name__ == "__main__":
         print(pf.pacgums)
         print(pf.eat_pacgum(18, 8))
         print(pf.is_level_complete())
+=======
+# if __name__ == "__main__":
+
+#     grid = generate_maze(19, 19, 42)
+#     if grid is not None:
+#         mz = Maze(grid)
+#         pf = PlayField(mz)
+
+#         print(pf.player_spawn)
+#         print(pf.ghost_spawns)
+#         print(mz.is_walkable(9, 9))
+#         print(pf.pacgums)
+#         print(pf.eat_pacgum(18, 8))
+#         print(pf.is_level_complete())
+>>>>>>> origin/main
