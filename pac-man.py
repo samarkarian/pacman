@@ -18,9 +18,7 @@ def main() -> None:
         sys.exit(1)
 
     config = json_load(content)
-<<<<<<< HEAD
     print(config)
-=======
     game = Game(config)
     if not game.start_level(0):
         print("Error: could not build level")
@@ -33,7 +31,6 @@ def main() -> None:
         sys.exit(1)
     except Exception as err:
         print(err)
->>>>>>> origin/main
 
     return None
 

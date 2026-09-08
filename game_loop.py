@@ -12,24 +12,22 @@ class GameLoop:
         32: (720, 720),
     }
 
-    def __init__(self, mazegen) -> None:
+    def __init__(self, game) -> None:
         pygame.init()
         self.asset_size: int = 64
         self.width, self.height = self.RESOLUTIONS[self.asset_size]
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
         self.is_running = True
-        self.mazegen = mazegen
+        self.game = game
 
 
         # Démarrage sur le MenuScene avec sa page initiale injectée
         self.current_scene = MenuScene(
             initial_page_cls=MainMenuPage,
             asset_size=self.asset_size,
-            mazegen=self.mazegen,
             gameloop=self,
         )
-        self.mazegen = mazegen
 
     def set_resolution(self, asset_size: int) -> None:
         if asset_size not in self.RESOLUTIONS:
@@ -41,7 +39,7 @@ class GameLoop:
     def change_scene(self, target: SceneID) -> None:
         if target == SceneID.GAME:
             self.current_scene = GameScene(
-                mazegen=self.mazegen,
+                game=self.game,
                 asset_size=self.asset_size,
             )
         elif target == SceneID.MENU:
@@ -49,7 +47,6 @@ class GameLoop:
                 initial_page_cls=MainMenuPage,
                 gameloop=self,
                 asset_size=self.asset_size,
-                mazegen=self.mazegen,
             )
         elif target == SceneID.QUIT:
             self.is_running = False
