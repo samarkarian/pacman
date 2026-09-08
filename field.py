@@ -1,4 +1,5 @@
 from maze import Maze
+from pacgums import Pacgum
 # from maze import generate_maze
 
 
@@ -11,7 +12,7 @@ class PlayField:
         self.super_pacgums = set(corners)
         self.ghost_spawns = corners
 
-        self.pacgums = set()
+        self.pacgums: dict = {}
         for y in range(self.maze.height):
             for x in range(self.maze.width):
                 if not self.maze.is_walkable(x, y):
@@ -20,12 +21,17 @@ class PlayField:
                     continue
                 if (x, y) == self.player_spawn:
                     continue
-                self.pacgums.add((x, y))
+                self.pacgums[(x, y)] = (Pacgum(pos=(x, y)))
 
     def eat_pacgum(self, x: int, y: int) -> bool:
 
-        if (x, y) in self.pacgums:
-            self.pacgums.remove((x, y))
+        # if (x, y) in self.pacgums:
+        #     self.pacgums.remove((x, y))
+        #     return True
+        # return False
+        pacgum = self.pacgums.pop((x, y), None)
+        if pacgum is not None:
+            # Tu as directement accès à l'instance pacgum ici
             return True
         return False
 

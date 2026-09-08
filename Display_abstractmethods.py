@@ -4,9 +4,8 @@ import pygame
 
 
 class Renderer(ABC):
-    def __init__(self, asset_size: int):
+    def __init__(self):
         self.sprites: dict = {}
-        self.asset_size: int = asset_size
 
     @abstractmethod
     def load_sprites(self):
@@ -18,18 +17,18 @@ class Renderer(ABC):
 
 
 class Entity(Renderer):
-    def __init__(self, asset_size: int):
-        super().__init__(asset_size)
+    def __init__(self):
+        super().__init__()
         self.posx: int
         self.posy: int
 
     @abstractmethod
-    def load_sprites(self):
+    def load_sprites(self, asset_size):
         """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
         """
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/{self.__class__.__name__}_{self.asset_size}/{self.__class__.__name__}_{self.asset_size}_frame_{sprite}.png")
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/{self.__class__.__name__}_{asset_size}/{self.__class__.__name__}_{asset_size}_frame_{sprite}.png")
         except Exception as e:
             print(e)
 

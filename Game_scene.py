@@ -6,7 +6,7 @@ import pygame
 class GameScene(Scene):
     def __init__(self, game, asset_size: int = 64) -> None:
         self.asset_size = asset_size
-        self.mazedisplayer = MazeDisplayer(maze_grid=game.field.maze.grid, asset_size=asset_size)
+        self.mazedisplayer = MazeDisplayer(game=game, asset_size=asset_size)
         self.player_x = 0
         self.player_y = 0
         self.entities = []  # Peuplé par la factory
