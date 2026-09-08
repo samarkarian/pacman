@@ -45,22 +45,38 @@ class Entity(Renderer):
 
         screen.blit(current_sprite, (draw_x, draw_y))
 
+# class livingEntity
+#     self.Entity(Renderer
+#     self.EntityAi = pos, comportement
 
-class Ghost(Entity):
-    def __init__(self, posx: int, posy: int, asset_size: int, color: str):
-        super().__init__(asset_size)
-        self.posx = posx
-        self.posy = posy
-        self.color = color
 
-    def load_sprites(self):
-        try:
-            for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/\
-{self.__class__.__name__}_{self.color}/{self.__class__.__name__}_{self.color}_{self.asset_size}/\
-{self.__class__.__name__}_{self.color}_{self.asset_size}_frame_{sprite}.png")
-        except Exception as e:
-            print(e)
 
-    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
-        super().render(screen, animation_speed, offset)
+
+
+
+
+
+
+
+
+
+
+
+# class Ghost(Entity):
+#     def __init__(self, posx: int, posy: int, asset_size: int, color: str):
+#         super().__init__(asset_size)
+#         self.posx = posx
+#         self.posy = posy
+#         self.color = color
+
+#     def load_sprites(self):
+#         try:
+#             for sprite in range(2):
+#                 self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/\
+# {self.__class__.__name__}_{self.color}/{self.__class__.__name__}_{self.color}_{self.asset_size}/\
+# {self.__class__.__name__}_{self.color}_{self.asset_size}_frame_{sprite}.png")
+#         except Exception as e:
+#             print(e)
+
+#     def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
+#         super().render(screen, animation_speed, offset)

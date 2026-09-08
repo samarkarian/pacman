@@ -4,14 +4,15 @@ from typing import Tuple
 
 
 class Pacgum(Renderer):
-    def __init__(self, pos):
+    def __init__(self, pos, gumtype: str):
         super().__init__()
         self.posx, self.posy = pos[0], pos[1]
+        self.gumtype = gumtype
 
     def load_sprites(self, asset_size):
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/maze/{self.__class__.__name__}/{self.__class__.__name__}_{asset_size}/{self.__class__.__name__}_{asset_size}_frame_{sprite}.png")
+                self.sprites[sprite] = pygame.image.load(f"sprites/maze/{self.gumtype}/{self.gumtype}_{asset_size}/{self.gumtype}_{asset_size}_frame_{sprite}.png")
         except Exception as e:
             print(e)
 

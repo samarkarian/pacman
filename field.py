@@ -9,10 +9,15 @@ class PlayField:
         corners = maze.corners()
         self.maze = maze
         self.player_spawn = maze.center()
-        self.super_pacgums = set(corners)
+        self.super_pacgums: dict = {}
         self.ghost_spawns = corners
 
         self.pacgums: dict = {}
+        self.generate_pacgums()
+
+    def generate_pacgums(self):
+        for c in self.maze.corners():
+            self.super_pacgums[c] = (Pacgum(pos=(c), gumtype='super_pacgum'))
         for y in range(self.maze.height):
             for x in range(self.maze.width):
                 if not self.maze.is_walkable(x, y):
@@ -21,14 +26,10 @@ class PlayField:
                     continue
                 if (x, y) == self.player_spawn:
                     continue
-                self.pacgums[(x, y)] = (Pacgum(pos=(x, y)))
+                self.pacgums[(x, y)] = (Pacgum(pos=(x, y), gumtype='Pacgum'))
 
     def eat_pacgum(self, x: int, y: int) -> bool:
 
-        # if (x, y) in self.pacgums:
-        #     self.pacgums.remove((x, y))
-        #     return True
-        # return False
         pacgum = self.pacgums.pop((x, y), None)
         if pacgum is not None:
             # Tu as directement accès à l'instance pacgum ici
@@ -37,10 +38,12 @@ class PlayField:
 
     def eat_super_pacgum(self, x: int, y: int) -> bool:
 
-        if (x, y) in self.super_pacgums:
-            self.super_pacgums.remove((x, y))
+        super_pacgum = self.super_pacgums.pop((x, y), None)
+        if super_pacgum is not None:
+            # Tu as directement accès à l'instance pacgum ici
             return True
         return False
+
 
     def is_level_complete(self) -> bool:
 

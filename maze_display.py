@@ -14,13 +14,19 @@ class MazeDisplayer(Renderer):
         self.load_wall_sprites(asset_size=self.asset_size)
         for p in self.game.field.pacgums.values():
             p.load_sprites(asset_size=self.asset_size)
+        for p in self.game.field.super_pacgums.values():
+            p.load_sprites(asset_size=self.asset_size)
         # print('\n\n\n\n',self.game.field)
         # print('\n\n\n\n',self.game.field.pacgums)
 
-
     def render(self, screen, offset):
         self.render_walls(screen=screen, offset=offset, asset_size=self.asset_size)
+        # torender = self.game.field.pacgums.values() + self.game.field.super_pacgums.values()
+        # for t in torender:
+        #     t.render(screen=screen, offset=offset, animation_speed=800, asset_size=self.asset_size)
         for p in self.game.field.pacgums.values():
+            p.render(screen=screen, offset=offset, animation_speed=800, asset_size=self.asset_size)
+        for p in self.game.field.super_pacgums.values():
             p.render(screen=screen, offset=offset, animation_speed=800, asset_size=self.asset_size)
 
     def load_wall_sprites(self, asset_size):
