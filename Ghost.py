@@ -1,26 +1,35 @@
 from Display_abstractmethods import Entity, Renderer
 import pygame
 import random
-
+from typing import Tuple
 
 class Ghost:
-    def __init__(self, play_field, spawn):
-        self.renderer = GhostRenderer()
+    def __init__(self, play_field, spawn, color: str):
         self.ai = GhostAI(play_field, spawn)
-        self.posx, self.posy = spawn
+        self.renderer = GhostRenderer(spawn, color)
 
-    
+    def turn_update(self, player, vulnerable_count):
+        self.posx, self.posy = self.ai.step(player, vulnerable_count=vulnerable_count)
+        self.renderer.posx, self.renderer.posy = self.posx, self.posy
+
+    def load_sprites(self, asset_size):
+        self.renderer.load_sprites(asset_size=asset_size)
+
+    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
+        self.renderer.render(screen=screen, animation_speed=animation_speed, offset=offset)
+
 class GhostRenderer(Entity):
-    def __init__(self, pos):
+    def __init__(self, pos, color):
         super().__init__()
         self.posx, self.posy = pos
+        self.color = color
 
     def load_sprites(self, asset_size):
         """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
         """
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/{self.__class__.__name__}_{asset_size}/{self.__class__.__name__}_{asset_size}_frame_{sprite}.png")
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/{self.__class__.__name__}_{asset_size}_frame_{sprite}.png")
         except Exception as e:
             print(e)
 
@@ -49,8 +58,8 @@ class GhostAI:
 
         self.respawn_count = steps
 
-    def step(self, player_x, player_y, vulnerable_count) -> None:
-
+    def step(self, player, vulnerable_count) -> None:
+        player_x, player_y = player
         if self.respawn_count != 0:
             self.respawn_count -= 1
             return None

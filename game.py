@@ -1,7 +1,7 @@
 from json_loader import Config
 from maze import Maze, generate_maze
 from field import PlayField
-from ghost import GhostIA
+from Ghost import Ghost
 
 GHOST_STEP_MS = 200
 VULNERABLE_SECONDS = 6
@@ -49,8 +49,10 @@ class Game:
                           // GHOST_STEP_MS)
 
         self.ghosts = []
-        for spawn in play_field.ghost_spawns:
-            self.ghosts.append(GhostIA(play_field, spawn))
+        ghost_colors = ['cyan', 'red', 'orange', 'pink']
+        ghost_colors_test = ['cyan', 'cyan', 'cyan', 'cyan']
+        for spawn, color in zip(play_field.ghost_spawns, ghost_colors_test):
+            self.ghosts.append(Ghost(play_field, spawn, color))
 
         self.level_index = level_index
 
