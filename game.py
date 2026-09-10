@@ -116,3 +116,40 @@ class Game:
                 return True
 
         return False
+
+    # def step_ghosts(self) -> None:
+    #     """Appelée uniquement toutes les GHOST_STEP_MS millisecondes."""
+    #     if self.field is None or self.player is None or self.is_over():
+    #         return
+
+    #     # 1. Mise à jour des timers
+    #     if self.time_left > 0:
+    #         self.time_left -= 1
+    #     if self.vulnerable_count > 0:
+    #         self.vulnerable_count -= 1
+
+    #     # 2. Déplacement de l'IA des fantômes
+    #     for ghost in self.ghosts:
+    #         ghost.turn_update(self.player.x, self.player.y, self.vulnerable_count)
+
+    #     # 3. Vérification des collisions après le saut des fantômes
+    #     self.check_collision(self.player)
+
+    # def update(self) -> None:
+    #     """Appelée à chaque frame (ou tick de scène)."""
+    #     if self.field is None or self.player is None or self.is_over():
+    #         return
+
+    #     # 1. Déplacement du joueur
+    #     self.player.turn_update()
+
+    #     # 2. Vérification immédiate de collision (si le joueur fonce sur un fantôme)
+    #     if self.check_collision(self.player):
+    #         return
+
+    #     # 3. Consommation de pacgum sur la case du joueur
+    #     eaten = self.field.eat(self.player.x, self.player.y)
+    #     if eaten:
+    #         self.eaten_effect(eaten)
+    #         if self.field.is_level_complete():
+    #             self.next_level()

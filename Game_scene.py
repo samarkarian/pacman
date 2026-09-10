@@ -38,18 +38,19 @@ class GameScene(Scene):
         }
         if event.type == pygame.QUIT:
             self.is_running = False
-
-        elif event.type == pygame.KEYDOWN:
-            if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
-                return SceneID.MENU
-            elif event.key == pygame.K_UP:
-                self.player_y += 50
-            elif event.key == pygame.K_DOWN:
-                self.player_y -= 50
-            elif event.key == pygame.K_LEFT:
-                self.player_x += 50
-            elif event.key == pygame.K_RIGHT:
-                self.player_x -= 50
+        elif event.key in KEY_TO_DIRECTION and self.game.player:
+            self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
+        # elif event.type == pygame.KEYDOWN:
+        #     if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
+        #         return SceneID.MENU
+        #     elif event.key == pygame.K_UP:
+        #         self.player_y += 50
+        #     elif event.key == pygame.K_DOWN:
+        #         self.player_y -= 50
+        #     elif event.key == pygame.K_LEFT:
+        #         self.player_x += 50
+        #     elif event.key == pygame.K_RIGHT:
+        #         self.player_x -= 50
 
         # elif event.type == pygame.KEYDOWN:
         #     if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
@@ -57,8 +58,20 @@ class GameScene(Scene):
         #     elif event.key in KEY_TO_DIRECTION:
         #         self.player.set_direction(KEY_TO_DIRECTION[event.key])
 
-    def update(self) -> None:
-        pass
+    def update(self) -> Optional[SceneID]:
+        if self.game.is_over():
+            return SceneID.MENU
+
+        # 1. Mise à jour continue (joueur, collisions, pacgums)
+        self.game.update()
+
+        # 2. Cadencement des fantômes toutes les GHOST_STEP_MS (200 ms)
+        now = pygame.time.get_ticks()
+        if now - self.last_ghost_step >= GHOST_STEP_MS:
+            self.game.step_ghosts()
+            self.last_ghost_step = now
+
+        return None
 
     def render(self, screen: pygame.Surface) -> None:
         offset = (self.player_x, self.player_y)

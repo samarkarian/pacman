@@ -10,6 +10,9 @@ class Player:
         self.controller = PlayerController(field)
         self.renderer = PlayerRenderer(field.player_spawn)
 
+    def set_direction(self, direction: str):
+        self.controller.set_direction(direction)
+
     def turn_update(self):
         self.posx, self.posy = self.controller.step()
         self.renderer.posx, self.renderer.posy = self.posx, self.posy
@@ -81,6 +84,7 @@ class PlayerController:
     def set_direction(self, direction: str) -> None:
 
         self.next_direction = direction
+        print(direction)
 
     def step(self) -> str | None:
 
