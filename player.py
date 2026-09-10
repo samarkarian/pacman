@@ -14,7 +14,8 @@ class Player:
         self.controller.set_direction(direction)
 
     def turn_update(self):
-        self.posx, self.posy = self.controller.step()
+        self.controller.step()
+        self.posx, self.posy = self.controller.x, self.controller.y
         self.renderer.posx, self.renderer.posy = self.posx, self.posy
 
     def load_sprites(self, asset_size):
@@ -34,7 +35,7 @@ class PlayerRenderer(Entity):
         try:
             for sprite in range(2):
                 self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Player/Player_{asset_size}/Player_{asset_size}_frame_{sprite}.png")
-            self.pixel_pos = (self.posx * asset_size, self.posy * asset_size)
+            self.pixel_offset = asset_size
 
         except Exception as e:
             print(e)
@@ -45,8 +46,8 @@ class PlayerRenderer(Entity):
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
-        draw_x = self.pixel_pos[0] + offset[0]
-        draw_y = self.pixel_pos[1] + offset[1]
+        draw_x = self.pixel_offset*self.posx + offset[0]
+        draw_y = self.pixel_offset*self.posy + offset[1]
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))
@@ -74,10 +75,6 @@ class PlayerController:
             dx, dy = dir_dict[direction]
             self.x += dx
             self.y += dy
-            if self.field.eat_pacgum(self.x, self.y):
-                return "pacgum"
-            if self.field.eat_super_pacgum(self.x, self.y):
-                return "super_pacgum"
 
         return None
 

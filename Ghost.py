@@ -9,8 +9,8 @@ class Ghost:
         self.renderer = GhostRenderer(spawn, color)
         self.posx, self.posy = spawn[0], spawn[1]
 
-    def turn_update(self, player, vulnerable_count):
-        self.posx, self.posy = self.ai.step(player, vulnerable_count=vulnerable_count)
+    def turn_update(self, player_pos, vulnerable_count):
+        self.posx, self.posy = self.ai.step(player_pos, vulnerable_count=vulnerable_count)
         self.renderer.posx, self.renderer.posy = self.posx, self.posy
 
     def load_sprites(self, asset_size):
@@ -30,7 +30,7 @@ class GhostRenderer(Entity):
         try:
             for sprite in range(2):
                 self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png")
-            self.pixel_pos = (self.posx * asset_size, self.posy * asset_size)
+            self.pixel_pos = asset_size
 
         except Exception as e:
             print(e)
@@ -41,8 +41,8 @@ class GhostRenderer(Entity):
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
-        draw_x = self.pixel_pos[0] + offset[0]
-        draw_y = self.pixel_pos[1] + offset[1]
+        draw_x = self.pixel_pos * self.posx + offset[0]
+        draw_y = self.pixel_pos * self.posy + offset[1]
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))
@@ -60,8 +60,8 @@ class GhostAI:
 
         self.respawn_count = steps
 
-    def step(self, player, vulnerable_count) -> None:
-        player_x, player_y = player
+    def step(self, player_pos, vulnerable_count) -> None:
+        player_x, player_y = player_pos
         if self.respawn_count != 0:
             self.respawn_count -= 1
             return None

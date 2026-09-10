@@ -7,14 +7,13 @@ class Pacgum(Renderer):
     def __init__(self, pos: Tuple[int, int], gumtype: str):
         super().__init__()
         self.posx, self.posy = int(pos[0]), int(pos[1])
-        self.pixelpos = pos
         self.gumtype = gumtype
 
     def load_sprites(self, asset_size: int):
         try:
             for sprite in range(2):
                 self.sprites[sprite] = pygame.image.load(f"sprites/maze/{self.gumtype}/{self.gumtype}_{asset_size}/{self.gumtype}_{asset_size}_frame_{sprite}.png")
-            self.pixel_pos = (self.posx * asset_size, self.posy * asset_size)
+            self.pixel_offset = asset_size
         except Exception as e:
             print(e)
 
@@ -22,8 +21,8 @@ class Pacgum(Renderer):
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
-        draw_x = self.pixel_pos[0] + offset[0] + asset_size/4
-        draw_y = self.pixel_pos[1] + offset[1] + asset_size/4
+        draw_x = self.pixel_offset * self.posx + offset[0] + self.pixel_offset/4
+        draw_y = self.pixel_offset * self.posy + self.pixel_offset/4
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))

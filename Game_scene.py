@@ -15,6 +15,7 @@ class GameScene(Scene):
         self.player_x = 0
         self.player_y = 0
         self.entities = []  # Peuplé par la factory
+        self.last_ghost_step = pygame.time.get_ticks()
         # self.player = Player(self.field)
 
         self.load_sprites()
@@ -38,8 +39,12 @@ class GameScene(Scene):
         }
         if event.type == pygame.QUIT:
             self.is_running = False
-        elif event.key in KEY_TO_DIRECTION and self.game.player:
-            self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
+        elif event.type == pygame.KEYDOWN:
+            if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
+                return SceneID.MENU
+            elif event.key in KEY_TO_DIRECTION and self.game.player:
+                self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
+        return None
         # elif event.type == pygame.KEYDOWN:
         #     if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
         #         return SceneID.MENU
@@ -67,9 +72,11 @@ class GameScene(Scene):
 
         # 2. Cadencement des fantômes toutes les GHOST_STEP_MS (200 ms)
         now = pygame.time.get_ticks()
-        if now - self.last_ghost_step >= GHOST_STEP_MS:
+        if now - self.last_ghost_step >= 200:
             self.game.step_ghosts()
             self.last_ghost_step = now
+            # for e in self.game.ghosts:
+            #     print(e.posx, e.posy)
 
         return None
 

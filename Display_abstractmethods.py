@@ -21,7 +21,7 @@ class Entity(Renderer):
         super().__init__()
         self.posx: int = int(position[0])
         self.posy: int = int(position[1])
-        self.pixel_pos: Tuple[int, int] = (self.posx, self.posy)
+        self.pixel_offset: int = 64
 
     @abstractmethod
     def load_sprites(self, asset_size: int):
@@ -42,8 +42,8 @@ class Entity(Renderer):
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
-        draw_x = self.pixel_pos[0] + offset[0]
-        draw_y = self.pixel_pos[1] + offset[1]
+        draw_x = self.pixel_offset*self.posx + offset[0]
+        draw_y = self.pixel_offset*self.posy + offset[1]
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))
