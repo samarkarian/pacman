@@ -72,6 +72,7 @@ class GameScene(Scene):
 
         # 2. Cadencement des fantômes toutes les GHOST_STEP_MS (200 ms)
         now = pygame.time.get_ticks()
+
         if now - self.last_ghost_step >= 200:
             self.game.step_ghosts()
             self.last_ghost_step = now
