@@ -1,7 +1,54 @@
 from maze import Maze
+from Display_abstractmethods import Entity
+import pygame
 
 
 class Player:
+    def __init__(self, field, spawn):
+        self.renderer = PlayerRenderer(spawn)
+        self.controller = PlayerController(field)
+        self.posx, self.posy = spawn[0], spawn[1]
+
+    def turn_update(self):
+        self.posx, self.posy = self.controller.step()
+        self.renderer.posx, self.renderer.posy = self.posx, self.posy
+
+    def load_sprites(self, asset_size):
+        self.renderer.load_sprites(asset_size=asset_size)
+
+    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
+        self.renderer.render(screen=screen, animation_speed=animation_speed, offset=offset)
+
+
+class PlayerRenderer(Entity):
+    def __init__(self, pos: Tuple[int, int]):
+        super().__init__(pos)
+
+    def load_sprites(self, asset_size):
+        """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
+        """
+        try:
+            for sprite in range(2):
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Player/Player_{asset_size}/Player_{asset_size}_frame_{sprite}.png")
+            self.pixel_pos = (self.posx * asset_size, self.posy * asset_size)
+
+        except Exception as e:
+            print(e)
+
+    def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
+        """rendu automatique avec 2 frames pour l'animation en deux temps
+        """
+        time = pygame.time.get_ticks()
+        frame_index = (time // animation_speed) % 2
+
+        draw_x = self.pixel_pos[0] + offset[0]
+        draw_y = self.pixel_pos[1] + offset[1]
+        current_sprite = self.sprites[frame_index]
+
+        screen.blit(current_sprite, (draw_x, draw_y))
+
+
+class PlayerController:
     def __init__(self, field) -> None:
 
         self.field = field

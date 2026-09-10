@@ -17,18 +17,21 @@ class Renderer(ABC):
 
 
 class Entity(Renderer):
-    def __init__(self):
+    def __init__(self, position: Tuple[int, int]):
         super().__init__()
-        self.posx: int
-        self.posy: int
+        self.posx: int = int(position[0])
+        self.posy: int = int(position[1])
+        self.pixel_pos: Tuple[int, int] = (self.posx, self.posy)
 
     @abstractmethod
-    def load_sprites(self, asset_size):
+    def load_sprites(self, asset_size: int):
         """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
         """
         try:
             for sprite in range(2):
                 self.sprites[sprite] = pygame.image.load(f"sprites/Entities/{self.__class__.__name__}/{self.__class__.__name__}_{asset_size}/{self.__class__.__name__}_{asset_size}_frame_{sprite}.png")
+            self.pixel_pos = (self.posx * int(asset_size), self.posy * int(asset_size))
+
         except Exception as e:
             print(e)
 
@@ -39,8 +42,8 @@ class Entity(Renderer):
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
-        draw_x = self.posx + offset[0]
-        draw_y = self.posy + offset[1]
+        draw_x = self.pixel_pos[0] + offset[0]
+        draw_y = self.pixel_pos[1] + offset[1]
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))

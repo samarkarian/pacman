@@ -49,7 +49,7 @@ class Game:
                           // GHOST_STEP_MS)
 
         self.ghosts = []
-        ghost_colors = ['cyan', 'red', 'orange', 'pink']
+        # ghost_colors = ['cyan', 'red', 'orange', 'pink']
         ghost_colors_test = ['cyan', 'cyan', 'cyan', 'cyan']
         for spawn, color in zip(play_field.ghost_spawns, ghost_colors_test):
             self.ghosts.append(Ghost(play_field, spawn, color))

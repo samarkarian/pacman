@@ -7,6 +7,7 @@ class Ghost:
     def __init__(self, play_field, spawn, color: str):
         self.ai = GhostAI(play_field, spawn)
         self.renderer = GhostRenderer(spawn, color)
+        self.posx, self.posy = spawn[0], spawn[1]
 
     def turn_update(self, player, vulnerable_count):
         self.posx, self.posy = self.ai.step(player, vulnerable_count=vulnerable_count)
@@ -19,9 +20,8 @@ class Ghost:
         self.renderer.render(screen=screen, animation_speed=animation_speed, offset=offset)
 
 class GhostRenderer(Entity):
-    def __init__(self, pos, color):
-        super().__init__()
-        self.posx, self.posy = pos
+    def __init__(self, pos: Tuple[int, int], color):
+        super().__init__(pos)
         self.color = color
 
     def load_sprites(self, asset_size):
@@ -29,18 +29,20 @@ class GhostRenderer(Entity):
         """
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/{self.__class__.__name__}_{asset_size}_frame_{sprite}.png")
+                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png")
+            self.pixel_pos = (self.posx * asset_size, self.posy * asset_size)
+
         except Exception as e:
             print(e)
 
-    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
+    def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
         """rendu automatique avec 2 frames pour l'animation en deux temps
         """
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
-        draw_x = self.posx + offset[0]
-        draw_y = self.posy + offset[1]
+        draw_x = self.pixel_pos[0] + offset[0]
+        draw_y = self.pixel_pos[1] + offset[1]
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))
