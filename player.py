@@ -1,13 +1,14 @@
 from maze import Maze
 from Display_abstractmethods import Entity
+from typing import Tuple
 import pygame
 
 
 class Player:
-    def __init__(self, field, spawn):
-        self.renderer = PlayerRenderer(spawn)
+    def __init__(self, field):
+        self.posx, self.posy = field.player_spawn[0], field.player_spawn[1]
         self.controller = PlayerController(field)
-        self.posx, self.posy = spawn[0], spawn[1]
+        self.renderer = PlayerRenderer(field.player_spawn)
 
     def turn_update(self):
         self.posx, self.posy = self.controller.step()

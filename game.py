@@ -2,6 +2,7 @@ from json_loader import Config
 from maze import Maze, generate_maze
 from field import PlayField
 from Ghost import Ghost
+from player import Player
 
 GHOST_STEP_MS = 200
 VULNERABLE_SECONDS = 6
@@ -33,6 +34,7 @@ class Game:
         self.lives = config.lives
         self.field = None
         self.ghosts = []
+        self.player = None
         self.vulnerable_count = 0
         self.time_left = 0
 
@@ -43,7 +45,7 @@ class Game:
         if play_field is None:
             return False
         self.field = play_field
-
+        self.player = Player(play_field)
         self.vulnerable_count = 0
         self.time_left = (self.config.level_max_time * 1000
                           // GHOST_STEP_MS)
