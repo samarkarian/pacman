@@ -12,6 +12,8 @@ class Player:
 
     def set_direction(self, direction: str):
         self.controller.set_direction(direction)
+        self.renderer.direction = direction
+
 
     def turn_update(self):
         self.controller.step()
@@ -28,13 +30,25 @@ class Player:
 class PlayerRenderer(Entity):
     def __init__(self, pos: Tuple[int, int]):
         super().__init__(pos)
+        self.direction: str = 'E'
 
     def load_sprites(self, asset_size):
         """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
         """
         try:
-            for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/Entities/Player/Player_{asset_size}/Player_{asset_size}_frame_{sprite}.png")
+            cardinals = ['N', 'S', 'E', 'W']
+            self.sprites.clear()
+
+            for c in cardinals:
+                self.sprites[c] = []
+                for sprite in range(2):
+                    path = (
+                        f"sprites/Entities/Player/Player_{asset_size}/"
+                        f"Player_{asset_size}_{c}_frame_{sprite}.png"
+                    )
+                    surface = pygame.image.load(path).convert_alpha()
+                    self.sprites[c].append(surface)
+
             self.pixel_offset = asset_size
 
         except Exception as e:
@@ -43,12 +57,13 @@ class PlayerRenderer(Entity):
     def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
         """rendu automatique avec 2 frames pour l'animation en deux temps
         """
+        animation_speed = 200 #ecriture en dur pour plus de simplicite, retirer l'argument de render pour plus tard
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
         draw_x = self.pixel_offset*self.posx + offset[0]
         draw_y = self.pixel_offset*self.posy + offset[1]
-        current_sprite = self.sprites[frame_index]
+        current_sprite = self.sprites[self.direction][frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))
 
@@ -81,7 +96,6 @@ class PlayerController:
     def set_direction(self, direction: str) -> None:
 
         self.next_direction = direction
-        print(direction)
 
     def step(self) -> str | None:
 
