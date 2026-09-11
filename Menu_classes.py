@@ -45,19 +45,19 @@ class UISprite:
 
     def __init__(
         self,
-        sprite_name: str,
+        name: str,
         pos: Tuple[int, int],
         asset_size: int,
     ) -> None:
         self.pos: Tuple[int, int] = pos
         self.sprites: List[pygame.Surface] = []
         self.asset_size: int = asset_size
-        self._load_sprites(sprite_name)
+        self._load_sprites(name)
 
-    def _load_sprites(self, sprite_name: str) -> None:
+    def _load_sprites(self, name: str) -> None:
         """Charge les images à partir d'un pattern contenant {frame}."""
         try:
-            self.sprites.append(pygame.image.load(f"sprites/UISprite/{sprite_name}/{sprite_name}_{self.asset_size}/{sprite_name}_{self.asset_size}.png"))
+            self.sprites.append(pygame.image.load(f"sprites/UISprite/{name}/{name}_{self.asset_size}/{name}_{self.asset_size}.png"))
         except Exception as e:
             print({e})
 

@@ -9,3 +9,5 @@ ajout de la classe UISprite pour mettre un sprite statique. methods a modifier (
 
 a faire :
 centering des sprites dans les menus, et positionnement de tout en general
+gerer le vitesse de deplacement du joueur avec update()
+AI des fantomes

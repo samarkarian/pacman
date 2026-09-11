@@ -37,7 +37,7 @@ class MainMenuPage(MenuPage):
             )
         self.decorations.append(
             UISprite(
-                sprite_name='Title',
+                name='Title',
                 pos=(center_x*0.6, int(gameloop.height * 0.05)),
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
@@ -85,6 +85,13 @@ class GameOverPage(MenuPage):
 
         center_x = (screen_w - current_size*3) // 2
 
+        self.decorations.append(
+            UISprite(
+                name='Gameover',
+                pos=(center_x*0.6, int(gameloop.height * 0.05)),
+                asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
         self.buttons.append(
             UIButton(
                 name="quit",
