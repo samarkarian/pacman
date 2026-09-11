@@ -1,9 +1,11 @@
-Creation d'abstractmethod pour les entites et leur systeme de rendu:
-dans la boucle principale pygame, on aura donc juste a lire une liste de toutes les entites, et appeler entity.load() et entity.render() par ex
+Mise en place de classes pour les objets player et ghost, ceux ci contiennent desormais un renderer et un controller, permettant de separer les roles
+classe pacgum au lieu d'avoir une liste de coordonnees
+class game gere desormais toute la logique du jeu, et se fait appeler par la GameScene, qui gere les inputs et mets a jour le jeu a chaque tick avec les fonctions update()
+menu de game over (on doit encore mettre des sprites et des boutons)
+methods de reinitialisation de la position du joueur et des fantomes apres un kill
+nouvel etat de joueur et de ghost pour modifier les sprites (sens pour le joueur, mode vulenrable pour les fantomes), il faudrait egalement rajouter un sprite de plus pour un feedback visuel quand les fantomes ne seront bientot plus vulnerables
+ajout de la classe UISprite pour mettre un sprite statique. methods a modifier (facile) pour les rendre animables. pour l'instant statique
 
-creation du maze avec les sprites
-J'ai vlonte a creer une nomenclature pour les sprites, poour avoir une lecture auto;atique des sprites en fonction de la size en pixels choisis
-la nomenclature :
-sprites/classe/sous-classe/entiteprecise/entiteprecise_taille/entiteprecise_taille_frame_numerofame
-ex:
-sprites/Entities/Ghost/Ghost_cyan/Ghost_cyan_64/Ghost_cyan_64_frame_0.png
+
+a faire :
+centering des sprites dans les menus, et positionnement de tout en general

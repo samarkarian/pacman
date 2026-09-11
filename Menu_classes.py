@@ -40,10 +40,39 @@ class UIButton:
             screen.blit(self.sprites[frame_index], self.pos)
 
 
+class UISprite:
+    """Élément visuel animé passif pour les menus (non interactif)."""
+
+    def __init__(
+        self,
+        sprite_name: str,
+        pos: Tuple[int, int],
+        asset_size: int,
+    ) -> None:
+        self.pos: Tuple[int, int] = pos
+        self.sprites: List[pygame.Surface] = []
+        self.asset_size: int = asset_size
+        self._load_sprites(sprite_name)
+
+    def _load_sprites(self, sprite_name: str) -> None:
+        """Charge les images à partir d'un pattern contenant {frame}."""
+        try:
+            self.sprites.append(pygame.image.load(f"sprites/UISprite/{sprite_name}/{sprite_name}_{self.asset_size}/{sprite_name}_{self.asset_size}.png"))
+        except Exception as e:
+            print({e})
+
+    def render(self, screen: pygame.Surface) -> None:
+        if not self.sprites:
+            return
+
+        screen.blit(self.sprites[0], self.pos)
+
+
 class MenuPage(ABC):
     def __init__(self, scene_context) -> None:
         self.context = scene_context
         self.buttons: List[UIButton] = []
+        self.decorations: List[UISprite] = []
         self.selected_index: int = 0
         self.build()
 
@@ -55,6 +84,7 @@ class MenuPage(ABC):
     def rebuild(self) -> None:
         """Vide et recrée les boutons avec la nouvelle taille."""
         self.buttons.clear()
+        self.decorations.clear()
         self.build()
         if self.buttons:
             self.selected_index = min(self.selected_index, len(self.buttons) - 1)
@@ -72,6 +102,9 @@ class MenuPage(ABC):
         return None
 
     def render(self, screen: pygame.Surface) -> None:
+        for decor in self.decorations:
+            decor.render(screen)
+
         for idx, btn in enumerate(self.buttons):
             btn.render(screen, idx == self.selected_index)
 

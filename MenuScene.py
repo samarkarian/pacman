@@ -43,4 +43,4 @@ class MenuScene(Scene):
 
     def render(self, screen: pygame.Surface) -> None:
         if self.page_stack:
-            self.page_stack[-1].render(screen)
+            self.page_stack[-1].render(screen=screen)

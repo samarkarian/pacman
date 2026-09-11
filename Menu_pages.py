@@ -1,6 +1,6 @@
 from Menu_classes import MenuPage
 from Scene import SceneID
-from Menu_classes import UIButton
+from Menu_classes import UIButton, UISprite
 
 
 class MainMenuPage(MenuPage):
@@ -35,6 +35,13 @@ class MainMenuPage(MenuPage):
                     asset_size=self.context.game_data.get("asset_size", 64),
                 )
             )
+        self.decorations.append(
+            UISprite(
+                sprite_name='Title',
+                pos=(center_x*0.6, int(gameloop.height * 0.05)),
+                asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
 
 
 class ResolutionPage(MenuPage):

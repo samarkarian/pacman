@@ -67,27 +67,6 @@ class GameScene(Scene):
                 return SceneID.GAMEOVER
 
         return None
-    # def update(self) -> Optional[SceneID]:
-    #     if self.game.is_over():
-    #         self.game.reset()
-    #         return SceneID.MENU
-
-    #     # 1. Mise à jour continue (joueur, collisions, pacgums)
-    #     self.game.update()
-    #     if self.game.is_over():
-    #         self.game.reset()
-    #         return SceneID.MENU
-    #     # 2. Cadencement des fantômes toutes les GHOST_STEP_MS (200 ms)
-    #     now = pygame.time.get_ticks()
-
-    #     if now - self.last_ghost_step >= 200:
-    #         self.game.step_ghosts()
-    #         self.last_ghost_step = now
-    #         if self.game.is_over():
-    #             self.game.reset()
-    #             return SceneID.MENU
-
-    #     return None
 
     def render(self, screen: pygame.Surface) -> None:
         offset = (self.player_x, self.player_y)
