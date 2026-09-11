@@ -10,6 +10,13 @@ class Ghost:
         self.posx, self.posy = spawn[0], spawn[1]
         self.state = 'normal'
 
+    def reset_position(self, spawn: Tuple[int, int]) -> None:
+        self.posx, self.posy = spawn
+        self.ai.reset(spawn)
+        self.renderer.posx, self.renderer.posy = spawn
+        self.state = 'normal'
+        self.renderer.state = 'normal'
+
     def turn_update(self, player_pos, vulnerable_count):
         new_state = 'normal' if vulnerable_count == 0 else 'vulnerable'
 
@@ -69,6 +76,11 @@ class GhostAI:
     def __init__(self, field, spawn):
 
         self.field = field
+        self.x, self.y = spawn
+        self.previous = None
+        self.respawn_count = 0
+
+    def reset(self, spawn: Tuple[int, int]) -> None:
         self.x, self.y = spawn
         self.previous = None
         self.respawn_count = 0

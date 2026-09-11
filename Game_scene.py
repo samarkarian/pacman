@@ -45,41 +45,29 @@ class GameScene(Scene):
             elif event.key in KEY_TO_DIRECTION and self.game.player:
                 self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
         return None
-        # elif event.type == pygame.KEYDOWN:
-        #     if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
-        #         return SceneID.MENU
-        #     elif event.key == pygame.K_UP:
-        #         self.player_y += 50
-        #     elif event.key == pygame.K_DOWN:
-        #         self.player_y -= 50
-        #     elif event.key == pygame.K_LEFT:
-        #         self.player_x += 50
-        #     elif event.key == pygame.K_RIGHT:
-        #         self.player_x -= 50
-
-        # elif event.type == pygame.KEYDOWN:
-        #     if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
-        #         return SceneID.MENU
-        #     elif event.key in KEY_TO_DIRECTION:
-        #         self.player.set_direction(KEY_TO_DIRECTION[event.key])
 
     def update(self) -> Optional[SceneID]:
         if self.game.is_over():
+            self.game.reset()
             return SceneID.MENU
 
         # 1. Mise à jour continue (joueur, collisions, pacgums)
         self.game.update()
-
+        if self.game.is_over():
+            self.game.reset()
+            return SceneID.MENU
         # 2. Cadencement des fantômes toutes les GHOST_STEP_MS (200 ms)
         now = pygame.time.get_ticks()
 
         if now - self.last_ghost_step >= 200:
             self.game.step_ghosts()
             self.last_ghost_step = now
-            # for e in self.game.ghosts:
-            #     print(e.posx, e.posy)
+            if self.game.is_over():
+                self.game.reset()
+                return SceneID.MENU
 
         return None
+
 
     def render(self, screen: pygame.Surface) -> None:
         offset = (self.player_x, self.player_y)
@@ -90,135 +78,6 @@ class GameScene(Scene):
 
         for e in self.entities:
             e.render(screen, offset)
-
-
-
-
-
-
-
-
-
-# from typing import List, Tuple
-# from player import Player
-# from ghost import Ghost
-
-
-# class GameState:
-#     def __init__(self, field) -> None:
-#         self.field = field
-#         self.score: int = 0
-#         self.lives: int = 3
-#         self.is_game_over: bool = False
-#         self.is_victory: bool = False
-
-#         # Les acteurs du jeu
-#         self.player: Player = Player(self.field)
-#         self.ghosts: List[Ghost] = []
-#         self._init_ghosts()
-
-#     def _init_ghosts(self) -> None:
-#         ghost_colors = ["cyan", "cyan", "cyan", "cyan"]
-#         for i, spawn in enumerate(self.field.ghost_spawns):
-#             color = ghost_colors[i % len(ghost_colors)]
-#             self.ghosts.append(Ghost(self.field, spawn, color))
-
-#     def update(self) -> None:
-#         if self.is_game_over or self.is_victory:
-#             return
-
-#         # 1. Mise à jour de la position du joueur
-#         self.player.update()
-
-#         # 2. Collecte de pacgums
-#         if self.field.eat_pacgum(self.player.grid_x, self.player.grid_y):
-#             self.score += 10
-#             if self.field.remaining_pacgums == 0:
-#                 self.is_victory = True
-
-#         # 3. Mise à jour des fantômes
-#         for ghost in self.ghosts:
-#             ghost.update(self.player.grid_x, self.player.grid_y)
-#             # Détection collision sans Rect de haut niveau (respect contrainte MLX)
-#             if (ghost.grid_x, ghost.grid_y) == (self.player.grid_x, self.player.grid_y):
-#                 self.lives -= 1
-#                 if self.lives <= 0:
-#                     self.is_game_over = True
-#                 else:
-#                     self.player.respawn()
-
-
-# from typing import Optional
-# import pygame
-# from scene import Scene, SceneID
-# from game_state import GameState
-# from maze_display import MazeDisplayer
-
-
-# class GameScene(Scene):
-#     def __init__(self, field, asset_size: int = 64) -> None:
-#         self.asset_size: int = asset_size
-#         self.game = GameState(field)
-
-#         # 2. Le moteur de rendu
-#         self.mazedisplayer = MazeDisplayer(field=field, asset_size=asset_size)
-#         self.camera_offset: tuple[int, int] = (0, 0)
-
-#         # 3. Chargement initial des sprites
-#         self.load_sprites()
-
-#     def load_sprites(self) -> None:
-#         self.mazedisplayer.load_sprites()
-#         self.game.player.renderer.load_sprites(self.asset_size)
-#         for ghost in self.game.ghosts:
-#             ghost.renderer.load_sprites(self.asset_size)
-
-#     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-#         KEY_TO_DIRECTION = {
-#             pygame.K_UP: "N",
-#             pygame.K_DOWN: "S",
-#             pygame.K_LEFT: "W",
-#             pygame.K_RIGHT: "E",
-#         }
-
-#         if event.type == pygame.KEYDOWN:
-#             if event.key == pygame.K_ESCAPE:
-#                 return SceneID.MENU
-#             elif event.key in KEY_TO_DIRECTION:
-#                 self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
-
-#         return None
-
-#     def update(self) -> Optional[SceneID]:
-#         # Mise à jour de toute la logique
-#         self.game.update()
-
-#         # Gestion des fins de partie
-#         if self.game.is_game_over:
-#             # Transition vers un écran Game Over ou retour Menu
-#             return SceneID.MENU
-
-#         return None
-
-#     def render(self, screen: pygame.Surface) -> None:
-#         self.mazedisplayer.render(screen=screen, offset=self.camera_offset)
-
-#         self.game.player.render(screen=screen, offset=self.camera_offset)
-
-#         for ghost in self.game.ghosts:
-#             ghost.render(screen=screen, offset=self.camera_offset)
-
-#         # 4. Affichage du HUD (score, vies) avec font.render basique
-#         # self.hud.render(screen, self.game.score, self.game.lives)
-
-
-
-
-
-
-
-
-
 
 
 

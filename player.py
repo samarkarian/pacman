@@ -26,6 +26,12 @@ class Player:
     def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
         self.renderer.render(screen=screen, animation_speed=animation_speed, offset=offset)
 
+    def reset_position(self, spawn: Tuple[int, int]) -> None:
+        self.posx, self.posy = spawn
+        self.controller.reset(spawn)
+        self.renderer.posx, self.renderer.posy = spawn
+        self.renderer.direction = 'E'
+
 
 class PlayerRenderer(Entity):
     def __init__(self, pos: Tuple[int, int]):
@@ -56,8 +62,9 @@ class PlayerRenderer(Entity):
 
     def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
         """rendu automatique avec 2 frames pour l'animation en deux temps
+        animation speed pour le mode SUPER 
         """
-        animation_speed = 200 #ecriture en dur pour plus de simplicite, retirer l'argument de render pour plus tard
+        animation_speed = 200 #ecriture en dur pour plus de simplicite au debut
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
@@ -73,6 +80,11 @@ class PlayerController:
 
         self.field = field
         self.x, self.y = field.player_spawn
+        self.direction = None
+        self.next_direction = None
+
+    def reset(self, spawn: Tuple[int, int]) -> None:
+        self.x, self.y = spawn
         self.direction = None
         self.next_direction = None
 

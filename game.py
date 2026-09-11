@@ -100,19 +100,22 @@ class Game:
         for idx, ghost in enumerate(self.ghosts):
             if ghost.ai.respawn_count != 0:
                 continue
+            
             if (ghost.posx, ghost.posy) == (player.posx, player.posy):
                 if self.vulnerable_count != 0:
                     self.score += self.config.points_per_ghost
                     ghost.posx, ghost.posy = self.field.ghost_spawns[idx]
+                    ghost.reset_position(spawn)
                     ghost.ai.start_respawn(RESPAWN_STEPS)
                 else:
                     self.lives -= 1
-                    player.posx, player.possy = self.field.player_spawn
-                    player.controller.direction = None
-                    player.controller.next_direction = None
-                    spawns = self.field.ghost_spawns
-                    for caught, spawn in zip(self.ghosts, spawns):
-                        caught.x, caught.y = spawn
+                    if self.lives <= 0:
+                        return True
+                    player.reset_position(self.field.player_spawn)
+                    for g, spawn in zip(self.ghosts, self.field.ghost_spawns):
+                        g.reset_position(spawn)
+
+                    self.vulnerable_count = 0
                 return True
 
         return False
