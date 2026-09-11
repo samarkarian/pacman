@@ -69,3 +69,20 @@ class ResolutionPage(MenuPage):
                 asset_size=current_size,
             )
         )
+
+class GameOverPage(MenuPage):
+    def build(self) -> None:
+        current_size = self.context.game_data.get("asset_size", 64)
+        gameloop = self.context.game_data.get("gameloop")
+        screen_w = gameloop.width if gameloop else 1080
+
+        center_x = (screen_w - current_size*3) // 2
+
+        self.buttons.append(
+            UIButton(
+                name="quit",
+                pos=(center_x, int(gameloop.height * 0.61)),
+                action=lambda: SceneID.MENU,
+                asset_size=current_size,
+            )
+        )

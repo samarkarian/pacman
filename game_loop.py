@@ -1,7 +1,7 @@
 from Scene import SceneID
 from Game_scene import GameScene
 from MenuScene import MenuScene
-from Menu_pages import MainMenuPage
+from Menu_pages import MainMenuPage, GameOverPage
 import pygame
 import sys
 
@@ -45,6 +45,12 @@ class GameLoop:
         elif target == SceneID.MENU:
             self.current_scene = MenuScene(
                 initial_page_cls=MainMenuPage,
+                gameloop=self,
+                asset_size=self.asset_size,
+            )
+        elif target == SceneID.GAMEOVER:
+            self.current_scene = MenuScene(
+                initial_page_cls=GameOverPage,
                 gameloop=self,
                 asset_size=self.asset_size,
             )
