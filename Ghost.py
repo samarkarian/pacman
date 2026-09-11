@@ -9,22 +9,22 @@ class Ghost:
         self.renderer = GhostRenderer(spawn, color)
         self.posx, self.posy = spawn[0], spawn[1]
         self.state = 'normal'
+        self.spawn = spawn
 
-    def reset_position(self, spawn: Tuple[int, int]) -> None:
-        self.posx, self.posy = spawn
-        self.ai.reset(spawn)
-        self.renderer.posx, self.renderer.posy = spawn
+    def reset_position(self) -> None:
+        self.posx, self.posy = self.spawn
+        self.ai.reset(self.spawn)
+        self.renderer.posx, self.renderer.posy = self.spawn
         self.state = 'normal'
         self.renderer.state = 'normal'
 
     def turn_update(self, player_pos, vulnerable_count):
         new_state = 'normal' if vulnerable_count == 0 else 'vulnerable'
 
-        # 2. Ne met à jour l'état et le renderer que lors d'un vrai changement
         if new_state != self.state:
             self.state = new_state
             self.renderer.state = self.state
-    
+
         self.posx, self.posy = self.ai.step(player_pos, state=self.state)
         self.renderer.posx, self.renderer.posy = self.posx, self.posy
 
@@ -93,12 +93,12 @@ class GhostAI:
         player_x, player_y = player_pos
         if self.respawn_count != 0:
             self.respawn_count -= 1
-            return None
+            return self.x, self.y
 
         maze = self.field.maze
         cells = maze.neighbors(self.x, self.y)
         if not cells:
-            return None
+            return self.x, self.y
 
         choices = []
         for cell in cells:

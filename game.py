@@ -105,15 +105,15 @@ class Game:
                 if self.vulnerable_count != 0:
                     self.score += self.config.points_per_ghost
                     ghost.posx, ghost.posy = self.field.ghost_spawns[idx]
-                    ghost.reset_position(spawn)
+                    ghost.reset_position()
                     ghost.ai.start_respawn(RESPAWN_STEPS)
                 else:
                     self.lives -= 1
                     if self.lives <= 0:
                         return True
-                    player.reset_position(self.field.player_spawn)
+                    player.reset_position()
                     for g, spawn in zip(self.ghosts, self.field.ghost_spawns):
-                        g.reset_position(spawn)
+                        g.reset_position()
 
                     self.vulnerable_count = 0
                 return True

@@ -9,11 +9,11 @@ class Player:
         self.posx, self.posy = field.player_spawn[0], field.player_spawn[1]
         self.controller = PlayerController(field)
         self.renderer = PlayerRenderer(field.player_spawn)
+        self.spawn = field.player_spawn
 
     def set_direction(self, direction: str):
         self.controller.set_direction(direction)
         self.renderer.direction = direction
-
 
     def turn_update(self):
         self.controller.step()
@@ -26,10 +26,10 @@ class Player:
     def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
         self.renderer.render(screen=screen, animation_speed=animation_speed, offset=offset)
 
-    def reset_position(self, spawn: Tuple[int, int]) -> None:
-        self.posx, self.posy = spawn
-        self.controller.reset(spawn)
-        self.renderer.posx, self.renderer.posy = spawn
+    def reset_position(self) -> None:
+        self.posx, self.posy = self.spawn
+        self.controller.reset(self.spawn)
+        self.renderer.posx, self.renderer.posy = self.spawn
         self.renderer.direction = 'E'
 
 
