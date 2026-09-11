@@ -11,3 +11,6 @@ a faire :
 centering des sprites dans les menus, et positionnement de tout en general
 gerer le vitesse de deplacement du joueur avec update()
 AI des fantomes
+deplacement fluide des fantomes et du joueur a la place des teleportations
+affichage score et vie
+GROS MORCEAU : generer les differents niveau et gerer le changement entre les scenes, puis stocker le high score

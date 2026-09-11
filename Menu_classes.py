@@ -5,6 +5,11 @@ from abc import ABC, abstractmethod
 
 
 class UIButton:
+    """Bouton avec element visuel
+    deux frames, une sans pre clic, et une lorsque le curseur est dessus
+    execute une fonction
+    il doit etre append aux buttuns du menu via self.buttons.append()
+    """
     def __init__(
         self,
         name: str,
@@ -41,7 +46,9 @@ class UIButton:
 
 
 class UISprite:
-    """Élément visuel animé passif pour les menus (non interactif)."""
+    """Élément visuel animé passif pour les menus (non interactif).
+    Il doit etre append aux decorations du menu via self.decorations.append()
+    """
 
     def __init__(
         self,
