@@ -120,29 +120,24 @@ class Game:
         return False
 
     def step_ghosts(self) -> None:
-        """Appelée uniquement toutes les GHOST_STEP_MS millisecondes."""
         if self.field is None or self.player is None or self.is_over():
             return
 
-        # 1. Mise à jour des timers
         if self.time_left > 0:
             self.time_left -= 1
         if self.vulnerable_count > 0:
             self.vulnerable_count -= 1
 
-        # 2. Déplacement de l'IA des fantômes
         for ghost in self.ghosts:
-            print(self.vulnerable_count)
             if self.vulnerable_count == 0:
-                new_state = 'normal'
-            elif self.vulnerable_count > 0 and self.vulnerable_count <= (VULNERABLE_STEPS/3) and self.vulnerable_count % 2 == 0:
-                new_state = 'end'
+                new_state = "normal"
+            elif self.vulnerable_count <= (VULNERABLE_STEPS / 3) and self.vulnerable_count % 2 == 0:
+                new_state = "end"
             else:
-                new_state = 'vulnerable'
+                new_state = "vulnerable"
 
-            ghost.turn_update((self.player.posx, self.player.posy), new_state)
+            ghost.turn_update((self.player.posx, self.player.posy), new_state, GHOST_STEP_MS)
 
-        # 3. Vérification des collisions après le saut des fantômes
         self.check_collision(self.player)
 
     def update(self) -> None:

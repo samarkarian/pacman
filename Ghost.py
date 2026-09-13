@@ -15,17 +15,22 @@ class Ghost:
         self.posx, self.posy = self.spawn
         self.ai.reset(self.spawn)
         self.renderer.posx, self.renderer.posy = self.spawn
-        self.state = 'normal'
-        self.renderer.state = 'normal'
+        self.renderer.start_pos = self.spawn
+        self.renderer.target_pos = self.spawn
+        self.state = "normal"
+        self.renderer.state = "normal"
 
-    def turn_update(self, player_pos, new_state):
+    def turn_update(self, player_pos, new_state, step_duration: int = 200,):
 
         if new_state != self.state:
             self.state = new_state
             self.renderer.state = self.state
 
+        old_pos = (self.posx, self.posy)
+
         self.posx, self.posy = self.ai.step(player_pos, state=self.state)
-        self.renderer.posx, self.renderer.posy = self.posx, self.posy
+
+        self.renderer.start_move(old_pos, (self.posx, self.posy), step_duration)
 
     def load_sprites(self, asset_size):
         self.renderer.load_sprites(asset_size=asset_size)
@@ -45,6 +50,11 @@ class GhostRenderer(Entity):
         }
         self.state = 'normal'
 
+        self.start_pos: Tuple[int, int] = (int(pos[0]), int(pos[1]))
+        self.target_pos: Tuple[int, int] = (int(pos[0]), int(pos[1]))
+        self.move_start_time: int = pygame.time.get_ticks()
+        self.step_duration_ms: int = 200
+
     def load_sprites(self, asset_size):
         """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
         """
@@ -61,17 +71,38 @@ class GhostRenderer(Entity):
         except Exception as e:
             print(e)
 
-    def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
-        """rendu automatique avec 2 frames pour l'animation en deux temps
-        """
-        time = pygame.time.get_ticks()
-        frame_index = (time // animation_speed) % 2
+    def start_move(
+        self,
+        from_pos: Tuple[int, int],
+        to_pos: Tuple[int, int],
+        duration_ms: int = 200,
+    ) -> None:
+        self.start_pos = from_pos
+        self.target_pos = to_pos
+        self.move_start_time = pygame.time.get_ticks()
+        self.step_duration_ms = duration_ms
 
-        draw_x = self.pixel_offset * self.posx + offset[0]
-        draw_y = self.pixel_offset * self.posy + offset[1]
-        current_sprite = self.sprites[self.state][frame_index]
+    def render(
+        self,
+        screen: pygame.Surface,
+        animation_speed: int = 800,
+        offset: Tuple[int, int] = (0, 0),
+    ) -> None:
+        now = pygame.time.get_ticks()
 
-        screen.blit(current_sprite, (draw_x, draw_y))
+        elapsed = now - self.move_start_time
+        t = min(1.0, elapsed / self.step_duration_ms) if self.step_duration_ms > 0 else 1.0
+
+        interp_x = self.start_pos[0] + (self.target_pos[0] - self.start_pos[0]) * t
+        interp_y = self.start_pos[1] + (self.target_pos[1] - self.start_pos[1]) * t
+
+        draw_x = int(interp_x * self.pixel_offset) + offset[0]
+        draw_y = int(interp_y * self.pixel_offset) + offset[1]
+
+        frame_index = (now // animation_speed) % 2
+        sprites_list = self.sprites.get(self.state, self.sprites["normal"])
+        if sprites_list:
+            screen.blit(sprites_list[frame_index], (draw_x, draw_y))
 
 
 class GhostAI:
