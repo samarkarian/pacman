@@ -67,7 +67,6 @@ class Game:
         elif eaten == 'super_pacgum':
             self.score += self.config.points_per_super_pacgum
             self.vulnerable_count = VULNERABLE_STEPS
-
         return None
 
     def next_level(self) -> bool:
@@ -100,7 +99,7 @@ class Game:
         for idx, ghost in enumerate(self.ghosts):
             if ghost.ai.respawn_count != 0:
                 continue
-            
+
             if (ghost.posx, ghost.posy) == (player.posx, player.posy):
                 if self.vulnerable_count != 0:
                     self.score += self.config.points_per_ghost
@@ -133,7 +132,15 @@ class Game:
 
         # 2. Déplacement de l'IA des fantômes
         for ghost in self.ghosts:
-            ghost.turn_update((self.player.posx, self.player.posy), self.vulnerable_count)
+            print(self.vulnerable_count)
+            if self.vulnerable_count == 0:
+                new_state = 'normal'
+            elif self.vulnerable_count > 0 and self.vulnerable_count <= (VULNERABLE_STEPS/3) and self.vulnerable_count % 2 == 0:
+                new_state = 'end'
+            else:
+                new_state = 'vulnerable'
+
+            ghost.turn_update((self.player.posx, self.player.posy), new_state)
 
         # 3. Vérification des collisions après le saut des fantômes
         self.check_collision(self.player)

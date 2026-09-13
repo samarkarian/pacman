@@ -9,8 +9,10 @@ ajout de la classe UISprite pour mettre un sprite statique. methods a modifier (
 
 a faire :
 centering des sprites dans les menus, et positionnement de tout en general
-gerer le vitesse de deplacement du joueur avec update()
+gerer le vitesse de deplacement du joueur avec update() (pac man ne doit pas aller a la meme vitesse que les fantomes (!!!) il doit etre un peu plus rapide, et avoir une gestion de deplacements differents)
 AI des fantomes
 deplacement fluide des fantomes et du joueur a la place des teleportations
 affichage score et vie
 GROS MORCEAU : generer les differents niveau et gerer le changement entre les scenes, puis stocker le high score
+mode invincible
+polish des assets et des visuels du jeu

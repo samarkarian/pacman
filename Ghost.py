@@ -18,8 +18,7 @@ class Ghost:
         self.state = 'normal'
         self.renderer.state = 'normal'
 
-    def turn_update(self, player_pos, vulnerable_count):
-        new_state = 'normal' if vulnerable_count == 0 else 'vulnerable'
+    def turn_update(self, player_pos, new_state):
 
         if new_state != self.state:
             self.state = new_state
@@ -42,6 +41,7 @@ class GhostRenderer(Entity):
         self.sprites: Dict[str, List[pygame.Surface]] = {
             "normal": [],
             "vulnerable": [],
+            "end": [],
         }
         self.state = 'normal'
 
@@ -53,6 +53,8 @@ class GhostRenderer(Entity):
                 self.sprites['normal'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png"))
             for sprite in range(2):
                 self.sprites['vulnerable'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_vulnerable/Ghost_vulnerable_{asset_size}/Ghost_vulnerable_{asset_size}_frame_{sprite}.png"))
+            for sprite in range(2):
+                self.sprites['end'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_vulnerable/Ghost_end_{asset_size}/Ghost_end_{asset_size}_frame_{sprite}.png"))
 
             self.pixel_offset = asset_size
 
