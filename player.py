@@ -39,8 +39,6 @@ class PlayerRenderer(Entity):
         self.direction: str = 'E'
 
     def load_sprites(self, asset_size):
-        """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
-        """
         try:
             cardinals = ['N', 'S', 'E', 'W']
             self.sprites.clear()

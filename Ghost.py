@@ -3,6 +3,7 @@ import pygame
 import random
 from typing import Tuple, Dict, List
 
+
 class Ghost:
     def __init__(self, play_field, spawn, color: str):
         self.ai = GhostAI(play_field, spawn)
@@ -22,6 +23,8 @@ class Ghost:
 
     def turn_update(self, player_pos, new_state, step_duration: int = 200,):
 
+        if self.ai.respawn_count > 0:
+            new_state = "dead"
         if new_state != self.state:
             self.state = new_state
             self.renderer.state = self.state
@@ -30,13 +33,16 @@ class Ghost:
 
         self.posx, self.posy = self.ai.step(player_pos, state=self.state)
 
-        self.renderer.start_move(old_pos, (self.posx, self.posy), step_duration)
+        self.renderer.start_move(old_pos, (self.posx, self.posy),
+                                 step_duration)
 
     def load_sprites(self, asset_size):
         self.renderer.load_sprites(asset_size=asset_size)
 
-    def render(self, screen, animation_speed: int, offset: Tuple[int, int] = (0, 0)):
-        self.renderer.render(screen=screen, animation_speed=animation_speed, offset=offset)
+    def render(self, screen, animation_speed: int,
+               offset: Tuple[int, int] = (0, 0)):
+        self.renderer.render(screen=screen, animation_speed=animation_speed,
+                             offset=offset)
 
 
 class GhostRenderer(Entity):
@@ -47,6 +53,7 @@ class GhostRenderer(Entity):
             "normal": [],
             "vulnerable": [],
             "end": [],
+            "dead": [],
         }
         self.state = 'normal'
 
@@ -59,12 +66,13 @@ class GhostRenderer(Entity):
         """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
         """
         try:
-            for sprite in range(2):
-                self.sprites['normal'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png"))
-            for sprite in range(2):
-                self.sprites['vulnerable'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_vulnerable/Ghost_vulnerable_{asset_size}/Ghost_vulnerable_{asset_size}_frame_{sprite}.png"))
-            for sprite in range(2):
-                self.sprites['end'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_vulnerable/Ghost_end_{asset_size}/Ghost_end_{asset_size}_frame_{sprite}.png"))
+            for state in self.sprites.keys():
+                if state == 'normal':
+                    for sprite in range(2):
+                        self.sprites['normal'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png"))
+                else:
+                    for sprite in range(2):
+                        self.sprites[state].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_neutral/Ghost_{state}/Ghost_{state}_{asset_size}/Ghost_{state}_{asset_size}_frame_{sprite}.png"))
 
             self.pixel_offset = asset_size
 

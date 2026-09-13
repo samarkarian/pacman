@@ -29,8 +29,8 @@ def main() -> None:
         loop.run()
     except KeyboardInterrupt:
         sys.exit(1)
-    # except Exception as err:
-    #     print(err)
+    except Exception as err:
+        print(err)
 
     return None
 
