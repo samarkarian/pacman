@@ -11,7 +11,7 @@ class GameScene(Scene):
     def __init__(self, game, asset_size: int = 64) -> None:
         self.asset_size = asset_size
         self.game = game
-        self.mazedisplayer = MazeDisplayer(game=game, asset_size=asset_size)
+        self.mazedisplayer = MazeDisplayer(field=game.field, asset_size=asset_size)
         self.player_x = 0
         self.player_y = 0
         self.entities = []  # a retirer

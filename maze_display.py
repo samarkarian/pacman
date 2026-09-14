@@ -4,17 +4,19 @@ from Display_abstractmethods import Renderer
 
 
 class MazeDisplayer(Renderer):
-    def __init__(self, game, asset_size: int = 64):
-        self.game = game
-        self.maze_grid = game.field.maze.grid
+    def __init__(self, field, asset_size: int = 64):
+        self.field = field
         self.wall_sprites = {}
         self.asset_size = asset_size
 
+    def next_level(self, newfield):
+        self.field = newfield
+        
     def load_sprites(self):
         self.load_wall_sprites(asset_size=self.asset_size)
-        for p in self.game.field.pacgums.values():
+        for p in self.field.pacgums.values():
             p.load_sprites(asset_size=self.asset_size)
-        for p in self.game.field.super_pacgums.values():
+        for p in self.field.super_pacgums.values():
             p.load_sprites(asset_size=self.asset_size)
         # print('\n\n\n\n',self.game.field)
         # print('\n\n\n\n',self.game.field.pacgums)
@@ -24,9 +26,9 @@ class MazeDisplayer(Renderer):
         # torender = self.game.field.pacgums.values() + self.game.field.super_pacgums.values()
         # for t in torender:
         #     t.render(screen=screen, offset=offset, animation_speed=800, asset_size=self.asset_size)
-        for p in self.game.field.pacgums.values():
+        for p in self.field.pacgums.values():
             p.render(screen=screen, offset=offset, animation_speed=800, asset_size=self.asset_size)
-        for p in self.game.field.super_pacgums.values():
+        for p in self.field.super_pacgums.values():
             p.render(screen=screen, offset=offset, animation_speed=800, asset_size=self.asset_size)
 
     def load_wall_sprites(self, asset_size):
@@ -37,7 +39,7 @@ class MazeDisplayer(Renderer):
             print(e)
 
     def render_walls(self, asset_size, screen: pygame.Surface, offset: Tuple[int, int] = (0, 0)):
-        for y, line in enumerate(self.maze_grid):
+        for y, line in enumerate(self.field.maze.grid):
             for x, cell in enumerate(line):
 
                 draw_x = x*asset_size + offset[0]
