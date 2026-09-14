@@ -12,7 +12,10 @@ centering des sprites dans les menus, et positionnement de tout en general
 AI des fantomes
 deplacements du joueurs mieux faits. actuellement, le ressenti est etrange, car si la nouvelle directement n'est pas possible, il la garde en cache, et slide en continuant dans la direction precedente jusqu'a pouvoir tourner. c'est malin mais ca donne un ressenti desagreable
 affichage score et vie
-GROS MORCEAU : generer les differents niveau et gerer le changement entre les scenes, puis stocker le high score, gerer l'entree de noms de joueurs
+generer les differents niveau et gerer le changement entre les scenes, le chargement des niveaux avec les fonctions reset()
+stocker le high score, gerer l'entree de noms de joueurs
+menu pause ?
 mode invincible
 polish des assets et des visuels du jeu
 retirer les variables globales
+
