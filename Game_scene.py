@@ -10,14 +10,13 @@ import pygame
 class GameScene(Scene):
     def __init__(self, game, asset_size: int = 64) -> None:
         self.asset_size = asset_size
-        self.mazedisplayer = MazeDisplayer(game=game, asset_size=asset_size)
         self.game = game
+        self.mazedisplayer = MazeDisplayer(game=game, asset_size=asset_size)
         self.player_x = 0
         self.player_y = 0
-        self.entities = []  # Peuplé par la factory
+        self.entities = []  # a retirer
         self.last_ghost_step = pygame.time.get_ticks()
-        # self.player = Player(self.field)
-
+        self.last_tick = pygame.time.get_ticks()
         self.load_sprites()
 
     def load_sprites(self):
@@ -47,24 +46,16 @@ class GameScene(Scene):
         return None
 
     def update(self) -> Optional[SceneID]:
-        if self.game.is_over():
-            self.game.reset()
-            return SceneID.GAMEOVER
-
-        # 1. Mise à jour continue (joueur, collisions, pacgums)
-        self.game.update()
-        if self.game.is_over():
-            self.game.reset()
-            return SceneID.GAMEOVER
-        # 2. Cadencement des fantômes toutes les GHOST_STEP_MS (200 ms)
         now = pygame.time.get_ticks()
+        dt = now - self.last_tick
+        self.last_tick = now
 
-        if now - self.last_ghost_step >= 200:
-            self.game.step_ghosts()
-            self.last_ghost_step = now
-            if self.game.is_over():
-                self.game.reset()
-                return SceneID.GAMEOVER
+        # Un seul appel unifié
+        self.game.update(dt)
+
+        if self.game.is_over():
+            self.game.reset()
+            return SceneID.GAMEOVER
 
         return None
 

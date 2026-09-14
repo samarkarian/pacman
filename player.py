@@ -15,11 +15,21 @@ class Player:
         self.controller.set_direction(direction)
         self.renderer.direction = direction
 
-    def turn_update(self):
+    # def turn_update(self):
+    #     self.controller.step()
+    #     self.posx, self.posy = self.controller.x, self.controller.y
+    #     self.renderer.posx, self.renderer.posy = self.posx, self.posy
+
+    def turn_update(self, step_duration_ms: int = 150) -> None:
+        old_pos = (self.posx, self.posy)
         self.controller.step()
         self.posx, self.posy = self.controller.x, self.controller.y
-        self.renderer.posx, self.renderer.posy = self.posx, self.posy
 
+        if old_pos != (self.posx, self.posy):
+            self.renderer.start_move(old_pos, (self.posx, self.posy), step_duration_ms)
+        else:
+            self.renderer.posx, self.renderer.posy = self.posx, self.posy
+    
     def load_sprites(self, asset_size):
         self.renderer.load_sprites(asset_size=asset_size)
 
@@ -30,6 +40,8 @@ class Player:
         self.posx, self.posy = self.spawn
         self.controller.reset(self.spawn)
         self.renderer.posx, self.renderer.posy = self.spawn
+        self.renderer.start_pos = self.spawn
+        self.renderer.target_pos = self.spawn
         self.renderer.direction = 'E'
 
 
@@ -37,6 +49,11 @@ class PlayerRenderer(Entity):
     def __init__(self, pos: Tuple[int, int]):
         super().__init__(pos)
         self.direction: str = 'E'
+
+        self.start_pos: Tuple[int, int] = pos
+        self.target_pos: Tuple[int, int] = pos
+        self.move_start_time: int = pygame.time.get_ticks()
+        self.step_duration_ms: int = 150
 
     def load_sprites(self, asset_size):
         try:
@@ -58,19 +75,29 @@ class PlayerRenderer(Entity):
         except Exception as e:
             print(e)
 
-    def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
-        """rendu automatique avec 2 frames pour l'animation en deux temps
-        animation speed pour le mode SUPER 
-        """
-        animation_speed = 200 #ecriture en dur pour plus de simplicite au debut
-        time = pygame.time.get_ticks()
-        frame_index = (time // animation_speed) % 2
 
-        draw_x = self.pixel_offset*self.posx + offset[0]
-        draw_y = self.pixel_offset*self.posy + offset[1]
-        current_sprite = self.sprites[self.direction][frame_index]
+    def start_move(self, from_pos: Tuple[int, int], to_pos: Tuple[int, int], duration_ms: int) -> None:
+        self.start_pos = from_pos
+        self.target_pos = to_pos
+        self.move_start_time = pygame.time.get_ticks()
+        self.step_duration_ms = duration_ms
 
-        screen.blit(current_sprite, (draw_x, draw_y))
+    def render(self, screen: pygame.Surface, animation_speed: int = 200, offset: Tuple[int, int] = (0, 0)) -> None:
+        now = pygame.time.get_ticks()
+
+        elapsed = now - self.move_start_time
+        t = min(1.0, elapsed / self.step_duration_ms) if self.step_duration_ms > 0 else 1.0
+
+        interp_x = self.start_pos[0] + (self.target_pos[0] - self.start_pos[0]) * t
+        interp_y = self.start_pos[1] + (self.target_pos[1] - self.start_pos[1]) * t
+
+        draw_x = int(interp_x * self.pixel_offset) + offset[0]
+        draw_y = int(interp_y * self.pixel_offset) + offset[1]
+
+        frame_index = (now // animation_speed) % 2
+        sprites = self.sprites.get(self.direction, [])
+        if sprites:
+            screen.blit(sprites[frame_index], (draw_x, draw_y))
 
 
 class PlayerController:

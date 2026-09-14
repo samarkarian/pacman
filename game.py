@@ -38,6 +38,11 @@ class Game:
         self.vulnerable_count = 0
         self.time_left = 0
 
+        self.ghost_timer_ms: int = 0
+        self.player_timer_ms: int = 0
+        self.player_step_ms: int = 150
+        self.ghost_step_ms: int = GHOST_STEP_MS
+
     def start_level(self, level_index) -> bool:
 
         play_field = build_level(self.config, level_index)
@@ -120,44 +125,53 @@ class Game:
         return False
 
     def step_ghosts(self) -> None:
-        if self.field is None or self.player is None or self.is_over():
-            return
-
         if self.time_left > 0:
             self.time_left -= 1
         if self.vulnerable_count > 0:
             self.vulnerable_count -= 1
 
         for ghost in self.ghosts:
-            if self.vulnerable_count == 0:
+            if ghost.ai.respawn_count > 0:
+                new_state = "dead"
+            elif self.vulnerable_count == 0:
                 new_state = "normal"
             elif self.vulnerable_count <= (VULNERABLE_STEPS / 3) and self.vulnerable_count % 2 == 0:
                 new_state = "end"
             else:
                 new_state = "vulnerable"
 
-            ghost.turn_update((self.player.posx, self.player.posy), new_state, GHOST_STEP_MS)
+            ghost.turn_update((self.player.posx, self.player.posy), new_state, self.ghost_step_ms)
 
-        self.check_collision(self.player)
+    def step_player(self) -> None:
+        """Avancement logique du joueur d'une case."""
+        self.player.turn_update(self.player_step_ms)
 
-    def update(self) -> None:
-        """Appelée à chaque frame (ou tick de scène)."""
-        if self.field is None or self.player is None or self.is_over():
-            return
-
-        # 1. Déplacement du joueur
-        self.player.turn_update()
-
-        # 2. Vérification immédiate de collision (si le joueur fonce sur un fantôme)
-        if self.check_collision(self.player):
-            return
-
+        # Ramassage des gommes
         eaten = None
         if self.field.eat_pacgum(self.player.posx, self.player.posy):
             eaten = "pacgum"
-        if self.field.eat_super_pacgum(self.player.posx, self.player.posy):
+        elif self.field.eat_super_pacgum(self.player.posx, self.player.posy):
             eaten = "super_pacgum"
+
         if eaten:
             self.eaten_effect(eaten)
             if self.field.is_level_complete():
                 self.next_level()
+
+    def update(self, dt_ms: int) -> None:
+        if self.field is None or self.player is None or self.is_over():
+            return
+
+        self.player_timer_ms += dt_ms
+        if self.player_timer_ms >= self.player_step_ms:
+            self.player_timer_ms -= self.player_step_ms
+            self.step_player()
+            if self.check_collision(self.player):
+                return
+
+        self.ghost_timer_ms += dt_ms
+        if self.ghost_timer_ms >= self.ghost_step_ms:
+            self.ghost_timer_ms -= self.ghost_step_ms
+            self.step_ghosts()
+            if self.check_collision(self.player):
+                return
