@@ -1,4 +1,5 @@
 import pygame
+from sprite_cache import load_image
 from typing import Tuple
 from Display_abstractmethods import Renderer
 
@@ -34,7 +35,7 @@ class MazeDisplayer(Renderer):
     def load_wall_sprites(self, asset_size):
         try:
             for n in range(16):
-                self.wall_sprites[f'wall_{n}'] = pygame.image.load(f"sprites/maze/walls/walls_{asset_size}/wall_by{asset_size}_{n}.png")
+                self.wall_sprites[f'wall_{n}'] = load_image(f"sprites/maze/walls/walls_{asset_size}/wall_by{asset_size}_{n}.png")
         except Exception as e:
             print(e)
 

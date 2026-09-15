@@ -2,6 +2,7 @@ from maze import Maze
 from Display_abstractmethods import Entity
 from typing import Tuple
 import pygame
+from sprite_cache import load_image
 
 
 class Player:
@@ -67,7 +68,7 @@ class PlayerRenderer(Entity):
                         f"sprites/Entities/Player/Player_{asset_size}/"
                         f"Player_{asset_size}_{c}_frame_{sprite}.png"
                     )
-                    surface = pygame.image.load(path).convert_alpha()
+                    surface = load_image(path).convert_alpha()
                     self.sprites[c].append(surface)
 
             self.pixel_offset = asset_size
@@ -115,16 +116,9 @@ class PlayerController:
 
     def move(self, direction: str) -> str | None:
 
-        dir_dict = {
-            'N': (0, -1),
-            'E': (1, 0),
-            'S': (0, 1),
-            'W': (-1, 0)
-        }
-
         maze = self.field.maze
         if maze.can_move(self.x, self.y, direction):
-            dx, dy = dir_dict[direction]
+            dx, dy = maze.DIRECTIONS[direction]
             self.x += dx
             self.y += dy
 

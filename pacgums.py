@@ -1,5 +1,6 @@
 from Display_abstractmethods import Entity, Renderer
 import pygame
+from sprite_cache import load_image
 from typing import Tuple
 
 
@@ -12,7 +13,7 @@ class Pacgum(Renderer):
     def load_sprites(self, asset_size: int):
         try:
             for sprite in range(2):
-                self.sprites[sprite] = pygame.image.load(f"sprites/maze/{self.gumtype}/{self.gumtype}_{asset_size}/{self.gumtype}_{asset_size}_frame_{sprite}.png")
+                self.sprites[sprite] = load_image(f"sprites/maze/{self.gumtype}/{self.gumtype}_{asset_size}/{self.gumtype}_{asset_size}_frame_{sprite}.png")
             self.pixel_offset = asset_size
         except Exception as e:
             print(e)

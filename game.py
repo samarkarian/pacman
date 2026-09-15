@@ -4,12 +4,6 @@ from field import PlayField
 from Ghost import Ghost
 from player import Player
 
-GHOST_STEP_MS = 200
-VULNERABLE_SECONDS = 6
-VULNERABLE_STEPS = VULNERABLE_SECONDS * 1000 // GHOST_STEP_MS
-
-RESPAWN_SECONDS = 5
-RESPAWN_STEPS = RESPAWN_SECONDS * 1000 // GHOST_STEP_MS
 
 def build_level(config: Config, level_index: int) -> PlayField | None:
 
@@ -41,7 +35,15 @@ class Game:
         self.ghost_timer_ms: int = 0
         self.player_timer_ms: int = 0
         self.player_step_ms: int = 150
-        self.ghost_step_ms: int = GHOST_STEP_MS
+        self.ghost_step_ms: int = 200
+
+        self.vulnerable_seconds: int = 6
+        self.vulnerable_steps: int = (self.vulnerable_seconds * 1000
+                                      // self.ghost_step_ms)
+
+        self.respawn_seconds: int = 5
+        self.respawn_steps: int = (self.respawn_seconds * 1000
+                                   // self.ghost_step_ms)
 
     def start_level(self, level_index) -> bool:
 
@@ -53,12 +55,13 @@ class Game:
         self.player = Player(play_field)
         self.vulnerable_count = 0
         self.time_left = (self.config.level_max_time * 1000
-                          // GHOST_STEP_MS)
+                          // self.ghost_step_ms)
 
         self.ghosts = []
         ghost_colors = ['cyan', 'red', 'orange', 'pink']
-        for spawn, color in zip(play_field.ghost_spawns, ghost_colors):
-            self.ghosts.append(Ghost(play_field, spawn, color))
+        ghost_behaviors = ['follow', 'follow', 'random', 'copy']
+        for spawn, color, behavior in zip(play_field.ghost_spawns, ghost_colors, ghost_behaviors):
+            self.ghosts.append(Ghost(play_field, spawn, color, behavior))
 
         self.level_index = level_index
 
@@ -70,7 +73,7 @@ class Game:
             self.score += self.config.points_per_pacgum
         elif eaten == 'super_pacgum':
             self.score += self.config.points_per_super_pacgum
-            self.vulnerable_count = VULNERABLE_STEPS
+            self.vulnerable_count = self.vulnerable_steps
         return None
 
     def next_level(self) -> bool:
@@ -100,23 +103,22 @@ class Game:
 
     def check_collision(self, player) -> bool:
 
-        for idx, ghost in enumerate(self.ghosts):
+        for ghost in self.ghosts:
             if ghost.ai.respawn_count != 0:
                 continue
 
             if (ghost.posx, ghost.posy) == (player.posx, player.posy):
                 if self.vulnerable_count != 0:
                     self.score += self.config.points_per_ghost
-                    ghost.posx, ghost.posy = self.field.ghost_spawns[idx]
                     ghost.reset_position()
-                    ghost.ai.start_respawn(RESPAWN_STEPS)
+                    ghost.ai.start_respawn(self.respawn_steps)
                 else:
                     self.lives -= 1
                     if self.lives <= 0:
                         return True
                     player.reset_position()
-                    for g, spawn in zip(self.ghosts, self.field.ghost_spawns):
-                        g.reset_position()
+                    for ghost in self.ghosts:
+                        ghost.reset_position()
 
                     self.vulnerable_count = 0
                 return True
@@ -134,12 +136,12 @@ class Game:
                 new_state = "dead"
             elif self.vulnerable_count == 0:
                 new_state = "normal"
-            elif self.vulnerable_count <= (VULNERABLE_STEPS / 3) and self.vulnerable_count % 2 == 0:
+            elif self.vulnerable_count <= (self.vulnerable_steps / 3) and self.vulnerable_count % 2 == 0:
                 new_state = "end"
             else:
                 new_state = "vulnerable"
 
-            ghost.turn_update((self.player.posx, self.player.posy), new_state, self.ghost_step_ms)
+            ghost.turn_update((self.player.posx, self.player.posy), new_state, self.ghost_step_ms, self.player.controller.next_direction)
 
     def step_player(self) -> None:
         """Avancement logique du joueur d'une case."""

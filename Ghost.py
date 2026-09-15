@@ -1,12 +1,13 @@
 from Display_abstractmethods import Entity, Renderer
 import pygame
+from sprite_cache import load_image
 import random
 from typing import Tuple, Dict, List
 
 
 class Ghost:
-    def __init__(self, play_field, spawn, color: str):
-        self.ai = GhostAI(play_field, spawn)
+    def __init__(self, play_field, spawn, color: str, behavior: str):
+        self.ai = GhostAI(play_field, spawn, behavior)
         self.renderer = GhostRenderer(spawn, color)
         self.posx, self.posy = spawn[0], spawn[1]
         self.state = 'normal'
@@ -21,7 +22,8 @@ class Ghost:
         self.state = "normal"
         self.renderer.state = "normal"
 
-    def turn_update(self, player_pos, new_state, step_duration: int = 200,):
+    def turn_update(self, player_pos, new_state, step_duration: int = 200,
+                    direction: str | None = None):
 
         if self.ai.respawn_count > 0:
             new_state = "dead"
@@ -31,7 +33,7 @@ class Ghost:
 
         old_pos = (self.posx, self.posy)
 
-        self.posx, self.posy = self.ai.step(player_pos, state=self.state)
+        self.posx, self.posy = self.ai.step(player_pos, state=self.state, direction=direction)
 
         self.renderer.start_move(old_pos, (self.posx, self.posy),
                                  step_duration)
@@ -67,12 +69,13 @@ class GhostRenderer(Entity):
         """
         try:
             for state in self.sprites.keys():
+                self.sprites[state].clear()
                 if state == 'normal':
                     for sprite in range(2):
-                        self.sprites['normal'].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png"))
+                        self.sprites['normal'].append(load_image(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png"))
                 else:
                     for sprite in range(2):
-                        self.sprites[state].append(pygame.image.load(f"sprites/Entities/Ghost/Ghost_neutral/Ghost_{state}/Ghost_{state}_{asset_size}/Ghost_{state}_{asset_size}_frame_{sprite}.png"))
+                        self.sprites[state].append(load_image(f"sprites/Entities/Ghost/Ghost_neutral/Ghost_{state}/Ghost_{state}_{asset_size}/Ghost_{state}_{asset_size}_frame_{sprite}.png"))
 
             self.pixel_offset = asset_size
 
@@ -114,10 +117,11 @@ class GhostRenderer(Entity):
 
 
 class GhostAI:
-    def __init__(self, field, spawn):
+    def __init__(self, field, spawn, behavior: str):
 
         self.field = field
         self.x, self.y = spawn
+        self.behavior = behavior
         self.previous = None
         self.respawn_count = 0
 
@@ -130,7 +134,7 @@ class GhostAI:
 
         self.respawn_count = steps
 
-    def step(self, player_pos, state) -> None:
+    def step(self, player_pos, state, direction: str | None) -> None:
         player_x, player_y = player_pos
         if self.respawn_count != 0:
             self.respawn_count -= 1
@@ -158,12 +162,20 @@ class GhostAI:
             abs_dist = abs(x_dist) + abs(y_dist)
             dist_dict.update({choice: abs_dist})
         if state == 'normal':
-            min_value = min(dist_dict.values())
-            min_key = []
-            for key, value in dist_dict.items():
-                if value == min_value:
-                    min_key.append(key)
-            self.x, self.y = random.choice(min_key)
+            if self.behavior == 'random':
+                self.x, self.y = random.choice(choices)
+            elif self.behavior == 'copy':
+                if maze.can_move(self.x, self.y, direction):
+                    self.x, self.y = maze.next_cell(self.x, self.y, direction)
+                else:
+                    self.x, self.y = random.choice(choices)
+            elif self.behavior == 'follow':
+                min_value = min(dist_dict.values())
+                min_key = []
+                for key, value in dist_dict.items():
+                    if value == min_value:
+                        min_key.append(key)
+                self.x, self.y = random.choice(min_key)
             return self.x, self.y
         else:
             max_value = max(dist_dict.values())
