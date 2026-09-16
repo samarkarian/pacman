@@ -5,20 +5,30 @@ from player import Player
 from game import Game
 import pygame
 
+from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer
 
 class GameScene(Scene):
     def __init__(self, game, asset_size: int = 64) -> None:
         self.asset_size = asset_size
-        self.game = game
+        self.game: Game = game
         self.mazedisplayer = MazeDisplayer(field=game.field, asset_size=asset_size)
         self.player_x = 0
         self.player_y = 0
         self.entities = []  # a retirer
         self.last_ghost_step = pygame.time.get_ticks()
         self.last_tick = pygame.time.get_ticks()
-        self.load_sprites()
         self.loaded_field = self.game.field
         self.max_dt_ms: int = 100
+
+        self.hud_elements: list[Renderer] = [
+            ScoreRenderer(pos=(20, 15), game=self.game),
+            TimeRenderer(pos=(240, 15), game=self.game),
+            LevelRenderer(pos=(420, 15), game=self.game),
+            # LivesRenderer(pos=(560, 10), game=self.game),
+            ]
+
+        self.load_sprites()
+
 
     def load_sprites(self):
         """fonction appelant le load_sprites() de toutes les entites
@@ -29,6 +39,8 @@ class GameScene(Scene):
             e.load_sprites(asset_size=self.asset_size)
         for e in self.entities:
             e.load_sprites()
+        for hud in self.hud_elements:
+            hud.load_sprites(self.asset_size)
 
     def handle_event(self, event: pygame.event.Event) -> Optional[Scene]:
         KEY_TO_DIRECTION = {
@@ -78,3 +90,5 @@ class GameScene(Scene):
 
         for e in self.entities:
             e.render(screen, offset)
+        for hud in self.hud_elements:
+            hud.render(screen)

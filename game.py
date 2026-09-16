@@ -30,7 +30,7 @@ class Game:
         self.ghosts = []
         self.player = None
         self.vulnerable_count = 0
-        self.time_left = 0
+        self.time_left: int = 0
 
         self.ghost_timer_ms: int = 0
         self.player_timer_ms: int = 0
@@ -126,8 +126,6 @@ class Game:
         return False
 
     def step_ghosts(self) -> None:
-        if self.time_left > 0:
-            self.time_left -= 1
         if self.vulnerable_count > 0:
             self.vulnerable_count -= 1
 
@@ -160,6 +158,8 @@ class Game:
                 self.next_level()
 
     def update(self, dt_ms: int) -> None:
+        if self.time_left > 0:
+            self.time_left -= dt_ms / 1000 
         if self.field is None or self.player is None or self.is_over():
             return
 
