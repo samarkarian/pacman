@@ -1,2 +1,21 @@
-{
-}
+[
+        {
+            "name": "Sash",
+            "score": 234
+        },
+        {
+            "name": "Rob",
+            "score": 222
+        },
+        {
+            "name": "Enz",
+            "score": 321
+        },
+        {
+            "name": "Jul",
+            "score": 111
+        },
+        {
+            "hey": 2
+        }
+]
