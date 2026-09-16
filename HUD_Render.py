@@ -17,8 +17,13 @@ class HUDTextRenderer(Renderer):
 
     def load_sprites(self, asset_size: int = 64) -> None:
         """Initialise la police selon la résolution choisie."""
-        font_size = max(18, asset_size // 2)
-        self.font = pygame.font.Font(None, font_size)
+        font_path = "sprites/Font/KGPerfectPenmanship.ttf"
+        font_size = max(12, asset_size // 3)
+        try:
+            self.font = pygame.font.Font(font_path, font_size)
+        except (FileNotFoundError, pygame.error) as e:
+            print(f"Police introuvable ({font_path}) : {e}. Utilisation de la police par défaut.")
+            self.font = pygame.font.Font(None, font_size)
 
     @abstractmethod
     def get_text(self) -> str:
@@ -36,7 +41,7 @@ class HUDTextRenderer(Renderer):
 
 class ScoreRenderer(HUDTextRenderer):
     def __init__(self, pos: Tuple[int, int], game) -> None:
-        super().__init__(pos, game, label="SCORE: ")
+        super().__init__(pos, game, label="Perfect: ")
 
     def get_text(self) -> str:
         return f"{self.label}{self.game.score:05d}"

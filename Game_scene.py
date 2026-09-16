@@ -84,7 +84,7 @@ class GameScene(Scene):
     def render(self, screen: pygame.Surface) -> None:
         offset = (self.player_x, self.player_y)
         self.mazedisplayer.render(screen=screen, offset=offset)
-        self.game.player.render(screen=screen, offset=offset, animation_speed=400)
+        self.game.player.render(screen=screen, offset=offset, animation_speed=150)
         for e in self.game.ghosts:
             e.render(screen=screen, offset=offset, animation_speed=800)
 

@@ -163,9 +163,29 @@ class Game:
         if self.field is None or self.player is None or self.is_over():
             return
 
+        # self.player_timer_ms += dt_ms
+        # if self.player_timer_ms >= self.player_step_ms:
+        #     self.player_timer_ms -= self.player_step_ms
+        #     self.step_player()
+        #     if self.check_collision(self.player):
+        #         return
         self.player_timer_ms += dt_ms
-        if self.player_timer_ms >= self.player_step_ms:
-            self.player_timer_ms -= self.player_step_ms
+
+        # Si le joueur est à l'arrêt et qu'une direction valide est demandée : départ immédiat
+        can_start_moving = (
+            self.player.controller.direction is None
+            and self.player.controller.next_direction is not None
+            and self.field.maze.can_move(
+                self.player.posx, self.player.posy, self.player.controller.next_direction
+            )
+        )
+
+        if can_start_moving or self.player_timer_ms >= self.player_step_ms:
+            if can_start_moving:
+                self.player_timer_ms = 0
+            else:
+                self.player_timer_ms -= self.player_step_ms
+
             self.step_player()
             if self.check_collision(self.player):
                 return
