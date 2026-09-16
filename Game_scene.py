@@ -5,7 +5,7 @@ from player import Player
 from game import Game
 import pygame
 
-from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer
+from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer, LivesRenderer
 
 class GameScene(Scene):
     def __init__(self, game, asset_size: int = 64) -> None:
@@ -24,7 +24,7 @@ class GameScene(Scene):
             ScoreRenderer(pos=(20, 15), game=self.game),
             TimeRenderer(pos=(240, 15), game=self.game),
             LevelRenderer(pos=(420, 15), game=self.game),
-            # LivesRenderer(pos=(560, 10), game=self.game),
+            LivesRenderer(pos=(560, 10), game=self.game),
             ]
 
         self.load_sprites()

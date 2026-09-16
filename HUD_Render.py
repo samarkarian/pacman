@@ -57,3 +57,34 @@ class LevelRenderer(HUDTextRenderer):
 
     def get_text(self) -> str:
         return f"{self.label}{self.game.level_index + 1}"
+
+
+from sprite_cache import load_image
+
+
+class LivesRenderer(Renderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__()
+        self.posx, self.posy = int(pos[0]), int(pos[1])
+        self.game = game
+
+    def load_sprites(self, asset_size: int = 64) -> None:
+        self.sprites.clear()
+        try:
+            path = (
+                f"sprites/ui/HUD/Lives/Lives_{asset_size}/Lives_{asset_size}.png"
+            )
+            self.sprites[0] = load_image(path)
+        except Exception as e:
+            print(f"Erreur sprite vie : {e}")
+
+    def render(self, screen: pygame.Surface, offset: Tuple[int, int] = (0, 0)) -> None:
+        icon = self.sprites.get(0)
+        if not icon:
+            return
+
+        spacing = icon.get_width() + 4
+        for i in range(max(0, self.game.lives)):
+            draw_x = self.posx + (i * spacing) + offset[0]
+            draw_y = self.posy + offset[1]
+            screen.blit(icon, (draw_x, draw_y))
