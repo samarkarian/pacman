@@ -78,29 +78,29 @@ class ResolutionPage(MenuPage):
             )
         )
 
-class GameOverPage(MenuPage):
-    def build(self) -> None:
-        current_size = self.context.game_data.get("asset_size", 64)
-        gameloop = self.context.game_data.get("gameloop")
-        screen_w = gameloop.width if gameloop else 1080
+# class GameOverPage(MenuPage):
+#     def build(self) -> None:
+#         current_size = self.context.game_data.get("asset_size", 64)
+#         gameloop = self.context.game_data.get("gameloop")
+#         screen_w = gameloop.width if gameloop else 1080
 
-        center_x = (screen_w - current_size*3) // 2
+#         center_x = (screen_w - current_size*3) // 2
 
-        self.decorations.append(
-            UISprite(
-                name='Gameover',
-                pos=(center_x*0.6, int(gameloop.height * 0.05)),
-                asset_size=self.context.game_data.get("asset_size", 64),
-            )
-        )
-        self.buttons.append(
-            UIButton(
-                name="quit",
-                pos=(center_x, int(gameloop.height * 0.61)),
-                action=lambda: SceneID.MENU,
-                asset_size=current_size,
-            )
-        )
+#         self.decorations.append(
+#             UISprite(
+#                 name='Gameover',
+#                 pos=(center_x*0.6, int(gameloop.height * 0.05)),
+#                 asset_size=self.context.game_data.get("asset_size", 64),
+#             )
+#         )
+#         self.buttons.append(
+#             UIButton(
+#                 name="quit",
+#                 pos=(center_x, int(gameloop.height * 0.61)),
+#                 action=lambda: SceneID.MENU,
+#                 asset_size=current_size,
+#             )
+#         )
 
 
 class NameEntry(MenuPage):
@@ -111,9 +111,9 @@ class NameEntry(MenuPage):
 
         center_x = (screen_w - current_size*3) // 2
 
-        self.buttons.append(
+        self.decorations.append(
             UISprite(
-                name='Victory',
+                name='Victory' if gameloop.game.victory() else 'Gameover',
                 pos=(center_x*0.6, int(gameloop.height * 0.05)),
                 asset_size=self.context.game_data.get("asset_size", 64)
             )

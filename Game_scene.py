@@ -20,7 +20,7 @@ class GameScene(Scene):
         self.loaded_field = self.game.field
         self.max_dt_ms: int = 100
 
-        self.hud_container = HUDContainer(game=self.game, asset_size=self.asset_size)       
+        self.hud_container = HUDContainer(game=self.game, asset_size=self.asset_size)
         self.load_sprites()
 
 
@@ -70,7 +70,7 @@ class GameScene(Scene):
             self.loaded_field = self.game.field
 
         if self.game.is_over():
-            return SceneID.GAMEOVER
+            return SceneID.NAME
 
         return None
 

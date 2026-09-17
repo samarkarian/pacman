@@ -160,7 +160,7 @@ class Game:
 
     def update(self, dt_ms: int) -> None:
         if self.time_left > 0:
-            self.time_left -= dt_ms / 1000 
+            self.time_left -= dt_ms / 1000
         if self.field is None or self.player is None or self.is_over():
             return
 
