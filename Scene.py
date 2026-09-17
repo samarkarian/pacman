@@ -12,6 +12,7 @@ class SceneID(Enum):
     GAME = auto()
     QUIT = auto()
     GAMEOVER = auto()
+    NAME = auto()
 
 
 class Scene(ABC):

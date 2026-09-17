@@ -1,7 +1,7 @@
 from Scene import SceneID
 from Game_scene import GameScene
 from MenuScene import MenuScene
-from Menu_pages import MainMenuPage, GameOverPage
+from Menu_pages import MainMenuPage, GameOverPage, NameEntry
 import pygame
 import sys
 
@@ -38,6 +38,7 @@ class GameLoop:
 
     def change_scene(self, target: SceneID) -> None:
         if target == SceneID.GAME:
+            self.game.reset()
             self.current_scene = GameScene(
                 game=self.game,
                 asset_size=self.asset_size,
@@ -56,6 +57,12 @@ class GameLoop:
             )
         elif target == SceneID.QUIT:
             self.is_running = False
+        elif target == SceneID.NAME:
+            self.current_scene = MenuScene(
+                initial_page_cls=NameEntry,
+                gameloop=self,
+                asset_size=self.asset_size,
+            )
 
     def run(self) -> None:
         while self.is_running:

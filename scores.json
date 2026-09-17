@@ -1,21 +1,22 @@
 [
-        {
-            "name": "Sash",
-            "score": 234
-        },
-        {
-            "name": "Rob",
-            "score": 222
-        },
-        {
-            "name": "Enz",
-            "score": 321
-        },
-        {
-            "name": "Jul",
-            "score": 111
-        },
-        {
-            "hey": 2
-        }
+    {
+        "name": "Enzo",
+        "score": 3500
+    },
+    {
+        "name": "Chris",
+        "score": 321
+    },
+    {
+        "name": "Sash",
+        "score": 234
+    },
+    {
+        "name": "Rob",
+        "score": 222
+    },
+    {
+        "name": "Jul",
+        "score": 111
+    }
 ]

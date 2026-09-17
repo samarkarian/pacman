@@ -44,10 +44,10 @@ class GameScene(Scene):
                 return SceneID.MENU
             elif event.key in KEY_TO_DIRECTION and self.game.player:
                 self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
-            # elif event.key == pygame.K_n:
-            #     self.game.next_level()
-            # elif event.key == pygame.K_b:
-            #     pygame.time.wait(2000)
+            elif event.key == pygame.K_n:
+                self.game.next_level()
+            elif event.key == pygame.K_b:
+                pygame.time.wait(2000)
         return None
 
     def update(self) -> Optional[SceneID]:
@@ -64,7 +64,6 @@ class GameScene(Scene):
             self.loaded_field = self.game.field
 
         if self.game.is_over():
-            self.game.reset()
             return SceneID.GAMEOVER
 
         return None

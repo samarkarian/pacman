@@ -3,6 +3,7 @@ from maze import Maze, generate_maze
 from field import PlayField
 from Ghost import Ghost
 from player import Player
+from high_score import scores_load
 
 
 def build_level(config: Config, level_index: int) -> PlayField | None:
@@ -31,6 +32,7 @@ class Game:
         self.player = None
         self.vulnerable_count = 0
         self.time_left = 0
+        self.rank = scores_load(config.highscore_filename)
 
         self.ghost_timer_ms: int = 0
         self.player_timer_ms: int = 0
@@ -117,8 +119,8 @@ class Game:
                     if self.lives <= 0:
                         return True
                     player.reset_position()
-                    for ghost in self.ghosts:
-                        ghost.reset_position()
+                    for ghos in self.ghosts:
+                        ghos.reset_position()
 
                     self.vulnerable_count = 0
                 return True
@@ -147,7 +149,6 @@ class Game:
         """Avancement logique du joueur d'une case."""
         self.player.turn_update(self.player_step_ms)
 
-        # Ramassage des gommes
         eaten = None
         if self.field.eat_pacgum(self.player.posx, self.player.posy):
             eaten = "pacgum"
@@ -176,3 +177,11 @@ class Game:
             self.step_ghosts()
             if self.check_collision(self.player):
                 return
+
+    def victory(self) -> bool:
+
+        if self.level_index == len(self.config.level) - 1:
+            if self.is_over():
+                if self.lives > 0 and self.time_left > 0:
+                    return True
+        return False

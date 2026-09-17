@@ -3,10 +3,6 @@ import json
 from typing import Any
 
 
-def player_writing() -> None:
-    pass
-
-
 def valid_name_score(name: str, score: int) -> bool:
 
     if not isinstance(name, str):
@@ -60,7 +56,9 @@ def scores_load(file_path: str) -> list[dict[str, Any]]:
     return sorted_value(scores)
 
 
-def scores_add(scores: list[dict[str, Any]], name: str, score: int) -> list[dict[str, Any]]:
+def scores_add(
+        scores: list[dict[str, Any]],
+        name: str, score: int) -> list[dict[str, Any]]:
 
     if not valid_name_score(name, score):
         return scores
@@ -70,10 +68,24 @@ def scores_add(scores: list[dict[str, Any]], name: str, score: int) -> list[dict
 
     return sorted_value(scores_cp)
 
-def scores_save():
-    pass
+def scores_save(file_path: str, scores: list[dict[str, Any]]) -> bool:
+
+    scores = sorted_value(scores)
+
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            json.dump(scores, file, indent=4)
+    except OSError:
+        print(f"Warning: cannot save highscore file '{file_path}'")
+        return False
+
+    return True
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    scores_load('./scores.json')
+#     scores = scores_load('./scores.json')
+#     print(scores)
+#     new_scores = scores_add(scores, 'enzo', 3500)
+#     print(new_scores)
+#     print(scores_save('./scores.json', new_scores))

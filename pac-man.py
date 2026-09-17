@@ -11,7 +11,7 @@ def main() -> None:
         else:
             print('Usage: python3 pac-man.py config.json')
             sys.exit(1)
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
     except Exception:
         print(f"Error: cannot read config file '{path}'")
