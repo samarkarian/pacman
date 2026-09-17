@@ -12,6 +12,13 @@ class MainMenuPage(MenuPage):
         print(screen_h, screen_w)
         center_x = (screen_w - current_size*3) // 2
 
+        self.decorations.append(
+            UISprite(
+                name='Main_menu_bg',
+                pos=(center_x/1.6, int(screen_h)*0.2),
+                asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
         self.buttons.append(
             UIButton(
                 name="play",
