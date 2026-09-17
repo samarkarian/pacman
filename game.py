@@ -128,8 +128,6 @@ class Game:
         return False
 
     def step_ghosts(self) -> None:
-        if self.time_left > 0:
-            self.time_left -= 1
         if self.vulnerable_count > 0:
             self.vulnerable_count -= 1
 
@@ -161,12 +159,34 @@ class Game:
                 self.next_level()
 
     def update(self, dt_ms: int) -> None:
+        if self.time_left > 0:
+            self.time_left -= dt_ms / 1000 
         if self.field is None or self.player is None or self.is_over():
             return
 
+        # self.player_timer_ms += dt_ms
+        # if self.player_timer_ms >= self.player_step_ms:
+        #     self.player_timer_ms -= self.player_step_ms
+        #     self.step_player()
+        #     if self.check_collision(self.player):
+        #         return
         self.player_timer_ms += dt_ms
-        if self.player_timer_ms >= self.player_step_ms:
-            self.player_timer_ms -= self.player_step_ms
+
+        # Si le joueur est à l'arrêt et qu'une direction valide est demandée : départ immédiat
+        can_start_moving = (
+            self.player.controller.direction is None
+            and self.player.controller.next_direction is not None
+            and self.field.maze.can_move(
+                self.player.posx, self.player.posy, self.player.controller.next_direction
+            )
+        )
+
+        if can_start_moving or self.player_timer_ms >= self.player_step_ms:
+            if can_start_moving:
+                self.player_timer_ms = 0
+            else:
+                self.player_timer_ms -= self.player_step_ms
+
             self.step_player()
             if self.check_collision(self.player):
                 return

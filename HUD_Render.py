@@ -1,0 +1,103 @@
+from abc import abstractmethod
+from typing import Tuple
+import pygame
+from Display_abstractmethods import Renderer
+
+
+class HUDTextRenderer(Renderer):
+    """Affiche un texte dynamique du HUD aux coordonnées écran données."""
+
+    def __init__(self, pos: Tuple[int, int], game, label: str = "") -> None:
+        super().__init__()
+        self.posx: int = int(pos[0])
+        self.posy: int = int(pos[1])
+        self.game = game
+        self.label: str = label
+        self.font: pygame.font.Font | None = None
+
+    def load_sprites(self, asset_size: int = 64) -> None:
+        """Initialise la police selon la résolution choisie."""
+        font_path = "sprites/Font/KGPerfectPenmanship.ttf"
+        font_size = max(12, asset_size // 3)
+        try:
+            self.font = pygame.font.Font(font_path, font_size)
+        except (FileNotFoundError, pygame.error) as e:
+            print(f"Police introuvable ({font_path}) : {e}. Utilisation de la police par défaut.")
+            self.font = pygame.font.Font(None, font_size)
+
+    @abstractmethod
+    def get_text(self) -> str:
+        """Chaque sous-classe implémente sa propre chaîne de caractères."""
+        pass
+
+    def render(self, screen: pygame.Surface, offset: Tuple[int, int] = (0, 0)) -> None:
+        if self.font is None:
+            self.load_sprites()
+
+        if self.font:
+            surface = self.font.render(self.get_text(), True, (255, 255, 255))
+            screen.blit(surface, (self.posx + offset[0], self.posy + offset[1]))
+
+
+class ScoreRenderer(HUDTextRenderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__(pos, game, label="Score: ")
+
+    def get_text(self) -> str:
+        return f"{self.label}{self.game.score:05d}"
+
+
+class TimeRenderer(HUDTextRenderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__(pos, game, label="TIME: ")
+
+    def get_text(self) -> str:
+        time_val = max(0.0, float(self.game.time_left))
+        return f"{self.label}{time_val:.0f}s"
+
+
+class LevelRenderer(HUDTextRenderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__(pos, game, label="LEVEL: ")
+
+    def get_text(self) -> str:
+        return f"{self.label}{self.game.level_index + 1}"
+
+
+class LivesTextRenderer(HUDTextRenderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__(pos, game, label="Lives: ")
+
+    def get_text(self) -> str:
+        return f"{self.label}"
+
+
+from sprite_cache import load_image
+
+
+class LivesRenderer(Renderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__()
+        self.posx, self.posy = int(pos[0]), int(pos[1])
+        self.game = game
+
+    def load_sprites(self, asset_size: int = 64) -> None:
+        self.sprites.clear()
+        try:
+            path = (
+                f"sprites/ui/HUD/Lives/Lives_{asset_size}/Lives_{asset_size}.png"
+            )
+            self.sprites[0] = load_image(path)
+        except Exception as e:
+            print(f"Erreur sprite vie : {e}")
+
+    def render(self, screen: pygame.Surface, offset: Tuple[int, int] = (0, 0)) -> None:
+        icon = self.sprites.get(0)
+        if not icon:
+            return
+
+        spacing = icon.get_width() + 4
+        for i in range(max(0, self.game.lives)):
+            draw_x = self.posx + (i * spacing) + offset[0]
+            draw_y = self.posy + offset[1]
+            screen.blit(icon, (draw_x, draw_y))

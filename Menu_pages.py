@@ -8,13 +8,14 @@ class MainMenuPage(MenuPage):
         current_size = self.context.game_data.get("asset_size", 64)
         gameloop = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
-
+        screen_h = gameloop.height if gameloop else 1080
+        print(screen_h, screen_w)
         center_x = (screen_w - current_size*3) // 2
 
         self.buttons.append(
             UIButton(
                 name="play",
-                pos=(center_x, gameloop.height * 0.35),
+                pos=(center_x, int(screen_h * 0.4)),
                 action=lambda: SceneID.GAME,
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
@@ -22,7 +23,7 @@ class MainMenuPage(MenuPage):
         self.buttons.append(
                     UIButton(
                         name="quit",
-                        pos=(center_x, int(gameloop.height * 0.48)),
+                        pos=(center_x, int(gameloop.height * 0.5)),
                         action=lambda: SceneID.QUIT,
                         asset_size=self.context.game_data.get("asset_size", 64),
                     )
@@ -30,7 +31,7 @@ class MainMenuPage(MenuPage):
         self.buttons.append(
                 UIButton(
                     name="resize",
-                    pos=(center_x, int(gameloop.height * 0.61)),
+                    pos=(center_x, int(gameloop.height * 0.6)),
                     action=lambda: self.context.push_page(ResolutionPage(self.context)),
                     asset_size=self.context.game_data.get("asset_size", 64),
                 )
