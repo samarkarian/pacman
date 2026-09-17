@@ -18,12 +18,12 @@ class Pacgum(Renderer):
         except Exception as e:
             print(e)
 
-    def render(self, screen, asset_size: int, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
+    def render(self, screen, animation_speed: int = 800, offset: Tuple[int, int] = (0, 0)):
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 
         draw_x = self.pixel_offset * self.posx + offset[0] + self.pixel_offset/4
-        draw_y = self.pixel_offset * self.posy + self.pixel_offset/4
+        draw_y = self.pixel_offset * self.posy + offset[1] + self.pixel_offset/4
         current_sprite = self.sprites[frame_index]
 
         screen.blit(current_sprite, (draw_x, draw_y))

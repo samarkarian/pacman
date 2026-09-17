@@ -41,7 +41,7 @@ class HUDTextRenderer(Renderer):
 
 class ScoreRenderer(HUDTextRenderer):
     def __init__(self, pos: Tuple[int, int], game) -> None:
-        super().__init__(pos, game, label="Perfect: ")
+        super().__init__(pos, game, label="Score: ")
 
     def get_text(self) -> str:
         return f"{self.label}{self.game.score:05d}"
@@ -62,6 +62,14 @@ class LevelRenderer(HUDTextRenderer):
 
     def get_text(self) -> str:
         return f"{self.label}{self.game.level_index + 1}"
+
+
+class LivesTextRenderer(HUDTextRenderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__(pos, game, label="Lives: ")
+
+    def get_text(self) -> str:
+        return f"{self.label}"
 
 
 from sprite_cache import load_image
