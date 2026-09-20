@@ -22,7 +22,7 @@ class HUDTextRenderer(Renderer):
         try:
             self.font = pygame.font.Font(font_path, font_size)
         except (FileNotFoundError, pygame.error) as e:
-            print(f"Police introuvable ({font_path}) : {e}. Utilisation de la police par défaut.")
+            print(f"Font not found ({font_path}) : {e}.")
             self.font = pygame.font.Font(None, font_size)
 
     @abstractmethod

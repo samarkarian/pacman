@@ -1,6 +1,9 @@
 from Menu_classes import MenuPage
 from Scene import SceneID
 from Menu_classes import UIButton, UISprite
+import pygame
+from typing import Optional
+from high_score import valid_name_score, scores_add, scores_save
 
 
 class MainMenuPage(MenuPage):
@@ -104,12 +107,27 @@ class ResolutionPage(MenuPage):
 
 
 class NameEntry(MenuPage):
+    def __init__(self, scene_context) -> None:
+        self.name = ""
+        self.error = ""
+        super().__init__(scene_context)
+
     def build(self) -> None:
         current_size = self.context.game_data.get("asset_size", 64)
         gameloop = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
+        self.game = gameloop.game
+        font_path = "sprites/Font/KGPerfectPenmanship.ttf"
+        font_size = max(12, current_size // 2)
+        try:
+            self.font = pygame.font.Font(font_path, font_size)
+        except (FileNotFoundError, pygame.error) as e:
+            print(f"Font not found ({font_path}) : {e}.")
+            self.font = pygame.font.Font(None, font_size)
 
         center_x = (screen_w - current_size*3) // 2
+        self.text_x = center_x + current_size*2
+        self.screen_h = gameloop.height
 
         self.decorations.append(
             UISprite(
@@ -118,3 +136,53 @@ class NameEntry(MenuPage):
                 asset_size=self.context.game_data.get("asset_size", 64)
             )
         )
+
+    def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+
+        if event.type == pygame.TEXTINPUT:
+            for char in event.text:
+                if len(self.name) >= 10:
+                    break
+                if char.isascii() and (char.isalnum() or char == " "):
+                    self.name += char
+                    self.error = ""
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                self.name = self.name[:-1]
+                self.error = ""
+            elif event.key == pygame.K_RETURN:
+                if not valid_name_score(self.name, self.game.score):
+                    self.error = "Nom invalide"
+                    return None
+
+                new_rank = scores_add(self.game.rank, self.name, self.game.score)
+                if not scores_save(self.game.config.highscore_filename, new_rank):
+                    self.error = "Sauvegarde impossible"
+                    return None
+
+                self.game.rank = new_rank
+                return SceneID.MENU
+
+        return None
+
+    def render(self, screen: pygame.Surface) -> None:
+        super().render(screen)
+
+        self._render_line(screen, f"Score: {self.game.score}", 0.45)
+        self._render_line(screen, self.name + "_", 0.55, (255, 255, 0))
+        if self.error:
+            self._render_line(screen, self.error, 0.65, (255, 80, 80))
+        else:
+            self._render_line(screen, "Entre ton nom puis Entree", 0.65)
+
+    def _render_line(
+        self,
+        screen: pygame.Surface,
+        text: str,
+        height_ratio: float,
+        color: tuple[int, int, int] = (255, 255, 255),
+    ) -> None:
+        image = self.font.render(text, True, color)
+        pos = (self.text_x - image.get_width() // 2, int(self.screen_h * height_ratio))
+        screen.blit(image, pos)
