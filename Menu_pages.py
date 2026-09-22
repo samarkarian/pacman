@@ -12,16 +12,14 @@ class MainMenuPage(MenuPage):
         gameloop = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
         screen_h = gameloop.height if gameloop else 1080
-        print(screen_h, screen_w)
         center_x = (screen_w - current_size*3) // 2
 
-        self.decorations.append(
-            UISprite(
+        fond = UISprite(
                 name='Main_menu_bg',
                 pos=(center_x/1.6, int(screen_h)*0.2),
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
-        )
+        self.decorations.append(fond)
         self.buttons.append(
             UIButton(
                 name="play",
@@ -46,6 +44,14 @@ class MainMenuPage(MenuPage):
                     asset_size=self.context.game_data.get("asset_size", 64),
                 )
             )
+        self.buttons.append(
+                UIButton(
+                    name="score",
+                    pos=(center_x, int(gameloop.height * 0.7)),
+                    action=lambda: self.context.push_page(HighscorePage(self.context)),
+                    asset_size=self.context.game_data.get("asset_size", 64),
+                )
+            )
         self.decorations.append(
             UISprite(
                 name='Title',
@@ -53,6 +59,22 @@ class MainMenuPage(MenuPage):
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
         )
+        self._center_buttons(fond)
+
+    def _center_buttons(self, fond: UISprite) -> None:
+        if not fond.sprites or not all(btn.sprites for btn in self.buttons):
+            return
+
+        fond_w, fond_h = fond.sprites[0].get_size()
+        dessin = self.buttons[0].sprites[0].get_bounding_rect()
+        ecart = dessin.height * 7 // 4
+        total = dessin.height + ecart * (len(self.buttons) - 1)
+        haut = fond.pos[1] + (fond_h - total) // 2
+
+        for index, btn in enumerate(self.buttons):
+            dessin = btn.sprites[0].get_bounding_rect()
+            pos_x = fond.pos[0] + (fond_w - dessin.width) // 2 - dessin.x
+            self.buttons[index].pos = (int(pos_x), int(haut + index * ecart - dessin.y))
 
 
 class ResolutionPage(MenuPage):
@@ -87,6 +109,64 @@ class ResolutionPage(MenuPage):
                 asset_size=current_size,
             )
         )
+
+
+class HighscorePage(MenuPage):
+    def build(self) -> None:
+        current_size = self.context.game_data.get("asset_size", 64)
+        gameloop = self.context.game_data.get("gameloop")
+        screen_w = gameloop.width if gameloop else 1080
+        self.rank = gameloop.game.rank
+        font_path = "sprites/Font/KGPerfectPenmanship.ttf"
+        font_size = max(12, current_size // 2)
+        try:
+            self.font = pygame.font.Font(font_path, font_size)
+        except (FileNotFoundError, pygame.error) as e:
+            print(f"Font not found ({font_path}) : {e}.")
+            self.font = pygame.font.Font(None, font_size)
+
+        center_x = (screen_w - current_size*3) // 2
+        self.text_x = center_x + current_size*2
+        self.screen_h = gameloop.height
+
+        self.buttons.append(
+            UIButton(
+                name="quit",
+                pos=(center_x, int(gameloop.height * 0.8)),
+                action=lambda: self.context.pop_page(),
+                asset_size=current_size,
+            )
+        )
+        self.decorations.append(
+            UISprite(
+                name='Title',
+                pos=(center_x*0.6, int(gameloop.height * 0.05)),
+                asset_size=current_size,
+            )
+        )
+
+    def render(self, screen: pygame.Surface) -> None:
+        super().render(screen)
+
+        if not self.rank:
+            self._render_line(screen, "Pas encore de score", 0.4)
+            return
+
+        for index, entry in enumerate(self.rank):
+            line = f"{index + 1}. {entry['name']} {entry['score']}"
+            color = (255, 255, 0) if index == 0 else (255, 255, 255)
+            self._render_line(screen, line, 0.4 + index * 0.04, color)
+
+    def _render_line(
+        self,
+        screen: pygame.Surface,
+        text: str,
+        height_ratio: float,
+        color: tuple[int, int, int] = (255, 255, 255),
+    ) -> None:
+        image = self.font.render(text, True, color)
+        pos = (self.text_x - image.get_width() // 2, int(self.screen_h * height_ratio))
+        screen.blit(image, pos)
 
 # class GameOverPage(MenuPage):
 #     def build(self) -> None:

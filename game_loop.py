@@ -9,7 +9,7 @@ import sys
 class GameLoop:
     RESOLUTIONS: dict[int, tuple[int, int]] = {
         64: (1500, 1500),
-        32: (1080, 1080),
+        32: (750, 750),
     }
 
     def __init__(self, game) -> None:

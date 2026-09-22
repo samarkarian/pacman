@@ -56,8 +56,7 @@ class Game:
         self.field = play_field
         self.player = Player(play_field)
         self.vulnerable_count = 0
-        self.time_left = (self.config.level_max_time * 1000
-                          // self.ghost_step_ms)
+        self.time_left = self.config.level_max_time
 
         self.ghosts = []
         ghost_colors = ['cyan', 'red', 'orange', 'pink']
