@@ -9,13 +9,24 @@ from pydantic import (
 )
 
 
-def clamp_int(raw: Any, minimum: int, default: int) -> int:
+def clamp_int(
+        raw: Any, minimum: int | None,
+        maximum: int | None, default: int, name: str) -> int | None:
 
     try:
         value = int(raw)
     except (TypeError, ValueError):
+        print(f"Warning: {name} {raw} is not a number, using {default} by default.")
         return default
-    return value if value >= minimum else default
+
+    if maximum is not None and value > maximum:
+        print(f"Warning: {name} {value} is too big, using {maximum} by default.")
+        return maximum
+    elif minimum is not None and value < minimum:
+        print(f"Warning: {name} {value} is too small, using {minimum} by default.")
+        return minimum
+    else:
+        return value
 
 
 class Level(BaseModel):
@@ -26,12 +37,12 @@ class Level(BaseModel):
     @field_validator("width", mode="before")
     @classmethod
     def clamp_width(cls, value: Any) -> int:
-        return clamp_int(value, 14, 19)
+        return clamp_int(value, 14, 23, 19, 'width')
 
     @field_validator("height", mode="before")
     @classmethod
     def clamp_height(cls, value: Any) -> int:
-        return clamp_int(value, 10, 19)
+        return clamp_int(value, 10, 21, 19, 'height')
 
 
 class Config(BaseModel):
@@ -58,17 +69,17 @@ class Config(BaseModel):
         name = info.field_name
         assert name is not None
         default = cls.model_fields[name].default
-        return clamp_int(value, 0, default)
+        return clamp_int(value, 0, None, default, name)
 
     @field_validator("lives", mode="before")
     @classmethod
     def clamp_lives(cls, value: Any) -> int:
-        return clamp_int(value, 1, 3)
+        return clamp_int(value, 1, None, 3, 'lives')
 
     @field_validator("level_max_time", mode="before")
     @classmethod
     def clamp_time(cls, value: Any) -> int:
-        return clamp_int(value, 10, 90)
+        return clamp_int(value, 10, None, 90, 'level_max_time')
 
     @field_validator("highscore_filename", mode="before")
     @classmethod

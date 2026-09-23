@@ -76,9 +76,28 @@ class Maze:
 
         return neighbors_lst
 
-    def center(self) -> tuple[int, int]:
-        # Pas encore pris en compte si case 15 ou pas dans la limite du maze
-        return (self.width // 2, self.height // 2)
+    def center(self) -> tuple[int, int] | None:
+
+        cy, cx = self.height // 2, self.width // 2
+
+        if self.is_walkable(cx, cy):
+            return (cx, cy)
+
+        cases = []
+        for y in range(self.height):
+            for x in range(self.width):
+                cases.append((x, y))
+
+        cases = sorted(
+            cases,
+            key=lambda c: abs(c[0] - cx) + abs(c[1] - cy)
+        )
+
+        for x, y in cases:
+            if self.is_walkable(x, y):
+                return (x, y)
+
+        return None
 
     def corners(self) -> list[tuple[int, int]]:
 

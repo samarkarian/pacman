@@ -32,7 +32,6 @@ class PlayField:
 
         pacgum = self.pacgums.pop((x, y), None)
         if pacgum is not None:
-            # Tu as directement accès à l'instance pacgum ici
             return True
         return False
 
@@ -40,7 +39,6 @@ class PlayField:
 
         super_pacgum = self.super_pacgums.pop((x, y), None)
         if super_pacgum is not None:
-            # Tu as directement accès à l'instance pacgum ici
             return True
         return False
 

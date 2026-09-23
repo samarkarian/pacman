@@ -65,6 +65,7 @@ class Game:
             self.ghosts.append(Ghost(play_field, spawn, color, behavior))
 
         self.level_index = level_index
+        self.player.set_direction('S')
 
         return True
 
@@ -143,7 +144,6 @@ class Game:
             ghost.turn_update((self.player.posx, self.player.posy), new_state, self.ghost_step_ms, self.player.controller.next_direction)
 
     def step_player(self) -> None:
-        """Avancement logique du joueur d'une case."""
         self.player.turn_update(self.player_step_ms)
 
         eaten = None
@@ -163,15 +163,8 @@ class Game:
         if self.field is None or self.player is None or self.is_over():
             return
 
-        # self.player_timer_ms += dt_ms
-        # if self.player_timer_ms >= self.player_step_ms:
-        #     self.player_timer_ms -= self.player_step_ms
-        #     self.step_player()
-        #     if self.check_collision(self.player):
-        #         return
         self.player_timer_ms += dt_ms
 
-        # Si le joueur est à l'arrêt et qu'une direction valide est demandée : départ immédiat
         can_start_moving = (
             self.player.controller.direction is None
             and self.player.controller.next_direction is not None

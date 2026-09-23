@@ -16,11 +16,6 @@ class Player:
         self.controller.set_direction(direction)
         self.renderer.direction = direction
 
-    # def turn_update(self):
-    #     self.controller.step()
-    #     self.posx, self.posy = self.controller.x, self.controller.y
-    #     self.renderer.posx, self.renderer.posy = self.posx, self.posy
-
     def turn_update(self, step_duration_ms: int = 150) -> None:
         old_pos = (self.posx, self.posy)
         self.controller.step()
@@ -30,7 +25,7 @@ class Player:
             self.renderer.start_move(old_pos, (self.posx, self.posy), step_duration_ms)
         else:
             self.renderer.posx, self.renderer.posy = self.posx, self.posy
-    
+
     def load_sprites(self, asset_size):
         self.renderer.load_sprites(asset_size=asset_size)
 
@@ -43,7 +38,7 @@ class Player:
         self.renderer.posx, self.renderer.posy = self.spawn
         self.renderer.start_pos = self.spawn
         self.renderer.target_pos = self.spawn
-        self.renderer.direction = 'E'
+        self.set_direction('S')
 
 
 class PlayerRenderer(Entity):

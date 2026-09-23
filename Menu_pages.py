@@ -52,6 +52,14 @@ class MainMenuPage(MenuPage):
                     asset_size=self.context.game_data.get("asset_size", 64),
                 )
             )
+        self.buttons.append(
+                UIButton(
+                    name="instructions",
+                    pos=(center_x, int(gameloop.height * 0.7)),
+                    action=lambda: self.context.push_page(InstructionsPages(self.context)),
+                    asset_size=self.context.game_data.get("asset_size", 64),
+                )
+            )
         self.decorations.append(
             UISprite(
                 name='Title',
@@ -168,31 +176,6 @@ class HighscorePage(MenuPage):
         pos = (self.text_x - image.get_width() // 2, int(self.screen_h * height_ratio))
         screen.blit(image, pos)
 
-# class GameOverPage(MenuPage):
-#     def build(self) -> None:
-#         current_size = self.context.game_data.get("asset_size", 64)
-#         gameloop = self.context.game_data.get("gameloop")
-#         screen_w = gameloop.width if gameloop else 1080
-
-#         center_x = (screen_w - current_size*3) // 2
-
-#         self.decorations.append(
-#             UISprite(
-#                 name='Gameover',
-#                 pos=(center_x*0.6, int(gameloop.height * 0.05)),
-#                 asset_size=self.context.game_data.get("asset_size", 64),
-#             )
-#         )
-#         self.buttons.append(
-#             UIButton(
-#                 name="quit",
-#                 pos=(center_x, int(gameloop.height * 0.61)),
-#                 action=lambda: SceneID.MENU,
-#                 asset_size=current_size,
-#             )
-#         )
-
-
 class NameEntry(MenuPage):
     def __init__(self, scene_context) -> None:
         self.name = ""
@@ -273,3 +256,35 @@ class NameEntry(MenuPage):
         image = self.font.render(text, True, color)
         pos = (self.text_x - image.get_width() // 2, int(self.screen_h * height_ratio))
         screen.blit(image, pos)
+
+
+class InstructionsPages(MenuPage):
+    def build(self) -> None:
+        current_size = self.context.game_data.get("asset_size", 64)
+        gameloop = self.context.game_data.get("gameloop")
+        screen_w = gameloop.width if gameloop else 1080
+
+        center_x = (screen_w - current_size*3) // 2
+
+        self.decorations.append(
+            UISprite(
+                name='Instructions',
+                pos=((screen_w - current_size*11) // 2, int(gameloop.height * 0.3)),
+                asset_size=current_size,
+            )
+        )
+        self.buttons.append(
+            UIButton(
+                name="quit",
+                pos=(center_x, int(gameloop.height * 0.8)),
+                action=lambda: self.context.pop_page(),
+                asset_size=current_size,
+            )
+        )
+        self.decorations.append(
+            UISprite(
+                name='Title',
+                pos=(center_x*0.6, int(gameloop.height * 0.05)),
+                asset_size=current_size,
+            )
+        )

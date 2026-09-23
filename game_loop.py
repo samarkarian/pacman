@@ -49,12 +49,6 @@ class GameLoop:
                 gameloop=self,
                 asset_size=self.asset_size,
             )
-        # elif target == SceneID.GAMEOVER:
-        #     self.current_scene = MenuScene(
-        #         initial_page_cls=GameOverPage,
-        #         gameloop=self,
-        #         asset_size=self.asset_size,
-        #     )
         elif target == SceneID.QUIT:
             self.is_running = False
         elif target == SceneID.NAME:
