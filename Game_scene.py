@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 from player import Player
 from game import Game
 from HUD_container import HUDContainer
+from Menu_classes import UIButton
 import pygame
 
 
@@ -18,7 +19,24 @@ class GameScene(Scene):
         self.last_ghost_step = pygame.time.get_ticks()
         self.last_tick = pygame.time.get_ticks()
         self.loaded_field = self.game.field
-        self.max_dt_ms: int = 100
+        self.max_dt_ms = 100
+
+        self.paused = False
+        self.pause_index = 0
+        self.pause_buttons = [
+            UIButton(
+                name="play",
+                pos=(0, 0),
+                action=self.resume,
+                asset_size=self.asset_size,
+            ),
+            UIButton(
+                name="quit",
+                pos=(0, 0),
+                action=lambda: SceneID.MENU,
+                asset_size=self.asset_size,
+            ),
+        ]
 
         self.hud_container = HUDContainer(game=self.game, asset_size=self.asset_size)
         self.load_sprites()
@@ -36,6 +54,9 @@ class GameScene(Scene):
 
         self.hud_container.load_sprites(self.asset_size)
 
+    def resume(self) -> None:
+        self.paused = False
+
     def handle_event(self, event: pygame.event.Event) -> Optional[Scene]:
         KEY_TO_DIRECTION = {
             pygame.K_UP: 'N',
@@ -46,17 +67,38 @@ class GameScene(Scene):
         if event.type == pygame.QUIT:
             self.is_running = False
         elif event.type == pygame.KEYDOWN:
-            if event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_ESCAPE):
-                return SceneID.MENU
+            if event.key == pygame.K_ESCAPE:
+                self.paused = not self.paused
+                self.pause_index = 0
+            elif self.paused:
+                n = len(self.pause_buttons)
+                if event.key == pygame.K_UP:
+                    self.pause_index = (self.pause_index - 1) % n
+                elif event.key == pygame.K_DOWN:
+                    self.pause_index = (self.pause_index + 1) % n
+                elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                    return self.pause_buttons[self.pause_index].trigger()
             elif event.key in KEY_TO_DIRECTION and self.game.player:
                 self.game.player.set_direction(KEY_TO_DIRECTION[event.key])
-            elif event.key == pygame.K_n:
-                self.game.next_level()
-            elif event.key == pygame.K_b:
-                pygame.time.wait(2000)
+            elif event.key == pygame.K_c:
+                self.game.cheat = not self.game.cheat
+                self.game.invincible = False
+                self.game.ghosts_frozen = False
+            elif self.game.cheat and event.key == pygame.K_n:
+                self.game.skip_level()
+            elif self.game.cheat and event.key == pygame.K_i:
+                self.game.invincible = not self.game.invincible
+            elif self.game.cheat and event.key == pygame.K_f:
+                self.game.ghosts_frozen = not self.game.ghosts_frozen
+            elif self.game.cheat and event.key == pygame.K_l:
+                self.game.lives += 1
         return None
 
     def update(self) -> Optional[SceneID]:
+        if self.paused:
+            self.last_tick = pygame.time.get_ticks()
+            return None
+
         now = pygame.time.get_ticks()
         dt = now - self.last_tick
         self.last_tick = now
@@ -121,3 +163,15 @@ class GameScene(Scene):
 
         for e in self.entities:
             e.render(screen, maze_offset)
+
+        if self.paused:
+            screen_w, screen_h = screen.get_size()
+            voile = pygame.Surface((screen_w, screen_h))
+            voile.fill((0, 0, 0))
+            voile.set_alpha(150)
+            screen.blit(voile, (0, 0))
+
+            x = (screen_w - 4 * self.asset_size) // 2
+            for i, btn in enumerate(self.pause_buttons):
+                btn.pos = (x, int(screen_h * (0.4 + 0.1 * i)))
+                btn.render(screen, i == self.pause_index)

@@ -72,6 +72,21 @@ class LivesTextRenderer(HUDTextRenderer):
         return f"{self.label}"
 
 
+class CheatRenderer(HUDTextRenderer):
+    def __init__(self, pos: Tuple[int, int], game) -> None:
+        super().__init__(pos, game, label="CHEAT")
+
+    def get_text(self) -> str:
+        if not self.game.cheat:
+            return ""
+        text = self.label
+        if self.game.invincible:
+            text += "  invincible"
+        if self.game.ghosts_frozen:
+            text += "  frozen"
+        return text
+
+
 from sprite_cache import load_image
 
 
@@ -80,6 +95,7 @@ class LivesRenderer(Renderer):
         super().__init__()
         self.posx, self.posy = int(pos[0]), int(pos[1])
         self.game = game
+        self.font: pygame.font.Font | None = None
 
     def load_sprites(self, asset_size: int = 64) -> None:
         self.sprites.clear()
@@ -91,12 +107,31 @@ class LivesRenderer(Renderer):
         except Exception as e:
             print(f"Erreur sprite vie : {e}")
 
+        font_path = "sprites/Font/KGPerfectPenmanship.ttf"
+        font_size = max(12, asset_size // 3)
+        try:
+            self.font = pygame.font.Font(font_path, font_size)
+        except (FileNotFoundError, pygame.error):
+            self.font = pygame.font.Font(None, font_size)
+
     def render(self, screen: pygame.Surface, offset: Tuple[int, int] = (0, 0)) -> None:
         icon = self.sprites.get(0)
         if not icon:
             return
 
         spacing = icon.get_width() + 4
+        max_icons = (screen.get_width() - self.posx - offset[0]) // spacing
+        if self.game.lives > max_icons and self.font:
+            # Trop de coeurs pour le bandeau : un seul coeur suivi de "x10"
+            draw_x = self.posx + offset[0]
+            draw_y = self.posy + offset[1]
+            screen.blit(icon, (draw_x, draw_y))
+            text = self.font.render(
+                f"x{self.game.lives}", True, (255, 255, 255))
+            text_y = draw_y + (icon.get_height() - text.get_height()) // 2
+            screen.blit(text, (draw_x + spacing, text_y))
+            return
+
         for i in range(max(0, self.game.lives)):
             draw_x = self.posx + (i * spacing) + offset[0]
             draw_y = self.posy + offset[1]

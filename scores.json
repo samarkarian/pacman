@@ -4,12 +4,24 @@
         "score": 3500
     },
     {
+        "name": "n",
+        "score": 1110
+    },
+    {
         "name": "Sash",
         "score": 820
     },
     {
+        "name": "b",
+        "score": 610
+    },
+    {
         "name": "S",
         "score": 360
+    },
+    {
+        "name": "Ss",
+        "score": 340
     },
     {
         "name": "Chris",
@@ -26,9 +38,5 @@
     {
         "name": "Sacha",
         "score": 190
-    },
-    {
-        "name": "Jul",
-        "score": 111
     }
 ]

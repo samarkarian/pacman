@@ -8,11 +8,9 @@ class MenuScene(Scene):
     def __init__(self, initial_page_cls: type[MenuPage], **shared_data: Any) -> None:
         self.game_data: Dict[str, Any] = shared_data
         self.page_stack: List[MenuPage] = []
-        # Instanciation de la toute première page injectée
         self.push_page(initial_page_cls(self))
 
     def set_asset_size(self, size: int) -> None:
-        """Met à jour la résolution et recharge les sprites de toutes les pages."""
         gameloop = self.game_data.get("gameloop")
         if gameloop:
             gameloop.set_resolution(size)

@@ -6,7 +6,7 @@ from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer, Liv
 
 from typing import List, Tuple
 import pygame
-from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer, LivesRenderer, LivesTextRenderer
+from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer, LivesRenderer, LivesTextRenderer, CheatRenderer
 
 
 class HUDContainer:
@@ -52,6 +52,10 @@ class HUDContainer:
             LevelRenderer(pos=(int(step_x * 2.1), hud_y), game=self.game),
             LivesTextRenderer(pos=(int(step_x * 2.8), hud_y), game=self.game),
             LivesRenderer(pos=(int(step_x * 3.1), int(hud_y * 0.7)), game=self.game),
+            CheatRenderer(
+                pos=(int(step_x * 0.1), hud_y + self.asset_size // 2),
+                game=self.game,
+            ),
         ]
 
         self.update_dimensions(maze_w, self.asset_size)

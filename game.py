@@ -47,6 +47,10 @@ class Game:
         self.respawn_steps: int = (self.respawn_seconds * 1000
                                    // self.ghost_step_ms)
 
+        self.cheat = False
+        self.invincible = False
+        self.ghosts_frozen = False
+
     def start_level(self, level_index) -> bool:
 
         play_field = build_level(self.config, level_index)
@@ -82,10 +86,20 @@ class Game:
 
         return self.start_level(self.level_index + 1)
 
+    def skip_level(self) -> None:
+
+        self.field.pacgums.clear()
+        self.field.super_pacgums.clear()
+        if self.level_index < len(self.config.level) - 1:
+            self.next_level()
+
     def reset(self) -> bool:
 
         self.score = 0
         self.lives = self.config.lives
+        self.cheat = False
+        self.invincible = False
+        self.ghosts_frozen = False
 
         return self.start_level(0)
 
@@ -114,6 +128,8 @@ class Game:
                     self.score += self.config.points_per_ghost
                     ghost.reset_position()
                     ghost.ai.start_respawn(self.respawn_steps)
+                elif self.invincible:
+                    continue
                 else:
                     self.lives -= 1
                     if self.lives <= 0:
@@ -140,6 +156,11 @@ class Game:
                 new_state = "end"
             else:
                 new_state = "vulnerable"
+
+            if self.ghosts_frozen:
+                ghost.state = new_state
+                ghost.renderer.state = new_state
+                continue
 
             ghost.turn_update((self.player.posx, self.player.posy), new_state, self.ghost_step_ms, self.player.controller.next_direction)
 
