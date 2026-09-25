@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
+from enum import Enum, auto
 from typing import Optional
 import pygame
 
 
-from enum import Enum, auto
-
-
 class SceneID(Enum):
+    """Identifiers of the scenes requested from the game loop."""
+
     NONE = auto()
     MENU = auto()
     GAME = auto()
@@ -16,17 +16,19 @@ class SceneID(Enum):
 
 
 class Scene(ABC):
+    """A game screen: handles its own input, logic and drawing."""
+
     @abstractmethod
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        """Gère les entrées clavier propres à cet écran."""
+        """Handle the keyboard input of this screen."""
         pass
 
     @abstractmethod
     def update(self) -> Optional[SceneID]:
-        """Met à jour la logique interne (animations, déplacements)."""
+        """Update the internal logic (animations, movement)."""
         pass
 
     @abstractmethod
     def render(self, screen: pygame.Surface) -> None:
-        """Affiche les éléments sur l'écran fourni."""
+        """Draw the elements on the given screen."""
         pass

@@ -1,0 +1,5 @@
+# Manifeste de l'app itch.io : lance le jeu avec la config fournie
+[[actions]]
+name = "play"
+path = "pac-man"
+args = ["config.json"]

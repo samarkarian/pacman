@@ -1,12 +1,17 @@
-from Display_abstractmethods import Entity, Renderer
+from display_abstractmethods import Entity
 import pygame
 from sprite_cache import load_image
 import random
 from typing import Tuple, Dict, List
+from field import PlayField
 
 
 class Ghost:
-    def __init__(self, play_field, spawn, color: str, behavior: str):
+    """Ghost: links its AI (ai) and its display (renderer)."""
+
+    def __init__(self, play_field: PlayField, spawn: Tuple[int, int],
+                 color: str, behavior: str) -> None:
+        """Create the ghost in its corner, with its colour and AI."""
         self.ai = GhostAI(play_field, spawn, behavior)
         self.renderer = GhostRenderer(spawn, color)
         self.posx, self.posy = spawn[0], spawn[1]
@@ -14,6 +19,7 @@ class Ghost:
         self.spawn = spawn
 
     def reset_position(self) -> None:
+        """Send the ghost back to its corner, in the normal state."""
         self.posx, self.posy = self.spawn
         self.ai.reset(self.spawn)
         self.renderer.posx, self.renderer.posy = self.spawn
@@ -22,8 +28,10 @@ class Ghost:
         self.state = "normal"
         self.renderer.state = "normal"
 
-    def turn_update(self, player_pos, new_state, step_duration: int = 200,
-                    direction: str | None = None):
+    def turn_update(self, player_pos: Tuple[int, int], new_state: str,
+                    step_duration: int = 200,
+                    direction: str | None = None) -> None:
+        """Update the state (colour), move one cell and start the slide."""
 
         if self.ai.respawn_count > 0:
             new_state = "dead"
@@ -33,22 +41,28 @@ class Ghost:
 
         old_pos = (self.posx, self.posy)
 
-        self.posx, self.posy = self.ai.step(player_pos, state=self.state, direction=direction)
+        self.posx, self.posy = self.ai.step(player_pos, state=self.state,
+                                            direction=direction)
 
         self.renderer.start_move(old_pos, (self.posx, self.posy),
                                  step_duration)
 
-    def load_sprites(self, asset_size):
+    def load_sprites(self, asset_size: int) -> None:
+        """Load the ghost's images for this size."""
         self.renderer.load_sprites(asset_size=asset_size)
 
-    def render(self, screen, animation_speed: int,
-               offset: Tuple[int, int] = (0, 0)):
+    def render(self, screen: pygame.Surface, animation_speed: int,
+               offset: Tuple[int, int] = (0, 0)) -> None:
+        """Draw the ghost."""
         self.renderer.render(screen=screen, animation_speed=animation_speed,
                              offset=offset)
 
 
 class GhostRenderer(Entity):
-    def __init__(self, pos: Tuple[int, int], color):
+    """Ghost display: one pair of frames per state."""
+
+    def __init__(self, pos: Tuple[int, int], color: str) -> None:
+        """Prepare the image lists of every state."""
         super().__init__(pos)
         self.color = color
         self.sprites: Dict[str, List[pygame.Surface]] = {
@@ -64,18 +78,23 @@ class GhostRenderer(Entity):
         self.move_start_time: int = pygame.time.get_ticks()
         self.step_duration_ms: int = 200
 
-    def load_sprites(self, asset_size):
-        """volonte de creer un systeme de path de fichier automatique avec le nom de la classe et la taille (size) en pixels
-        """
+    def load_sprites(self, asset_size: int) -> None:
+        """Load the frames: own colour when normal, neutral otherwise."""
+        color = self.color
         try:
             for state in self.sprites.keys():
                 self.sprites[state].clear()
                 if state == 'normal':
-                    for sprite in range(2):
-                        self.sprites['normal'].append(load_image(f"sprites/Entities/Ghost/Ghost_{self.color}/Ghost_{self.color}_{asset_size}/Ghost_{self.color}_{asset_size}_frame_{sprite}.png"))
+                    folder = (f"sprites/Entities/Ghost/Ghost_{color}/"
+                              f"Ghost_{color}_{asset_size}/"
+                              f"Ghost_{color}_{asset_size}")
                 else:
-                    for sprite in range(2):
-                        self.sprites[state].append(load_image(f"sprites/Entities/Ghost/Ghost_neutral/Ghost_{state}/Ghost_{state}_{asset_size}/Ghost_{state}_{asset_size}_frame_{sprite}.png"))
+                    folder = (f"sprites/Entities/Ghost/Ghost_neutral/"
+                              f"Ghost_{state}/Ghost_{state}_{asset_size}/"
+                              f"Ghost_{state}_{asset_size}")
+                for sprite in range(2):
+                    self.sprites[state].append(
+                        load_image(f"{folder}_frame_{sprite}.png"))
 
             self.pixel_offset = asset_size
 
@@ -88,6 +107,7 @@ class GhostRenderer(Entity):
         to_pos: Tuple[int, int],
         duration_ms: int = 200,
     ) -> None:
+        """Start a slide from from_pos to to_pos lasting duration_ms."""
         self.start_pos = from_pos
         self.target_pos = to_pos
         self.move_start_time = pygame.time.get_ticks()
@@ -99,13 +119,19 @@ class GhostRenderer(Entity):
         animation_speed: int = 800,
         offset: Tuple[int, int] = (0, 0),
     ) -> None:
+        """Draw the ghost at its current position along the slide."""
         now = pygame.time.get_ticks()
 
         elapsed = now - self.move_start_time
-        t = min(1.0, elapsed / self.step_duration_ms) if self.step_duration_ms > 0 else 1.0
+        if self.step_duration_ms > 0:
+            t = min(1.0, elapsed / self.step_duration_ms)
+        else:
+            t = 1.0
 
-        interp_x = self.start_pos[0] + (self.target_pos[0] - self.start_pos[0]) * t
-        interp_y = self.start_pos[1] + (self.target_pos[1] - self.start_pos[1]) * t
+        start_x, start_y = self.start_pos
+        target_x, target_y = self.target_pos
+        interp_x = start_x + (target_x - start_x) * t
+        interp_y = start_y + (target_y - start_y) * t
 
         draw_x = int(interp_x * self.pixel_offset) + offset[0]
         draw_y = int(interp_y * self.pixel_offset) + offset[1]
@@ -117,24 +143,36 @@ class GhostRenderer(Entity):
 
 
 class GhostAI:
-    def __init__(self, field, spawn, behavior: str):
+    """Choose a ghost's next cell according to its behaviour."""
+
+    def __init__(self, field: PlayField, spawn: Tuple[int, int],
+                 behavior: str) -> None:
+        """Place the AI on spawn with its behaviour."""
 
         self.field = field
         self.x, self.y = spawn
         self.behavior = behavior
-        self.previous = None
+        self.previous: Tuple[int, int] | None = None
         self.respawn_count = 0
 
     def reset(self, spawn: Tuple[int, int]) -> None:
+        """Put the ghost back on spawn and cancel its waiting time."""
         self.x, self.y = spawn
         self.previous = None
         self.respawn_count = 0
 
     def start_respawn(self, steps: int) -> None:
+        """Keep the ghost still for the given steps (after being eaten)."""
 
         self.respawn_count = steps
 
-    def step(self, player_pos, state, direction: str | None) -> None:
+    def step(self, player_pos: Tuple[int, int], state: str,
+             direction: str | None) -> Tuple[int, int]:
+        """Return the next cell: chase when normal, flee otherwise.
+
+        'follow' gets closer to Pac-Man, 'random' picks at random, 'copy'
+        follows Pac-Man's direction. No U-turn unless in a dead end.
+        """
         player_x, player_y = player_pos
         if self.respawn_count != 0:
             self.respawn_count -= 1
@@ -165,7 +203,8 @@ class GhostAI:
             if self.behavior == 'random':
                 self.x, self.y = random.choice(choices)
             elif self.behavior == 'copy':
-                if maze.can_move(self.x, self.y, direction):
+                if (direction is not None
+                        and maze.can_move(self.x, self.y, direction)):
                     self.x, self.y = maze.next_cell(self.x, self.y, direction)
                 else:
                     self.x, self.y = random.choice(choices)

@@ -1,15 +1,18 @@
-from Menu_classes import MenuPage
-from Scene import SceneID
-from Menu_classes import UIButton, UISprite
+from menu_classes import MenuPage
+from scene import SceneID
+from menu_classes import UIButton, UISprite
 import pygame
-from typing import Optional
+from typing import Any, Optional
 from high_score import valid_name_score, scores_add, scores_save
 
 
 class MainMenuPage(MenuPage):
+    """Main menu: play, quit, resize, score, instructions."""
+
     def build(self) -> None:
+        """Create the background, the title and the 5 buttons."""
         current_size = self.context.game_data.get("asset_size", 64)
-        gameloop = self.context.game_data.get("gameloop")
+        gameloop: Any = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
         screen_h = gameloop.height if gameloop else 1080
         center_x = (screen_w - current_size*3) // 2
@@ -33,31 +36,34 @@ class MainMenuPage(MenuPage):
                         name="quit",
                         pos=(center_x, int(gameloop.height * 0.5)),
                         action=lambda: SceneID.QUIT,
-                        asset_size=self.context.game_data.get("asset_size", 64),
+                        asset_size=current_size,
                     )
                 )
         self.buttons.append(
                 UIButton(
                     name="resize",
                     pos=(center_x, int(gameloop.height * 0.6)),
-                    action=lambda: self.context.push_page(ResolutionPage(self.context)),
-                    asset_size=self.context.game_data.get("asset_size", 64),
+                    action=lambda: self.context.push_page(
+                        ResolutionPage(self.context)),
+                    asset_size=current_size,
                 )
             )
         self.buttons.append(
                 UIButton(
                     name="score",
                     pos=(center_x, int(gameloop.height * 0.7)),
-                    action=lambda: self.context.push_page(HighscorePage(self.context)),
-                    asset_size=self.context.game_data.get("asset_size", 64),
+                    action=lambda: self.context.push_page(
+                        HighscorePage(self.context)),
+                    asset_size=current_size,
                 )
             )
         self.buttons.append(
                 UIButton(
                     name="instructions",
                     pos=(center_x, int(gameloop.height * 0.7)),
-                    action=lambda: self.context.push_page(InstructionsPages(self.context)),
-                    asset_size=self.context.game_data.get("asset_size", 64),
+                    action=lambda: self.context.push_page(
+                        InstructionsPages(self.context)),
+                    asset_size=current_size,
                 )
             )
         self.decorations.append(
@@ -70,6 +76,7 @@ class MainMenuPage(MenuPage):
         self._center_buttons(fond)
 
     def _center_buttons(self, fond: UISprite) -> None:
+        """Centre the button column inside the background frame."""
         if not fond.sprites or not all(btn.sprites for btn in self.buttons):
             return
 
@@ -82,13 +89,17 @@ class MainMenuPage(MenuPage):
         for index, btn in enumerate(self.buttons):
             dessin = btn.sprites[0].get_bounding_rect()
             pos_x = fond.pos[0] + (fond_w - dessin.width) // 2 - dessin.x
-            self.buttons[index].pos = (int(pos_x), int(haut + index * ecart - dessin.y))
+            self.buttons[index].pos = (int(pos_x),
+                                       int(haut + index * ecart - dessin.y))
 
 
 class ResolutionPage(MenuPage):
+    """Size choice: small (32 px) or medium (64 px)."""
+
     def build(self) -> None:
+        """Create the small, medium and quit buttons."""
         current_size = self.context.game_data.get("asset_size", 64)
-        gameloop = self.context.game_data.get("gameloop")
+        gameloop: Any = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
 
         center_x = (screen_w - current_size*3) // 2
@@ -120,9 +131,12 @@ class ResolutionPage(MenuPage):
 
 
 class HighscorePage(MenuPage):
+    """Shows the top 10 scores."""
+
     def build(self) -> None:
+        """Load the font, the title and the quit button."""
         current_size = self.context.game_data.get("asset_size", 64)
-        gameloop = self.context.game_data.get("gameloop")
+        gameloop: Any = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
         self.rank = gameloop.game.rank
         font_path = "sprites/Font/KGPerfectPenmanship.ttf"
@@ -154,10 +168,11 @@ class HighscorePage(MenuPage):
         )
 
     def render(self, screen: pygame.Surface) -> None:
+        """Draw one line per score, the first one in yellow."""
         super().render(screen)
 
         if not self.rank:
-            self._render_line(screen, "Pas encore de score", 0.4)
+            self._render_line(screen, "No score yet", 0.4)
             return
 
         for index, entry in enumerate(self.rank):
@@ -172,19 +187,26 @@ class HighscorePage(MenuPage):
         height_ratio: float,
         color: tuple[int, int, int] = (255, 255, 255),
     ) -> None:
+        """Write text centred, at height_ratio of the screen height."""
         image = self.font.render(text, True, color)
-        pos = (self.text_x - image.get_width() // 2, int(self.screen_h * height_ratio))
+        pos = (self.text_x - image.get_width() // 2,
+               int(self.screen_h * height_ratio))
         screen.blit(image, pos)
 
+
 class NameEntry(MenuPage):
-    def __init__(self, scene_context) -> None:
+    """End screen (victory or game over): player name entry."""
+
+    def __init__(self, scene_context: Any) -> None:
+        """Start with an empty name."""
         self.name = ""
         self.error = ""
         super().__init__(scene_context)
 
     def build(self) -> None:
+        """Load the font and the Victory or Game Over image."""
         current_size = self.context.game_data.get("asset_size", 64)
-        gameloop = self.context.game_data.get("gameloop")
+        gameloop: Any = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
         self.game = gameloop.game
         font_path = "sprites/Font/KGPerfectPenmanship.ttf"
@@ -208,6 +230,7 @@ class NameEntry(MenuPage):
         )
 
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+        """Type the name (10 max); Enter saves it and returns to the menu."""
 
         if event.type == pygame.TEXTINPUT:
             for char in event.text:
@@ -223,12 +246,14 @@ class NameEntry(MenuPage):
                 self.error = ""
             elif event.key == pygame.K_RETURN:
                 if not valid_name_score(self.name, self.game.score):
-                    self.error = "Nom invalide"
+                    self.error = "Invalid name"
                     return None
 
-                new_rank = scores_add(self.game.rank, self.name, self.game.score)
-                if not scores_save(self.game.config.highscore_filename, new_rank):
-                    self.error = "Sauvegarde impossible"
+                new_rank = scores_add(self.game.rank, self.name,
+                                      self.game.score)
+                filename = self.game.config.highscore_filename
+                if not scores_save(filename, new_rank):
+                    self.error = "Cannot save the score"
                     return None
 
                 self.game.rank = new_rank
@@ -237,6 +262,7 @@ class NameEntry(MenuPage):
         return None
 
     def render(self, screen: pygame.Surface) -> None:
+        """Draw the score, the name being typed and the hint (or error)."""
         super().render(screen)
 
         self._render_line(screen, f"Score: {self.game.score}", 0.45)
@@ -244,7 +270,7 @@ class NameEntry(MenuPage):
         if self.error:
             self._render_line(screen, self.error, 0.65, (255, 80, 80))
         else:
-            self._render_line(screen, "Entre ton nom puis Entree", 0.65)
+            self._render_line(screen, "Type your name and press Enter", 0.65)
 
     def _render_line(
         self,
@@ -253,15 +279,20 @@ class NameEntry(MenuPage):
         height_ratio: float,
         color: tuple[int, int, int] = (255, 255, 255),
     ) -> None:
+        """Write text centred, at height_ratio of the screen height."""
         image = self.font.render(text, True, color)
-        pos = (self.text_x - image.get_width() // 2, int(self.screen_h * height_ratio))
+        pos = (self.text_x - image.get_width() // 2,
+               int(self.screen_h * height_ratio))
         screen.blit(image, pos)
 
 
 class InstructionsPages(MenuPage):
+    """Controls and rules page (one image)."""
+
     def build(self) -> None:
+        """Place the instructions image, the title and the quit button."""
         current_size = self.context.game_data.get("asset_size", 64)
-        gameloop = self.context.game_data.get("gameloop")
+        gameloop: Any = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
 
         center_x = (screen_w - current_size*3) // 2
@@ -269,7 +300,8 @@ class InstructionsPages(MenuPage):
         self.decorations.append(
             UISprite(
                 name='Instructions',
-                pos=((screen_w - current_size*11) // 2, int(gameloop.height * 0.3)),
+                pos=((screen_w - current_size*11) // 2,
+                     int(gameloop.height * 0.3)),
                 asset_size=current_size,
             )
         )

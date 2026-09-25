@@ -1,25 +1,29 @@
-from typing import List, Tuple
+from typing import Tuple
+from game import Game
 import pygame
-from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer, LivesRenderer, LivesTextRenderer
-
-
-
-from typing import List, Tuple
-import pygame
-from HUD_Render import ScoreRenderer, TimeRenderer, LevelRenderer, Renderer, LivesRenderer, LivesTextRenderer, CheatRenderer
+from hud_render import (
+    CheatRenderer,
+    LevelRenderer,
+    LivesRenderer,
+    LivesTextRenderer,
+    Renderer,
+    ScoreRenderer,
+    TimeRenderer,
+)
 
 
 class HUDContainer:
-    """Conteneur d'affichage pour le HUD (conforme aux contraintes MLX)."""
+    """Display container for the HUD (MLX-compatible drawing only)."""
 
     def __init__(
         self,
-        game,
+        game: Game,
         asset_size: int = 64,
         bg_color: Tuple[int, int, int] = (15, 15, 25),
         border_color: Tuple[int, int, int] = (200, 200, 200),
         border_width: int = 2,
     ) -> None:
+        """Create the HUD bar and its elements."""
         self.game = game
         self.asset_size = asset_size
         self.bg_color = bg_color
@@ -35,26 +39,28 @@ class HUDContainer:
         self.build()
 
     def build(self) -> None:
-        """Instancie et configure les composants internes du HUD."""
+        """Create and place the HUD elements."""
         self.hud_elements.clear()
 
-        # Sécurisation si la grille ou le labyrinthe n'est pas encore prêt
-        if not hasattr(self.game, "field") or not self.game.field or not hasattr(self.game.field, "maze"):
+        field = getattr(self.game, "field", None)
+        if not field or not hasattr(field, "maze"):
             return
 
-        maze_w = self.game.field.maze.width
+        maze_w = field.maze.width
         hud_y = int(self.asset_size * 0.7)
         step_x = (maze_w * self.asset_size) // 4
+        game = self.game
 
         self.hud_elements = [
-            ScoreRenderer(pos=(int(step_x * 0.1), hud_y), game=self.game),
-            TimeRenderer(pos=(int(step_x * 1.1), hud_y), game=self.game),
-            LevelRenderer(pos=(int(step_x * 2.1), hud_y), game=self.game),
-            LivesTextRenderer(pos=(int(step_x * 2.8), hud_y), game=self.game),
-            LivesRenderer(pos=(int(step_x * 3.1), int(hud_y * 0.7)), game=self.game),
+            ScoreRenderer(pos=(int(step_x * 0.1), hud_y), game=game),
+            TimeRenderer(pos=(int(step_x * 1.1), hud_y), game=game),
+            LevelRenderer(pos=(int(step_x * 2.1), hud_y), game=game),
+            LivesTextRenderer(pos=(int(step_x * 2.8), hud_y), game=game),
+            LivesRenderer(pos=(int(step_x * 3.1), int(hud_y * 0.7)),
+                          game=game),
             CheatRenderer(
                 pos=(int(step_x * 0.1), hud_y + self.asset_size // 2),
-                game=self.game,
+                game=game,
             ),
         ]
 
@@ -62,14 +68,14 @@ class HUDContainer:
         self.load_sprites(self.asset_size)
 
     def load_sprites(self, asset_size: int) -> None:
-        """Transmet l'ordre de chargement des ressources à tous les éléments enfants."""
+        """Pass the loading call on to every child element."""
         self.asset_size = asset_size
         for elem in self.hud_elements:
             if hasattr(elem, "load_sprites"):
                 elem.load_sprites(asset_size)
 
     def update_dimensions(self, maze_grid_w: int, asset_size: int) -> None:
-        """Recalcule la surface extérieure et intérieure sans méthode vectorielle."""
+        """Recompute the outer and inner surfaces of the bar."""
         self.asset_size = asset_size
         self.width = maze_grid_w * asset_size
         self.height = 2 * asset_size
@@ -84,7 +90,7 @@ class HUDContainer:
         self.inner_surface = pygame.Surface((inner_w, inner_h))
 
     def render(self, screen: pygame.Surface, pos: Tuple[int, int]) -> None:
-        """Effectue le rendu par double buffer et blit."""
+        """Draw the HUD on an off-screen surface, then blit it."""
         if self.surface is None or self.inner_surface is None:
             return
 
@@ -94,6 +100,7 @@ class HUDContainer:
         for hud in self.hud_elements:
             hud.render(self.inner_surface)
 
-        self.surface.blit(self.inner_surface, (self.border_width, self.border_width))
+        self.surface.blit(self.inner_surface,
+                          (self.border_width, self.border_width))
 
         screen.blit(self.surface, pos)

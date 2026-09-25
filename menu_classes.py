@@ -1,14 +1,14 @@
-from typing import List, Optional, Any, Tuple, Dict, Callable
-from Scene import SceneID
+from typing import Any, List, Optional, Tuple, Dict, Callable
+from scene import SceneID
 import pygame
 from abc import ABC, abstractmethod
 
 
 class UIButton:
-    """Bouton avec element visuel
-    deux frames, une sans pre clic, et une lorsque le curseur est dessus
-    execute une fonction
-    il doit etre append aux buttuns du menu via self.buttons.append()
+    """Menu button with two frames: normal and selected.
+
+    Runs its action when triggered; add it to a page with
+    self.buttons.append().
     """
     def __init__(
         self,
@@ -17,6 +17,7 @@ class UIButton:
         action: Callable[[], Optional[SceneID]],
         asset_size: int = 64,
     ) -> None:
+        """Create the button and load its 2 frames."""
         self.name: str = name
         self.pos: Tuple[int, int] = pos
         self.action: Callable[[], Optional[SceneID]] = action
@@ -25,7 +26,7 @@ class UIButton:
         self.load_sprites()
 
     def load_sprites(self) -> None:
-        """Charge la frame 0 (inactif) et la frame 1 (sélectionné)."""
+        """Load frame 0 (idle) and frame 1 (selected)."""
         try:
             for frame in range(2):
                 path = (
@@ -34,41 +35,48 @@ class UIButton:
                 )
                 self.sprites[frame] = pygame.image.load(path).convert_alpha()
         except Exception as e:
-            print(f"Erreur de chargement pour {self.name}: {e}")
+            print(f"Error: cannot load the {self.name} button ({e})")
 
     def trigger(self) -> Optional[SceneID]:
+        """Run the button action and return the requested scene."""
         return self.action()
 
     def render(self, screen: pygame.Surface, is_selected: bool) -> None:
+        """Draw frame 1 if the button is selected, frame 0 otherwise."""
         frame_index = 1 if is_selected else 0
         if frame_index in self.sprites:
             screen.blit(self.sprites[frame_index], self.pos)
 
 
 class UISprite:
-    """Élément visuel animé passif pour les menus (non interactif).
-    Il doit etre append aux decorations du menu via self.decorations.append()
+    """Static image used as a menu decoration (not interactive).
+
+    Add it to a page with self.decorations.append().
     """
 
     def __init__(
         self,
         name: str,
-        pos: Tuple[int, int],
+        pos: Tuple[float, float],
         asset_size: int,
     ) -> None:
-        self.pos: Tuple[int, int] = pos
+        """Create the decoration and load its image."""
+        self.pos: Tuple[float, float] = pos
         self.sprites: List[pygame.Surface] = []
         self.asset_size: int = asset_size
         self._load_sprites(name)
 
     def _load_sprites(self, name: str) -> None:
-        """Charge les images à partir d'un pattern contenant {frame}."""
+        """Load the image from the sprite name and size."""
         try:
-            self.sprites.append(pygame.image.load(f"sprites/UISprite/{name}/{name}_{self.asset_size}/{name}_{self.asset_size}.png"))
+            size = self.asset_size
+            self.sprites.append(pygame.image.load(
+                f"sprites/UISprite/{name}/{name}_{size}/{name}_{size}.png"))
         except Exception as e:
             print({e})
 
     def render(self, screen: pygame.Surface) -> None:
+        """Draw the image at its position."""
         if not self.sprites:
             return
 
@@ -76,7 +84,10 @@ class UISprite:
 
 
 class MenuPage(ABC):
-    def __init__(self, scene_context) -> None:
+    """Menu page: decorations, buttons and keyboard selection."""
+
+    def __init__(self, scene_context: Any) -> None:
+        """Create the page and its elements (build)."""
         self.context = scene_context
         self.buttons: List[UIButton] = []
         self.decorations: List[UISprite] = []
@@ -85,18 +96,20 @@ class MenuPage(ABC):
 
     @abstractmethod
     def build(self) -> None:
-        """Chaque page instancie ses propres SpriteButtons ici."""
+        """Create the buttons and decorations of the page."""
         pass
 
     def rebuild(self) -> None:
-        """Vide et recrée les boutons avec la nouvelle taille."""
+        """Clear and rebuild the elements with the new size."""
         self.buttons.clear()
         self.decorations.clear()
         self.build()
         if self.buttons:
-            self.selected_index = min(self.selected_index, len(self.buttons) - 1)
+            self.selected_index = min(self.selected_index,
+                                      len(self.buttons) - 1)
 
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
+        """Up/Down: change button. Enter/Space: trigger it."""
         if event.type != pygame.KEYDOWN or not self.buttons:
             return None
 
@@ -109,6 +122,7 @@ class MenuPage(ABC):
         return None
 
     def render(self, screen: pygame.Surface) -> None:
+        """Draw the decorations then the buttons."""
         for decor in self.decorations:
             decor.render(screen)
 
@@ -116,5 +130,7 @@ class MenuPage(ABC):
             btn.render(screen, idx == self.selected_index)
 
     def _select_resolution(self, size: int) -> Optional[SceneID]:
+        """Change the sprite size and go back to the previous page."""
         self.context.set_asset_size(size)
-        return self.context.pop_page()
+        result: Optional[SceneID] = self.context.pop_page()
+        return result

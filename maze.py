@@ -2,6 +2,7 @@ from mazegenerator import MazeGenerator
 
 
 class Maze:
+    """Maze grid: 4 wall bits per cell (N=1, E=2, S=4, W=8)."""
 
     DIRECTIONS: dict[str, tuple[int, int]] = {
         'N': (0, -1),
@@ -11,11 +12,13 @@ class Maze:
     }
 
     def __init__(self, grid: list[list[int]]) -> None:
+        """Store the grid and its size."""
         self.grid = grid
         self.height = len(grid)
         self.width = len(grid[0])
 
     def is_walkable(self, x: int, y: int) -> bool:
+        """Return True if the cell exists and is not a closed block."""
 
         if not 0 <= x < self.width or not 0 <= y < self.height:
             return False
@@ -26,6 +29,7 @@ class Maze:
         return True
 
     def can_move(self, x: int, y: int, direction: str) -> bool:
+        """Return True if one can move from (x, y) in this direction."""
 
         walkable = self.is_walkable(x, y)
         if walkable is False:
@@ -66,6 +70,7 @@ class Maze:
         return False
 
     def neighbors(self, x: int, y: int) -> list[tuple[int, int]]:
+        """Return the reachable neighbour cells of (x, y)."""
 
         neighbors_lst = []
         for dir in self.DIRECTIONS:
@@ -77,6 +82,7 @@ class Maze:
         return neighbors_lst
 
     def center(self) -> tuple[int, int] | None:
+        """Return the walkable cell closest to the centre, or None."""
 
         cy, cx = self.height // 2, self.width // 2
 
@@ -100,6 +106,7 @@ class Maze:
         return None
 
     def corners(self) -> list[tuple[int, int]]:
+        """Return the 4 corners of the grid."""
 
         return [
             (0, 0),
@@ -110,6 +117,7 @@ class Maze:
 
     def next_cell(self, pos_x: int, pos_y: int,
                   direction: str) -> tuple[int, int]:
+        """Return the next cell in this direction (same cell if unknown)."""
 
         if direction not in self.DIRECTIONS:
             return (pos_x, pos_y)
@@ -123,6 +131,7 @@ def generate_maze(
     height: int,
     seed: int,
 ) -> list[list[int]] | None:
+    """Generate the grid with the A-Maze-ing package; None on error."""
 
     try:
         mg = MazeGenerator(size=(width, height), perfect=False, seed=seed)

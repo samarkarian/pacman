@@ -16,4 +16,9 @@ dependencies = [
 mazegenerator = { path = "./mazegenerator-2.1.0-py3-none-any.whl" }
 
 [tool.mypy]
-exclude = ['\.venv']
+exclude = ['\.venv', 'build', 'dist']
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.22.3",
+]

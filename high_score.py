@@ -4,6 +4,7 @@ from typing import Any
 
 
 def valid_name_score(name: str, score: int) -> bool:
+    """Check the name (1-10 letters, digits, spaces) and a score >= 0."""
 
     if not isinstance(name, str):
         return False
@@ -21,12 +22,14 @@ def valid_name_score(name: str, score: int) -> bool:
 
 
 def sorted_value(scores: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Sort the scores from best to worst and keep the top 10."""
 
     sorted_scores = sorted(scores, key=lambda x: x['score'], reverse=True)
     return sorted_scores[:10]
 
 
 def scores_load(file_path: str) -> list[dict[str, Any]]:
+    """Read the scores file; empty list if missing or invalid."""
 
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -59,6 +62,7 @@ def scores_load(file_path: str) -> list[dict[str, Any]]:
 def scores_add(
         scores: list[dict[str, Any]],
         name: str, score: int) -> list[dict[str, Any]]:
+    """Return a new top 10 list including this score."""
 
     if not valid_name_score(name, score):
         return scores
@@ -68,7 +72,9 @@ def scores_add(
 
     return sorted_value(scores_cp)
 
+
 def scores_save(file_path: str, scores: list[dict[str, Any]]) -> bool:
+    """Write the top 10 to the file; return False if writing fails."""
 
     scores = sorted_value(scores)
 
@@ -80,12 +86,3 @@ def scores_save(file_path: str, scores: list[dict[str, Any]]) -> bool:
         return False
 
     return True
-
-
-# if __name__ == '__main__':
-
-#     scores = scores_load('./scores.json')
-#     print(scores)
-#     new_scores = scores_add(scores, 'enzo', 3500)
-#     print(new_scores)
-#     print(scores_save('./scores.json', new_scores))
