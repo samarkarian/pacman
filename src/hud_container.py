@@ -1,7 +1,7 @@
 from typing import Tuple
-from game import Game
+from src.game import Game
 import pygame
-from hud_render import (
+from src.hud_render import (
     CheatRenderer,
     LevelRenderer,
     LivesRenderer,

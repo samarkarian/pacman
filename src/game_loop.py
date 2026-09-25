@@ -1,8 +1,8 @@
-from scene import SceneID
-from game import Game
-from game_scene import GameScene
-from menu_scene import MenuScene
-from menu_pages import MainMenuPage, NameEntry
+from src.scene import SceneID
+from src.game import Game
+from src.game_scene import GameScene
+from src.menu_scene import MenuScene
+from src.menu_pages import MainMenuPage, NameEntry
 import pygame
 import sys
 

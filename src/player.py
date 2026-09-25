@@ -1,8 +1,8 @@
-from display_abstractmethods import Entity
+from src.display_abstractmethods import Entity
 from typing import Tuple
-from field import PlayField
+from src.field import PlayField
 import pygame
-from sprite_cache import load_image
+from src.sprite_cache import load_image
 
 
 class Player:

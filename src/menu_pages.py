@@ -1,9 +1,9 @@
-from menu_classes import MenuPage
-from scene import SceneID
-from menu_classes import UIButton, UISprite
+from src.menu_classes import MenuPage
+from src.scene import SceneID
+from src.menu_classes import UIButton, UISprite
 import pygame
 from typing import Any, Optional
-from high_score import valid_name_score, scores_add, scores_save
+from src.high_score import valid_name_score, scores_add, scores_save
 
 
 class MainMenuPage(MenuPage):

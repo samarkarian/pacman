@@ -1,10 +1,10 @@
 from typing import Any
-from json_loader import Config
-from maze import Maze, generate_maze
-from field import PlayField
-from ghost import Ghost
-from player import Player
-from high_score import scores_load
+from src.json_loader import Config
+from src.maze import Maze, generate_maze
+from src.field import PlayField
+from src.ghost import Ghost
+from src.player import Player
+from src.high_score import scores_load
 
 
 def build_level(config: Config, level_index: int) -> PlayField | None:

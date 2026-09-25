@@ -1,8 +1,8 @@
 import pygame
-from sprite_cache import load_image
+from src.sprite_cache import load_image
 from typing import Tuple
-from field import PlayField
-from display_abstractmethods import Renderer
+from src.field import PlayField
+from src.display_abstractmethods import Renderer
 
 
 class MazeDisplayer(Renderer):

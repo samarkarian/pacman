@@ -1,9 +1,9 @@
-from maze_display import MazeDisplayer
-from scene import Scene, SceneID
+from src.maze_display import MazeDisplayer
+from src.scene import Scene, SceneID
 from typing import Any, Optional, Tuple
-from game import Game
-from hud_container import HUDContainer
-from menu_classes import UIButton
+from src.game import Game
+from src.hud_container import HUDContainer
+from src.menu_classes import UIButton
 import pygame
 
 

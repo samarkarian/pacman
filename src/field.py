@@ -1,5 +1,5 @@
-from maze import Maze
-from pacgums import Pacgum
+from src.maze import Maze
+from src.pacgums import Pacgum
 
 
 class PlayField:

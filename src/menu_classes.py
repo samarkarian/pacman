@@ -1,5 +1,5 @@
 from typing import Any, List, Optional, Tuple, Dict, Callable
-from scene import SceneID
+from src.scene import SceneID
 import pygame
 from abc import ABC, abstractmethod
 

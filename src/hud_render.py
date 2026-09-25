@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import Tuple
-from game import Game
+from src.game import Game
 import pygame
-from display_abstractmethods import Renderer
-from sprite_cache import load_image
+from src.display_abstractmethods import Renderer
+from src.sprite_cache import load_image
 
 
 class HUDTextRenderer(Renderer):

@@ -1,9 +1,9 @@
-from display_abstractmethods import Entity
+from src.display_abstractmethods import Entity
 import pygame
-from sprite_cache import load_image
+from src.sprite_cache import load_image
 import random
 from typing import Tuple, Dict, List
-from field import PlayField
+from src.field import PlayField
 
 
 class Ghost:

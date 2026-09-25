@@ -193,6 +193,10 @@ MazeGenerator(size=(width, height), perfect=False, seed=seed).maze
 
 ## General Software Architecture
 
+`pac-man.py`, the packaging spec, the config and the sprites stay at the
+root of the repository. Every other module is in `src/` and is imported as
+`src.<module>` (for example `from src.game import Game`).
+
 ```
 pac-man.py            entry point: reads the config file, starts GameLoop
 game_loop.py          GameLoop: window, main loop, switches between scenes

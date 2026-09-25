@@ -1,8 +1,8 @@
 from typing import List, Optional, Any, Dict
 import pygame
-from scene import SceneID, Scene
-from menu_classes import MenuPage
-from menu_pages import MainMenuPage
+from src.scene import SceneID, Scene
+from src.menu_classes import MenuPage
+from src.menu_pages import MainMenuPage
 
 
 class MenuScene(Scene):

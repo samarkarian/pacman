@@ -1,6 +1,6 @@
-from display_abstractmethods import Renderer
+from src.display_abstractmethods import Renderer
 import pygame
-from sprite_cache import load_image
+from src.sprite_cache import load_image
 from typing import Tuple
 
 

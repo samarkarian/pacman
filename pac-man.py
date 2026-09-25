@@ -1,8 +1,8 @@
-from game_loop import GameLoop
+from src.game_loop import GameLoop
 import os
 import sys
-from json_loader import json_load
-from game import Game
+from src.json_loader import json_load
+from src.game import Game
 
 
 def main() -> None:

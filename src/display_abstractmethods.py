@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Tuple
 import pygame
-from sprite_cache import load_image
+from src.sprite_cache import load_image
 
 
 class Renderer(ABC):
