@@ -23,7 +23,15 @@ class HUDContainer:
         border_color: Tuple[int, int, int] = (200, 200, 200),
         border_width: int = 2,
     ) -> None:
-        """Create the HUD bar and its elements."""
+        """Create the HUD bar and its elements.
+
+        Args:
+            game: the game to show.
+            asset_size: sprite size in pixels (32 or 64).
+            bg_color: RGB background colour.
+            border_color: RGB border colour.
+            border_width: border width, in pixels.
+        """
         self.game = game
         self.asset_size = asset_size
         self.bg_color = bg_color
@@ -68,14 +76,23 @@ class HUDContainer:
         self.load_sprites(self.asset_size)
 
     def load_sprites(self, asset_size: int) -> None:
-        """Pass the loading call on to every child element."""
+        """Pass the loading call on to every child element.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.asset_size = asset_size
         for elem in self.hud_elements:
             if hasattr(elem, "load_sprites"):
                 elem.load_sprites(asset_size)
 
     def update_dimensions(self, maze_grid_w: int, asset_size: int) -> None:
-        """Recompute the outer and inner surfaces of the bar."""
+        """Recompute the outer and inner surfaces of the bar.
+
+        Args:
+            maze_grid_w: maze width, in cells.
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.asset_size = asset_size
         self.width = maze_grid_w * asset_size
         self.height = 2 * asset_size
@@ -90,7 +107,12 @@ class HUDContainer:
         self.inner_surface = pygame.Surface((inner_w, inner_h))
 
     def render(self, screen: pygame.Surface, pos: Tuple[int, int]) -> None:
-        """Draw the HUD on an off-screen surface, then blit it."""
+        """Draw the HUD on an off-screen surface, then blit it.
+
+        Args:
+            screen: surface to draw on.
+            pos: (x, y) of the bar.
+        """
         if self.surface is None or self.inner_surface is None:
             return
 

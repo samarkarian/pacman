@@ -4,7 +4,15 @@ from typing import Any
 
 
 def valid_name_score(name: str, score: int) -> bool:
-    """Check the name (1-10 letters, digits, spaces) and a score >= 0."""
+    """Check the name (1-10 letters, digits, spaces) and a score >= 0.
+
+    Args:
+        name: player name.
+        score: final score.
+
+    Returns:
+        True if both are valid.
+    """
 
     if not isinstance(name, str):
         return False
@@ -22,14 +30,28 @@ def valid_name_score(name: str, score: int) -> bool:
 
 
 def sorted_value(scores: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Sort the scores from best to worst and keep the top 10."""
+    """Sort the scores from best to worst and keep the top 10.
+
+    Args:
+        scores: list of {'name', 'score'}.
+
+    Returns:
+        The 10 best scores, best first.
+    """
 
     sorted_scores = sorted(scores, key=lambda x: x['score'], reverse=True)
     return sorted_scores[:10]
 
 
 def scores_load(file_path: str) -> list[dict[str, Any]]:
-    """Read the scores file; empty list if missing or invalid."""
+    """Read the scores file; empty list if missing or invalid.
+
+    Args:
+        file_path: path of the scores file.
+
+    Returns:
+        The valid scores, sorted.
+    """
 
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -62,7 +84,16 @@ def scores_load(file_path: str) -> list[dict[str, Any]]:
 def scores_add(
         scores: list[dict[str, Any]],
         name: str, score: int) -> list[dict[str, Any]]:
-    """Return a new top 10 list including this score."""
+    """Return a new top 10 list including this score.
+
+    Args:
+        scores: current top 10.
+        name: player name.
+        score: final score.
+
+    Returns:
+        The new top 10 (unchanged if invalid).
+    """
 
     if not valid_name_score(name, score):
         return scores
@@ -74,7 +105,15 @@ def scores_add(
 
 
 def scores_save(file_path: str, scores: list[dict[str, Any]]) -> bool:
-    """Write the top 10 to the file; return False if writing fails."""
+    """Write the top 10 to the file; return False if writing fails.
+
+    Args:
+        file_path: path of the scores file.
+        scores: scores to write.
+
+    Returns:
+        True if the file was written.
+    """
 
     scores = sorted_value(scores)
 

@@ -11,7 +11,13 @@ class HUDTextRenderer(Renderer):
 
     def __init__(self, pos: Tuple[int, int], game: Game,
                  label: str = "") -> None:
-        """Store the position, the game and the label."""
+        """Store the position, the game and the label.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+            label: text before the value.
+        """
         super().__init__()
         self.posx: int = int(pos[0])
         self.posy: int = int(pos[1])
@@ -20,7 +26,11 @@ class HUDTextRenderer(Renderer):
         self.font: pygame.font.Font | None = None
 
     def load_sprites(self, asset_size: int = 64) -> None:
-        """Load the font for the chosen resolution."""
+        """Load the font for the chosen resolution.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         font_path = "sprites/Font/KGPerfectPenmanship.ttf"
         font_size = max(12, asset_size // 3)
         try:
@@ -31,12 +41,21 @@ class HUDTextRenderer(Renderer):
 
     @abstractmethod
     def get_text(self) -> str:
-        """Return the text to display (one per subclass)."""
+        """Return the text to display (one per subclass).
+
+        Returns:
+            The text to display.
+        """
         pass
 
     def render(self, screen: pygame.Surface,
                offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw the text in white."""
+        """Draw the text in white.
+
+        Args:
+            screen: surface to draw on.
+            offset: (x, y) added to the position.
+        """
         if self.font is None:
             self.load_sprites()
 
@@ -51,11 +70,20 @@ class ScoreRenderer(HUDTextRenderer):
     """Score on 5 digits."""
 
     def __init__(self, pos: Tuple[int, int], game: Game) -> None:
-        """Create the score text."""
+        """Create the score text.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+        """
         super().__init__(pos, game, label="Score: ")
 
     def get_text(self) -> str:
-        """Return "Score: 00000"."""
+        """Return "Score: 00000".
+
+        Returns:
+            The text to display.
+        """
         return f"{self.label}{self.game.score:05d}"
 
 
@@ -63,11 +91,20 @@ class TimeRenderer(HUDTextRenderer):
     """Time left in the level, in seconds."""
 
     def __init__(self, pos: Tuple[int, int], game: Game) -> None:
-        """Create the time text."""
+        """Create the time text.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+        """
         super().__init__(pos, game, label="TIME: ")
 
     def get_text(self) -> str:
-        """Return "TIME: 90s" (never negative)."""
+        """Return "TIME: 90s" (never negative).
+
+        Returns:
+            The text to display.
+        """
         time_val = max(0.0, float(self.game.time_left))
         return f"{self.label}{time_val:.0f}s"
 
@@ -76,11 +113,20 @@ class LevelRenderer(HUDTextRenderer):
     """Level number, starting at 1."""
 
     def __init__(self, pos: Tuple[int, int], game: Game) -> None:
-        """Create the level text."""
+        """Create the level text.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+        """
         super().__init__(pos, game, label="LEVEL: ")
 
     def get_text(self) -> str:
-        """Return "LEVEL: 1"."""
+        """Return "LEVEL: 1".
+
+        Returns:
+            The text to display.
+        """
         return f"{self.label}{self.game.level_index + 1}"
 
 
@@ -88,11 +134,20 @@ class LivesTextRenderer(HUDTextRenderer):
     """"Lives:" label placed before the hearts."""
 
     def __init__(self, pos: Tuple[int, int], game: Game) -> None:
-        """Create the lives label."""
+        """Create the lives label.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+        """
         super().__init__(pos, game, label="Lives: ")
 
     def get_text(self) -> str:
-        """Return the label only."""
+        """Return the label only.
+
+        Returns:
+            The text to display.
+        """
         return f"{self.label}"
 
 
@@ -100,11 +155,20 @@ class CheatRenderer(HUDTextRenderer):
     """Shows that cheat mode is on, with its active effects."""
 
     def __init__(self, pos: Tuple[int, int], game: Game) -> None:
-        """Create the cheat text."""
+        """Create the cheat text.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+        """
         super().__init__(pos, game, label="CHEAT")
 
     def get_text(self) -> str:
-        """Return "CHEAT invincible frozen", or nothing without cheats."""
+        """Return "CHEAT invincible frozen", or nothing without cheats.
+
+        Returns:
+            The text to display.
+        """
         if not self.game.cheat:
             return ""
         text = self.label
@@ -119,14 +183,23 @@ class LivesRenderer(Renderer):
     """One heart per life, or "heart x10" when they do not fit."""
 
     def __init__(self, pos: Tuple[int, int], game: Game) -> None:
-        """Store the position of the hearts and the game."""
+        """Store the position of the hearts and the game.
+
+        Args:
+            pos: (x, y) in the HUD bar.
+            game: the game to read.
+        """
         super().__init__()
         self.posx, self.posy = int(pos[0]), int(pos[1])
         self.game = game
         self.font: pygame.font.Font | None = None
 
     def load_sprites(self, asset_size: int = 64) -> None:
-        """Load the heart image and the counter font."""
+        """Load the heart image and the counter font.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.sprites.clear()
         try:
             path = (
@@ -146,7 +219,12 @@ class LivesRenderer(Renderer):
 
     def render(self, screen: pygame.Surface,
                offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw the hearts up to the edge of the bar."""
+        """Draw the hearts up to the edge of the bar.
+
+        Args:
+            screen: surface to draw on.
+            offset: (x, y) added to the position.
+        """
         icon = self.sprites.get(0)
         if not icon:
             return

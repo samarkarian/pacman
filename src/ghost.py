@@ -11,7 +11,14 @@ class Ghost:
 
     def __init__(self, play_field: PlayField, spawn: Tuple[int, int],
                  color: str, behavior: str) -> None:
-        """Create the ghost in its corner, with its colour and AI."""
+        """Create the ghost in its corner, with its colour and AI.
+
+        Args:
+            play_field: field of the level.
+            spawn: corner cell.
+            color: 'cyan', 'red', 'orange' or 'pink'.
+            behavior: 'follow', 'random' or 'copy'.
+        """
         self.ai = GhostAI(play_field, spawn, behavior)
         self.renderer = GhostRenderer(spawn, color)
         self.posx, self.posy = spawn[0], spawn[1]
@@ -31,7 +38,14 @@ class Ghost:
     def turn_update(self, player_pos: Tuple[int, int], new_state: str,
                     step_duration: int = 200,
                     direction: str | None = None) -> None:
-        """Update the state (colour), move one cell and start the slide."""
+        """Update the state (colour), move one cell and start the slide.
+
+        Args:
+            player_pos: Pac-Man's cell.
+            new_state: 'normal', 'vulnerable', 'end' or 'dead'.
+            step_duration: slide duration, in ms.
+            direction: Pac-Man's wanted direction.
+        """
 
         if self.ai.respawn_count > 0:
             new_state = "dead"
@@ -48,12 +62,22 @@ class Ghost:
                                  step_duration)
 
     def load_sprites(self, asset_size: int) -> None:
-        """Load the ghost's images for this size."""
+        """Load the ghost's images for this size.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.renderer.load_sprites(asset_size=asset_size)
 
     def render(self, screen: pygame.Surface, animation_speed: int,
                offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw the ghost."""
+        """Draw the ghost.
+
+        Args:
+            screen: surface to draw on.
+            animation_speed: time between two frames, in ms.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         self.renderer.render(screen=screen, animation_speed=animation_speed,
                              offset=offset)
 
@@ -62,7 +86,12 @@ class GhostRenderer(Entity):
     """Ghost display: one pair of frames per state."""
 
     def __init__(self, pos: Tuple[int, int], color: str) -> None:
-        """Prepare the image lists of every state."""
+        """Prepare the image lists of every state.
+
+        Args:
+            pos: starting cell.
+            color: ghost colour.
+        """
         super().__init__(pos)
         self.color = color
         self.sprites: Dict[str, List[pygame.Surface]] = {
@@ -79,7 +108,11 @@ class GhostRenderer(Entity):
         self.step_duration_ms: int = 200
 
     def load_sprites(self, asset_size: int) -> None:
-        """Load the frames: own colour when normal, neutral otherwise."""
+        """Load the frames: own colour when normal, neutral otherwise.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         color = self.color
         try:
             for state in self.sprites.keys():
@@ -107,7 +140,13 @@ class GhostRenderer(Entity):
         to_pos: Tuple[int, int],
         duration_ms: int = 200,
     ) -> None:
-        """Start a slide from from_pos to to_pos lasting duration_ms."""
+        """Start a slide from from_pos to to_pos lasting duration_ms.
+
+        Args:
+            from_pos: cell left.
+            to_pos: cell reached.
+            duration_ms: slide duration, in ms.
+        """
         self.start_pos = from_pos
         self.target_pos = to_pos
         self.move_start_time = pygame.time.get_ticks()
@@ -119,7 +158,13 @@ class GhostRenderer(Entity):
         animation_speed: int = 800,
         offset: Tuple[int, int] = (0, 0),
     ) -> None:
-        """Draw the ghost at its current position along the slide."""
+        """Draw the ghost at its current position along the slide.
+
+        Args:
+            screen: surface to draw on.
+            animation_speed: time between two frames, in ms.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         now = pygame.time.get_ticks()
 
         elapsed = now - self.move_start_time
@@ -147,7 +192,13 @@ class GhostAI:
 
     def __init__(self, field: PlayField, spawn: Tuple[int, int],
                  behavior: str) -> None:
-        """Place the AI on spawn with its behaviour."""
+        """Place the AI on spawn with its behaviour.
+
+        Args:
+            field: field of the level.
+            spawn: corner cell.
+            behavior: 'follow', 'random' or 'copy'.
+        """
 
         self.field = field
         self.x, self.y = spawn
@@ -156,13 +207,21 @@ class GhostAI:
         self.respawn_count = 0
 
     def reset(self, spawn: Tuple[int, int]) -> None:
-        """Put the ghost back on spawn and cancel its waiting time."""
+        """Put the ghost back on spawn and cancel its waiting time.
+
+        Args:
+            spawn: corner cell.
+        """
         self.x, self.y = spawn
         self.previous = None
         self.respawn_count = 0
 
     def start_respawn(self, steps: int) -> None:
-        """Keep the ghost still for the given steps (after being eaten)."""
+        """Keep the ghost still for the given steps (after being eaten).
+
+        Args:
+            steps: number of steps to wait.
+        """
 
         self.respawn_count = steps
 
@@ -172,6 +231,14 @@ class GhostAI:
 
         'follow' gets closer to Pac-Man, 'random' picks at random, 'copy'
         follows Pac-Man's direction. No U-turn unless in a dead end.
+
+        Args:
+            player_pos: Pac-Man's cell.
+            state: ghost state ('normal' = chase).
+            direction: Pac-Man's wanted direction.
+
+        Returns:
+            The new (x, y) cell.
         """
         player_x, player_y = player_pos
         if self.respawn_count != 0:

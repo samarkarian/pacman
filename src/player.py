@@ -9,19 +9,31 @@ class Player:
     """Pac-Man: links the logic (controller) and the display (renderer)."""
 
     def __init__(self, field: PlayField) -> None:
-        """Create Pac-Man in the middle of the field."""
+        """Create Pac-Man in the middle of the field.
+
+        Args:
+            field: field of the level.
+        """
         self.posx, self.posy = field.player_spawn[0], field.player_spawn[1]
         self.controller = PlayerController(field)
         self.renderer = PlayerRenderer(field.player_spawn)
         self.spawn = field.player_spawn
 
     def set_direction(self, direction: str) -> None:
-        """Store the wanted direction ('N', 'S', 'E' or 'W')."""
+        """Store the wanted direction ('N', 'S', 'E' or 'W').
+
+        Args:
+            direction: 'N', 'E', 'S' or 'W'.
+        """
         self.controller.set_direction(direction)
         self.renderer.direction = direction
 
     def turn_update(self, step_duration_ms: int = 150) -> None:
-        """Move one cell if possible and start the sprite slide."""
+        """Move one cell if possible and start the sprite slide.
+
+        Args:
+            step_duration_ms: slide duration, in ms.
+        """
         old_pos = (self.posx, self.posy)
         self.controller.step()
         self.posx, self.posy = self.controller.x, self.controller.y
@@ -33,12 +45,22 @@ class Player:
             self.renderer.posx, self.renderer.posy = self.posx, self.posy
 
     def load_sprites(self, asset_size: int) -> None:
-        """Load Pac-Man's images for this size."""
+        """Load Pac-Man's images for this size.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.renderer.load_sprites(asset_size=asset_size)
 
     def render(self, screen: pygame.Surface, animation_speed: int,
                offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw Pac-Man."""
+        """Draw Pac-Man.
+
+        Args:
+            screen: surface to draw on.
+            animation_speed: time between two frames, in ms.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         self.renderer.render(screen=screen, animation_speed=animation_speed,
                              offset=offset)
 
@@ -56,7 +78,11 @@ class PlayerRenderer(Entity):
     """Pac-Man display: oriented sprite sliding from cell to cell."""
 
     def __init__(self, pos: Tuple[int, int]) -> None:
-        """Place the sprite on pos, facing east."""
+        """Place the sprite on pos, facing east.
+
+        Args:
+            pos: starting cell.
+        """
         super().__init__(pos)
         self.direction: str = 'E'
 
@@ -66,7 +92,11 @@ class PlayerRenderer(Entity):
         self.step_duration_ms: int = 150
 
     def load_sprites(self, asset_size: int) -> None:
-        """Load the 2 frames of every direction."""
+        """Load the 2 frames of every direction.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         try:
             cardinals = ['N', 'S', 'E', 'W']
             self.sprites.clear()
@@ -88,7 +118,13 @@ class PlayerRenderer(Entity):
 
     def start_move(self, from_pos: Tuple[int, int], to_pos: Tuple[int, int],
                    duration_ms: int) -> None:
-        """Start a slide from from_pos to to_pos lasting duration_ms."""
+        """Start a slide from from_pos to to_pos lasting duration_ms.
+
+        Args:
+            from_pos: cell left.
+            to_pos: cell reached.
+            duration_ms: slide duration, in ms.
+        """
         self.start_pos = from_pos
         self.target_pos = to_pos
         self.move_start_time = pygame.time.get_ticks()
@@ -96,7 +132,13 @@ class PlayerRenderer(Entity):
 
     def render(self, screen: pygame.Surface, animation_speed: int = 200,
                offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw Pac-Man at the current position along the slide."""
+        """Draw Pac-Man at the current position along the slide.
+
+        Args:
+            screen: surface to draw on.
+            animation_speed: time between two frames, in ms.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         now = pygame.time.get_ticks()
 
         elapsed = now - self.move_start_time
@@ -123,7 +165,11 @@ class PlayerController:
     """Pac-Man's movement logic, cell by cell."""
 
     def __init__(self, field: PlayField) -> None:
-        """Place Pac-Man in the middle, not moving."""
+        """Place Pac-Man in the middle, not moving.
+
+        Args:
+            field: field of the level.
+        """
 
         self.field = field
         self.x, self.y = field.player_spawn
@@ -131,13 +177,24 @@ class PlayerController:
         self.next_direction: str | None = None
 
     def reset(self, spawn: Tuple[int, int]) -> None:
-        """Put Pac-Man back on spawn, with no direction."""
+        """Put Pac-Man back on spawn, with no direction.
+
+        Args:
+            spawn: cell to go back to.
+        """
         self.x, self.y = spawn
         self.direction = None
         self.next_direction = None
 
     def move(self, direction: str) -> str | None:
-        """Move one cell in direction if no wall blocks the way."""
+        """Move one cell in direction if no wall blocks the way.
+
+        Args:
+            direction: 'N', 'E', 'S' or 'W'.
+
+        Returns:
+            None.
+        """
 
         maze = self.field.maze
         if maze.can_move(self.x, self.y, direction):
@@ -148,12 +205,20 @@ class PlayerController:
         return None
 
     def set_direction(self, direction: str) -> None:
-        """Store the direction to take as soon as possible."""
+        """Store the direction to take as soon as possible.
+
+        Args:
+            direction: 'N', 'E', 'S' or 'W'.
+        """
 
         self.next_direction = direction
 
     def step(self) -> str | None:
-        """Turn if the wanted direction is free, then move one cell."""
+        """Turn if the wanted direction is free, then move one cell.
+
+        Returns:
+            None.
+        """
 
         maze = self.field.maze
         if (self.next_direction is not None

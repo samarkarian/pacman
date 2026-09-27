@@ -8,7 +8,15 @@ from src.high_score import scores_load
 
 
 def build_level(config: Config, level_index: int) -> PlayField | None:
-    """Build the level field (fixed seed for level 1); None on failure."""
+    """Build the level field (fixed seed for level 1); None on failure.
+
+    Args:
+        config: game configuration.
+        level_index: index of the level (0 = first).
+
+    Returns:
+        The play field, or None if it failed.
+    """
 
     if not 0 <= level_index < len(config.level):
         return None
@@ -27,7 +35,11 @@ class Game:
     """Game state and rules: levels, score, lives, timer, cheats."""
 
     def __init__(self, config: Config) -> None:
-        """Prepare an empty game; start_level() builds the level."""
+        """Prepare an empty game; start_level() builds the level.
+
+        Args:
+            config: game configuration.
+        """
 
         self.config = config
         self.level_index = 0
@@ -62,7 +74,14 @@ class Game:
         self.ghosts_frozen = False
 
     def start_level(self, level_index: int) -> bool:
-        """Build the level and place Pac-Man and the 4 ghosts."""
+        """Build the level and place Pac-Man and the 4 ghosts.
+
+        Args:
+            level_index: index of the level to start.
+
+        Returns:
+            False if the level could not be built.
+        """
 
         play_field = build_level(self.config, level_index)
 
@@ -87,7 +106,11 @@ class Game:
         return True
 
     def eaten_effect(self, eaten: str | None) -> None:
-        """Add the points; a super pac-gum turns the ghosts blue."""
+        """Add the points; a super pac-gum turns the ghosts blue.
+
+        Args:
+            eaten: 'pacgum', 'super_pacgum' or None.
+        """
 
         if eaten == 'pacgum':
             self.score += self.config.points_per_pacgum
@@ -97,7 +120,11 @@ class Game:
         return None
 
     def next_level(self) -> bool:
-        """Go to the next level; False if there is none."""
+        """Go to the next level; False if there is none.
+
+        Returns:
+            False if there is no next level.
+        """
 
         return self.start_level(self.level_index + 1)
 
@@ -112,7 +139,11 @@ class Game:
             self.next_level()
 
     def reset(self) -> bool:
-        """Reset score, lives and cheats, then start level 1."""
+        """Reset score, lives and cheats, then start level 1.
+
+        Returns:
+            False if level 1 could not be built.
+        """
 
         self.score = 0
         self.lives = self.config.lives
@@ -123,7 +154,11 @@ class Game:
         return self.start_level(0)
 
     def is_over(self) -> bool:
-        """True if no lives or time left, or if the last level is cleared."""
+        """True if no lives or time left, or if the last level is cleared.
+
+        Returns:
+            True when the game is over.
+        """
 
         if self.lives <= 0 and self.death_timer_ms <= 0:
             return True
@@ -142,6 +177,12 @@ class Game:
 
         A blue ghost is eaten. Otherwise Pac-Man loses a life and the
         reset waits death_delay_ms (see update).
+
+        Args:
+            player: Pac-Man.
+
+        Returns:
+            True if a ghost was touched.
         """
 
         for ghost in self.ghosts:
@@ -211,6 +252,9 @@ class Game:
 
         After a lost life everything stays frozen for death_delay_ms, so
         the sprites finish sliding, then everybody goes back to spawn.
+
+        Args:
+            dt_ms: time since the last call, in ms.
         """
         if self.death_timer_ms > 0:
             self.death_timer_ms -= dt_ms
@@ -257,7 +301,11 @@ class Game:
                 return
 
     def victory(self) -> bool:
-        """True if the game ended by clearing the last level."""
+        """True if the game ended by clearing the last level.
+
+        Returns:
+            True if the player won.
+        """
 
         if self.level_index == len(self.config.level) - 1:
             if self.is_over():

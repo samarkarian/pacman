@@ -16,7 +16,11 @@ class GameLoop:
     }
 
     def __init__(self, game: Game) -> None:
-        """Open the window at the 64 px size and show the main menu."""
+        """Open the window at the 64 px size and show the main menu.
+
+        Args:
+            game: the game shared by all the scenes.
+        """
         pygame.init()
         self.asset_size: int = 64
         self.width, self.height = self.RESOLUTIONS[self.asset_size]
@@ -33,7 +37,11 @@ class GameLoop:
         )
 
     def set_resolution(self, asset_size: int) -> None:
-        """Change the sprite size (64 or 32) and the window size."""
+        """Change the sprite size (64 or 32) and the window size.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         if asset_size not in self.RESOLUTIONS:
             return
         self.asset_size = asset_size
@@ -41,7 +49,11 @@ class GameLoop:
         self.screen = pygame.display.set_mode((self.width, self.height))
 
     def change_scene(self, target: SceneID) -> None:
-        """Switch to the requested screen (a new game starts from zero)."""
+        """Switch to the requested screen (a new game starts from zero).
+
+        Args:
+            target: scene to show.
+        """
         if target == SceneID.GAME:
             self.game.reset()
             self.current_scene = GameScene(

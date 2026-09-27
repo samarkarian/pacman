@@ -6,7 +6,11 @@ class PlayField:
     """A level's play field: maze, pac-gums and spawn points."""
 
     def __init__(self, maze: Maze) -> None:
-        """Build the play field and its pac-gums from the maze."""
+        """Build the play field and its pac-gums from the maze.
+
+        Args:
+            maze: maze of the level.
+        """
 
         corners = maze.corners()
         self.maze = maze
@@ -34,7 +38,15 @@ class PlayField:
                 self.pacgums[(x, y)] = (Pacgum(pos=(x, y), gumtype='Pacgum'))
 
     def eat_pacgum(self, x: int, y: int) -> bool:
-        """Remove the pac-gum on this cell; return True if there was one."""
+        """Remove the pac-gum on this cell; return True if there was one.
+
+        Args:
+            x: column of the cell.
+            y: row of the cell.
+
+        Returns:
+            True if a pac-gum was eaten.
+        """
 
         pacgum = self.pacgums.pop((x, y), None)
         if pacgum is not None:
@@ -42,7 +54,15 @@ class PlayField:
         return False
 
     def eat_super_pacgum(self, x: int, y: int) -> bool:
-        """Remove the super pac-gum on this cell; True if there was one."""
+        """Remove the super pac-gum on this cell; True if there was one.
+
+        Args:
+            x: column of the cell.
+            y: row of the cell.
+
+        Returns:
+            True if a super pac-gum was eaten.
+        """
 
         super_pacgum = self.super_pacgums.pop((x, y), None)
         if super_pacgum is not None:
@@ -50,7 +70,11 @@ class PlayField:
         return False
 
     def is_level_complete(self) -> bool:
-        """Return True when no pac-gum is left."""
+        """Return True when no pac-gum is left.
+
+        Returns:
+            True if the level is cleared.
+        """
 
         if not self.pacgums and not self.super_pacgums:
             return True

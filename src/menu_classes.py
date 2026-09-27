@@ -17,7 +17,14 @@ class UIButton:
         action: Callable[[], Optional[SceneID]],
         asset_size: int = 64,
     ) -> None:
-        """Create the button and load its 2 frames."""
+        """Create the button and load its 2 frames.
+
+        Args:
+            name: sprite folder name ('play', 'quit'...).
+            pos: (x, y) on the screen.
+            action: function run by trigger().
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.name: str = name
         self.pos: Tuple[int, int] = pos
         self.action: Callable[[], Optional[SceneID]] = action
@@ -38,11 +45,20 @@ class UIButton:
             print(f"Error: cannot load the {self.name} button ({e})")
 
     def trigger(self) -> Optional[SceneID]:
-        """Run the button action and return the requested scene."""
+        """Run the button action and return the requested scene.
+
+        Returns:
+            The scene asked by the action, or None.
+        """
         return self.action()
 
     def render(self, screen: pygame.Surface, is_selected: bool) -> None:
-        """Draw frame 1 if the button is selected, frame 0 otherwise."""
+        """Draw frame 1 if the button is selected, frame 0 otherwise.
+
+        Args:
+            screen: surface to draw on.
+            is_selected: True to draw the selected frame.
+        """
         frame_index = 1 if is_selected else 0
         if frame_index in self.sprites:
             screen.blit(self.sprites[frame_index], self.pos)
@@ -60,14 +76,24 @@ class UISprite:
         pos: Tuple[float, float],
         asset_size: int,
     ) -> None:
-        """Create the decoration and load its image."""
+        """Create the decoration and load its image.
+
+        Args:
+            name: sprite folder name.
+            pos: (x, y) on the screen.
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.pos: Tuple[float, float] = pos
         self.sprites: List[pygame.Surface] = []
         self.asset_size: int = asset_size
         self._load_sprites(name)
 
     def _load_sprites(self, name: str) -> None:
-        """Load the image from the sprite name and size."""
+        """Load the image from the sprite name and size.
+
+        Args:
+            name: sprite folder name.
+        """
         try:
             size = self.asset_size
             self.sprites.append(pygame.image.load(
@@ -76,7 +102,11 @@ class UISprite:
             print({e})
 
     def render(self, screen: pygame.Surface) -> None:
-        """Draw the image at its position."""
+        """Draw the image at its position.
+
+        Args:
+            screen: surface to draw on.
+        """
         if not self.sprites:
             return
 
@@ -87,7 +117,11 @@ class MenuPage(ABC):
     """Menu page: decorations, buttons and keyboard selection."""
 
     def __init__(self, scene_context: Any) -> None:
-        """Create the page and its elements (build)."""
+        """Create the page and its elements (build).
+
+        Args:
+            scene_context: the MenuScene holding the page.
+        """
         self.context = scene_context
         self.buttons: List[UIButton] = []
         self.decorations: List[UISprite] = []
@@ -109,7 +143,14 @@ class MenuPage(ABC):
                                       len(self.buttons) - 1)
 
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        """Up/Down: change button. Enter/Space: trigger it."""
+        """Up/Down: change button. Enter/Space: trigger it.
+
+        Args:
+            event: pygame event.
+
+        Returns:
+            The scene asked by a button, or None.
+        """
         if event.type != pygame.KEYDOWN or not self.buttons:
             return None
 
@@ -122,7 +163,11 @@ class MenuPage(ABC):
         return None
 
     def render(self, screen: pygame.Surface) -> None:
-        """Draw the decorations then the buttons."""
+        """Draw the decorations then the buttons.
+
+        Args:
+            screen: surface to draw on.
+        """
         for decor in self.decorations:
             decor.render(screen)
 
@@ -130,7 +175,14 @@ class MenuPage(ABC):
             btn.render(screen, idx == self.selected_index)
 
     def _select_resolution(self, size: int) -> Optional[SceneID]:
-        """Change the sprite size and go back to the previous page."""
+        """Change the sprite size and go back to the previous page.
+
+        Args:
+            size: sprite size in pixels (32 or 64).
+
+        Returns:
+            The scene to open, or None.
+        """
         self.context.set_asset_size(size)
         result: Optional[SceneID] = self.context.pop_page()
         return result

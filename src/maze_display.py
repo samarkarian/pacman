@@ -9,13 +9,22 @@ class MazeDisplayer(Renderer):
     """Draw the level's walls and pac-gums."""
 
     def __init__(self, field: PlayField, asset_size: int = 64) -> None:
-        """Store the field to draw and the sprite size."""
+        """Store the field to draw and the sprite size.
+
+        Args:
+            field: field to draw.
+            asset_size: sprite size in pixels (32 or 64).
+        """
         self.field = field
         self.wall_sprites: dict[str, pygame.Surface] = {}
         self.asset_size = asset_size
 
     def next_level(self, newfield: PlayField) -> None:
-        """Switch to the new level's field."""
+        """Switch to the new level's field.
+
+        Args:
+            newfield: field of the new level.
+        """
         self.field = newfield
 
     def load_sprites(self) -> None:
@@ -28,7 +37,12 @@ class MazeDisplayer(Renderer):
 
     def render(self, screen: pygame.Surface,
                offset: Tuple[int, int]) -> None:
-        """Draw the walls then the pac-gums, shifted by offset."""
+        """Draw the walls then the pac-gums, shifted by offset.
+
+        Args:
+            screen: surface to draw on.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         self.render_walls(screen=screen, offset=offset,
                           asset_size=self.asset_size)
         for p in self.field.pacgums.values():
@@ -37,7 +51,11 @@ class MazeDisplayer(Renderer):
             p.render(screen=screen, offset=offset, animation_speed=800)
 
     def load_wall_sprites(self, asset_size: int) -> None:
-        """Load the 16 wall images (one per combination of sides)."""
+        """Load the 16 wall images (one per combination of sides).
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         try:
             for n in range(16):
                 self.wall_sprites[f'wall_{n}'] = load_image(
@@ -49,7 +67,13 @@ class MazeDisplayer(Renderer):
 
     def render_walls(self, asset_size: int, screen: pygame.Surface,
                      offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw the wall of every cell from its 4 wall bits."""
+        """Draw the wall of every cell from its 4 wall bits.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+            screen: surface to draw on.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         for y, line in enumerate(self.field.maze.grid):
             for x, cell in enumerate(line):
 

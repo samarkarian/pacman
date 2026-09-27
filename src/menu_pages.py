@@ -76,7 +76,11 @@ class MainMenuPage(MenuPage):
         self._center_buttons(fond)
 
     def _center_buttons(self, fond: UISprite) -> None:
-        """Centre the button column inside the background frame."""
+        """Centre the button column inside the background frame.
+
+        Args:
+            fond: background frame of the menu.
+        """
         if not fond.sprites or not all(btn.sprites for btn in self.buttons):
             return
 
@@ -168,9 +172,14 @@ class HighscorePage(MenuPage):
         )
 
     def render(self, screen: pygame.Surface) -> None:
-        """Draw one line per score, the first one in yellow."""
+        """Draw one line per score, the first one in yellow.
+
+        Args:
+            screen: surface to draw on.
+        """
         super().render(screen)
 
+        self._render_line(screen, "Here are the all-time highscores", 0.32)
         if not self.rank:
             self._render_line(screen, "No score yet", 0.4)
             return
@@ -187,7 +196,14 @@ class HighscorePage(MenuPage):
         height_ratio: float,
         color: tuple[int, int, int] = (255, 255, 255),
     ) -> None:
-        """Write text centred, at height_ratio of the screen height."""
+        """Write text centred, at height_ratio of the screen height.
+
+        Args:
+            screen: surface to draw on.
+            text: text to write.
+            height_ratio: height, as a fraction of the screen.
+            color: RGB colour.
+        """
         image = self.font.render(text, True, color)
         pos = (self.text_x - image.get_width() // 2,
                int(self.screen_h * height_ratio))
@@ -198,7 +214,11 @@ class NameEntry(MenuPage):
     """End screen (victory or game over): player name entry."""
 
     def __init__(self, scene_context: Any) -> None:
-        """Start with an empty name."""
+        """Start with an empty name.
+
+        Args:
+            scene_context: the MenuScene holding the page.
+        """
         self.name = ""
         self.error = ""
         super().__init__(scene_context)
@@ -230,7 +250,14 @@ class NameEntry(MenuPage):
         )
 
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        """Type the name (10 max); Enter saves it and returns to the menu."""
+        """Type the name (10 max); Enter saves it and returns to the menu.
+
+        Args:
+            event: pygame event.
+
+        Returns:
+            SceneID.MENU once the score is saved, else None.
+        """
 
         if event.type == pygame.TEXTINPUT:
             for char in event.text:
@@ -262,9 +289,15 @@ class NameEntry(MenuPage):
         return None
 
     def render(self, screen: pygame.Surface) -> None:
-        """Draw the score, the name being typed and the hint (or error)."""
+        """Draw the score, the name being typed and the hint (or error).
+
+        Args:
+            screen: surface to draw on.
+        """
         super().render(screen)
 
+        if self.game.victory():
+            self._render_line(screen, "Congratulations on your victory!", 0.35)
         self._render_line(screen, f"Score: {self.game.score}", 0.45)
         self._render_line(screen, self.name + "_", 0.55, (255, 255, 0))
         if self.error:
@@ -279,7 +312,14 @@ class NameEntry(MenuPage):
         height_ratio: float,
         color: tuple[int, int, int] = (255, 255, 255),
     ) -> None:
-        """Write text centred, at height_ratio of the screen height."""
+        """Write text centred, at height_ratio of the screen height.
+
+        Args:
+            screen: surface to draw on.
+            text: text to write.
+            height_ratio: height, as a fraction of the screen.
+            color: RGB colour.
+        """
         image = self.font.render(text, True, color)
         pos = (self.text_x - image.get_width() // 2,
                int(self.screen_h * height_ratio))

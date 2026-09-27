@@ -13,13 +13,24 @@ class Renderer(ABC):
 
     @abstractmethod
     def load_sprites(self, *args: Any, **kwargs: Any) -> None:
-        """Load the images for the given size."""
+        """Load the images for the given size.
+
+        Args:
+            *args: parameters of the subclass (sprite size).
+            **kwargs: same, by keyword.
+        """
         pass
 
     @abstractmethod
     def render(self, screen: pygame.Surface,
                *args: Any, **kwargs: Any) -> None:
-        """Draw the element on the screen."""
+        """Draw the element on the screen.
+
+        Args:
+            screen: surface to draw on.
+            *args: parameters of the subclass.
+            **kwargs: same, by keyword.
+        """
         pass
 
 
@@ -27,7 +38,11 @@ class Entity(Renderer):
     """Maze element placed on a cell, animated with 2 frames."""
 
     def __init__(self, position: Tuple[int, int]) -> None:
-        """Place the element on the given cell."""
+        """Place the element on the given cell.
+
+        Args:
+            position: (x, y) cell.
+        """
         super().__init__()
         self.posx: int = int(position[0])
         self.posy: int = int(position[1])
@@ -35,7 +50,11 @@ class Entity(Renderer):
 
     @abstractmethod
     def load_sprites(self, asset_size: int) -> None:
-        """Load the 2 frames from the class name and the size."""
+        """Load the 2 frames from the class name and the size.
+
+        Args:
+            asset_size: sprite size in pixels (32 or 64).
+        """
         name = self.__class__.__name__
         try:
             for sprite in range(2):
@@ -52,7 +71,13 @@ class Entity(Renderer):
     @abstractmethod
     def render(self, screen: pygame.Surface, animation_speed: int,
                offset: Tuple[int, int] = (0, 0)) -> None:
-        """Draw the current frame, switching every animation_speed ms."""
+        """Draw the current frame, switching every animation_speed ms.
+
+        Args:
+            screen: surface to draw on.
+            animation_speed: time between two frames, in ms.
+            offset: (x, y) of the maze on the screen, in pixels.
+        """
         time = pygame.time.get_ticks()
         frame_index = (time // animation_speed) % 2
 

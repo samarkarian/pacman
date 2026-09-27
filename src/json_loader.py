@@ -12,7 +12,18 @@ from pydantic import (
 def clamp_int(
         raw: Any, minimum: int | None,
         maximum: int | None, default: int, name: str) -> int:
-    """Convert to int, clamped to [minimum, maximum], with a warning."""
+    """Convert to int, clamped to [minimum, maximum], with a warning.
+
+    Args:
+        raw: value read in the config.
+        minimum: lowest value, or None.
+        maximum: highest value, or None.
+        default: value used if raw is not a number.
+        name: key name, for the warning.
+
+    Returns:
+        The value, clamped.
+    """
 
     try:
         value = int(raw)
@@ -42,13 +53,27 @@ class Level(BaseModel):
     @field_validator("width", mode="before")
     @classmethod
     def clamp_width(cls, value: Any) -> int:
-        """Clamp the width between 14 and 23."""
+        """Clamp the width between 14 and 23.
+
+        Args:
+            value: width read in the config.
+
+        Returns:
+            A width between 14 and 23.
+        """
         return clamp_int(value, 14, 23, 15, 'width')
 
     @field_validator("height", mode="before")
     @classmethod
     def clamp_height(cls, value: Any) -> int:
-        """Clamp the height between 10 and 21."""
+        """Clamp the height between 10 and 21.
+
+        Args:
+            value: height read in the config.
+
+        Returns:
+            A height between 10 and 21.
+        """
         return clamp_int(value, 10, 21, 11, 'height')
 
 
@@ -75,7 +100,15 @@ class Config(BaseModel):
     )
     @classmethod
     def clamp_points(cls, value: Any, info: ValidationInfo) -> int:
-        """Refuse negative points."""
+        """Refuse negative points.
+
+        Args:
+            value: value read in the config.
+            info: pydantic info, gives the key name.
+
+        Returns:
+            The value, at least 0.
+        """
         name = info.field_name
         assert name is not None
         default = cls.model_fields[name].default
@@ -84,33 +117,70 @@ class Config(BaseModel):
     @field_validator("lives", mode="before")
     @classmethod
     def clamp_lives(cls, value: Any) -> int:
-        """Require at least 1 life."""
+        """Require at least 1 life.
+
+        Args:
+            value: lives read in the config.
+
+        Returns:
+            The lives, at least 1.
+        """
         return clamp_int(value, 1, None, 3, 'lives')
 
     @field_validator("level_max_time", mode="before")
     @classmethod
     def clamp_time(cls, value: Any) -> int:
-        """Require at least 10 seconds per level."""
+        """Require at least 10 seconds per level.
+
+        Args:
+            value: time read in the config.
+
+        Returns:
+            The time in seconds, at least 10.
+        """
         return clamp_int(value, 10, None, 90, 'level_max_time')
 
     @field_validator("seed", mode="before")
     @classmethod
     def clamp_seed(cls, value: Any) -> int:
-        """Keep the seed if it is a number, or 42."""
+        """Keep the seed if it is a number, or 42.
+
+        Args:
+            value: seed read in the config.
+
+        Returns:
+            The seed, as an int.
+        """
         return clamp_int(value, None, None, 42, 'seed')
 
     @field_validator("highscore_filename", mode="before")
     @classmethod
     def clamp_filename(cls, value: Any) -> str:
-        """Keep the scores file name, or scores.json if it is empty."""
+        """Keep the scores file name, or scores.json if it is empty.
+
+        Args:
+            value: file name read in the config.
+
+        Returns:
+            A non-empty file name.
+        """
         if isinstance(value, str) and value.strip() != "":
             return value
+        print(f"Warning: highscore_filename '{value}' is empty or not a "
+              f"text, using scores.json by default.")
         return "scores.json"
 
     @field_validator("level", mode="before")
     @classmethod
     def clamp_level(cls, value: Any) -> Any:
-        """Keep the valid levels, completed with 15x11 levels up to 10."""
+        """Keep the valid levels, completed with 15x11 levels up to 10.
+
+        Args:
+            value: level list read in the config.
+
+        Returns:
+            At least 10 levels.
+        """
         if not isinstance(value, list) or len(value) == 0:
             print("Warning: level is empty or not a list, "
                   "using 10 levels of 15x11 by default.")
@@ -139,7 +209,14 @@ class Config(BaseModel):
 
 
 def json_load(content: str) -> Config:
-    """Parse the JSON config, skipping # lines; defaults if invalid."""
+    """Parse the JSON config, skipping # lines; defaults if invalid.
+
+    Args:
+        content: text of the config file.
+
+    Returns:
+        The validated configuration.
+    """
 
     lines = content.splitlines()
 

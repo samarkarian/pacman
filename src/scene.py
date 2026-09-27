@@ -20,15 +20,30 @@ class Scene(ABC):
 
     @abstractmethod
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        """Handle the keyboard input of this screen."""
+        """Handle the keyboard input of this screen.
+
+        Args:
+            event: pygame event.
+
+        Returns:
+            The scene to open, or None.
+        """
         pass
 
     @abstractmethod
     def update(self) -> Optional[SceneID]:
-        """Update the internal logic (animations, movement)."""
+        """Update the internal logic (animations, movement).
+
+        Returns:
+            The scene to open, or None.
+        """
         pass
 
     @abstractmethod
     def render(self, screen: pygame.Surface) -> None:
-        """Draw the elements on the given screen."""
+        """Draw the elements on the given screen.
+
+        Args:
+            screen: surface to draw on.
+        """
         pass

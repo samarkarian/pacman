@@ -11,7 +11,12 @@ class GameScene(Scene):
     """Game screen: maze, HUD, input, pause and cheats."""
 
     def __init__(self, game: Game, asset_size: int = 64) -> None:
-        """Prepare the display of the current (already started) level."""
+        """Prepare the display of the current (already started) level.
+
+        Args:
+            game: the game, with its level started.
+            asset_size: sprite size in pixels (32 or 64).
+        """
         if game.field is None or game.player is None:
             raise RuntimeError("the level could not be started")
         self.asset_size = asset_size
@@ -64,7 +69,14 @@ class GameScene(Scene):
         self.paused = False
 
     def handle_event(self, event: pygame.event.Event) -> Optional[SceneID]:
-        """Arrows: direction. Esc: pause. C then N/I/F/L: cheats."""
+        """Arrows: direction. Esc: pause. C then N/I/F/L: cheats.
+
+        Args:
+            event: pygame event.
+
+        Returns:
+            The scene to open, or None.
+        """
         KEY_TO_DIRECTION = {
             pygame.K_UP: 'N',
             pygame.K_DOWN: 'S',
@@ -102,7 +114,11 @@ class GameScene(Scene):
         return None
 
     def update(self) -> Optional[SceneID]:
-        """Advance the game by the elapsed time; SceneID.NAME when it ends."""
+        """Advance the game by the elapsed time; SceneID.NAME when it ends.
+
+        Returns:
+            SceneID.NAME when the game is over, else None.
+        """
         if self.paused:
             self.last_tick = pygame.time.get_ticks()
             return None
@@ -127,7 +143,14 @@ class GameScene(Scene):
     def get_layout(
         self, screen: pygame.Surface
     ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-        """Compute the (x, y) positions of the HUD and of the maze."""
+        """Compute the (x, y) positions of the HUD and of the maze.
+
+        Args:
+            screen: window surface.
+
+        Returns:
+            (x, y) of the HUD and (x, y) of the maze.
+        """
         screen_w, screen_h = screen.get_size()
         field = self.game.field
         if field is None:
@@ -149,7 +172,11 @@ class GameScene(Scene):
         return (pos_x, hud_y), (pos_x, maze_y)
 
     def render(self, screen: pygame.Surface) -> None:
-        """Draw the HUD, the maze, the characters and the pause menu."""
+        """Draw the HUD, the maze, the characters and the pause menu.
+
+        Args:
+            screen: surface to draw on.
+        """
         hud_pos, maze_offset = self.get_layout(screen)
 
         self.hud_container.render(screen, hud_pos)
