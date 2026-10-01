@@ -104,10 +104,25 @@ class ResolutionPage(MenuPage):
         """Create the small, medium and quit buttons."""
         current_size = self.context.game_data.get("asset_size", 64)
         gameloop: Any = self.context.game_data.get("gameloop")
-        screen_w = gameloop.width if gameloop else 1080
 
+        screen_w = gameloop.width if gameloop else 1080
+        screen_h = gameloop.height if gameloop else 1080
         center_x = (screen_w - current_size*3) // 2
 
+        self.decorations.append(
+            UISprite(
+                        name='Main_menu_bg',
+                        pos=(center_x/1.6, int(screen_h)*0.2),
+                        asset_size=self.context.game_data.get("asset_size", 64),
+                    )
+        )
+        self.decorations.append(
+            UISprite(
+                name='Title',
+                pos=(center_x*0.6, int(gameloop.height * 0.05)),
+                asset_size=self.context.game_data.get("asset_size", 64),
+            )
+        )
         self.buttons.append(
             UIButton(
                 name="small",
@@ -141,20 +156,30 @@ class HighscorePage(MenuPage):
         """Load the font, the title and the quit button."""
         current_size = self.context.game_data.get("asset_size", 64)
         gameloop: Any = self.context.game_data.get("gameloop")
-        screen_w = gameloop.width if gameloop else 1080
         self.rank = gameloop.game.rank
         font_path = "sprites/Font/KGPerfectPenmanship.ttf"
         font_size = max(12, current_size // 2)
+        screen_w = gameloop.width if gameloop else 1080
+        screen_h = gameloop.height if gameloop else 1080
+        center_x = (screen_w - current_size*3) // 2
         try:
             self.font = pygame.font.Font(font_path, font_size)
         except (FileNotFoundError, pygame.error) as e:
             print(f"Font not found ({font_path}) : {e}.")
             self.font = pygame.font.Font(None, font_size)
 
-        center_x = (screen_w - current_size*3) // 2
         self.text_x = center_x + current_size*2
         self.screen_h = gameloop.height
 
+
+
+        self.decorations.append(
+            UISprite(
+                        name='Main_menu_bg',
+                        pos=(center_x/1.6, int(screen_h)*0.2),
+                        asset_size=self.context.game_data.get("asset_size", 64),
+                    )
+        )
         self.buttons.append(
             UIButton(
                 name="quit",
@@ -334,14 +359,21 @@ class InstructionsPages(MenuPage):
         current_size = self.context.game_data.get("asset_size", 64)
         gameloop: Any = self.context.game_data.get("gameloop")
         screen_w = gameloop.width if gameloop else 1080
-
+        screen_h = gameloop.height if gameloop else 1080
         center_x = (screen_w - current_size*3) // 2
 
         self.decorations.append(
             UISprite(
+                        name='Main_menu_bg',
+                        pos=(center_x/1.6, int(screen_h)*0.2),
+                        asset_size=self.context.game_data.get("asset_size", 64),
+                    )
+        )
+        self.decorations.append(
+            UISprite(
                 name='Instructions',
-                pos=((screen_w - current_size*11) // 2,
-                     int(gameloop.height * 0.3)),
+                pos=((screen_w - current_size*10.25) // 2,
+                     int(gameloop.height * 0.28)),
                 asset_size=current_size,
             )
         )
