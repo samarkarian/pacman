@@ -35,13 +35,13 @@ class GameScene(Scene):
         self.pause_index = 0
         self.pause_buttons = [
             UIButton(
-                name="play",
+                name="resume",
                 pos=(0, 0),
                 action=self.resume,
                 asset_size=self.asset_size,
             ),
             UIButton(
-                name="quit",
+                name="menu",
                 pos=(0, 0),
                 action=lambda: SceneID.MENU,
                 asset_size=self.asset_size,

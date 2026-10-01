@@ -26,34 +26,26 @@ class MainMenuPage(MenuPage):
         self.buttons.append(
             UIButton(
                 name="play",
-                pos=(center_x, int(screen_h * 0.4)),
+                pos=(center_x, int(screen_h * 0.2)),
                 action=lambda: SceneID.GAME,
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
         )
         self.buttons.append(
-                    UIButton(
-                        name="quit",
-                        pos=(center_x, int(gameloop.height * 0.5)),
-                        action=lambda: SceneID.QUIT,
-                        asset_size=current_size,
-                    )
+                UIButton(
+                    name="score",
+                    pos=(center_x, int(gameloop.height * 0.5)),
+                    action=lambda: self.context.push_page(
+                        HighscorePage(self.context)),
+                    asset_size=current_size,
                 )
+            )
         self.buttons.append(
                 UIButton(
                     name="resize",
                     pos=(center_x, int(gameloop.height * 0.6)),
                     action=lambda: self.context.push_page(
                         ResolutionPage(self.context)),
-                    asset_size=current_size,
-                )
-            )
-        self.buttons.append(
-                UIButton(
-                    name="score",
-                    pos=(center_x, int(gameloop.height * 0.7)),
-                    action=lambda: self.context.push_page(
-                        HighscorePage(self.context)),
                     asset_size=current_size,
                 )
             )
@@ -66,6 +58,14 @@ class MainMenuPage(MenuPage):
                     asset_size=current_size,
                 )
             )
+        self.buttons.append(
+                    UIButton(
+                        name="quit",
+                        pos=(center_x, int(gameloop.height * 0.8)),
+                        action=lambda: SceneID.QUIT,
+                        asset_size=current_size,
+                    )
+                )
         self.decorations.append(
             UISprite(
                 name='Title',
@@ -141,7 +141,7 @@ class ResolutionPage(MenuPage):
         )
         self.buttons.append(
             UIButton(
-                name="quit",
+                name="back",
                 pos=(center_x, int(gameloop.height * 0.61)),
                 action=lambda: self.context.pop_page(),
                 asset_size=current_size,
