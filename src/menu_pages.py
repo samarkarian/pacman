@@ -17,12 +17,12 @@ class MainMenuPage(MenuPage):
         screen_h = gameloop.height if gameloop else 1080
         center_x = (screen_w - current_size*3) // 2
 
-        fond = UISprite(
+        background = UISprite(
                 name='Main_menu_bg',
                 pos=(center_x/1.6, int(screen_h)*0.2),
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
-        self.decorations.append(fond)
+        self.decorations.append(background)
         self.buttons.append(
             UIButton(
                 name="play",
@@ -73,28 +73,29 @@ class MainMenuPage(MenuPage):
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
         )
-        self._center_buttons(fond)
+        self._center_buttons(background)
 
-    def _center_buttons(self, fond: UISprite) -> None:
+    def _center_buttons(self, background: UISprite) -> None:
         """Centre the button column inside the background frame.
 
         Args:
-            fond: background frame of the menu.
+            background: background frame of the menu.
         """
-        if not fond.sprites or not all(btn.sprites for btn in self.buttons):
+        if not background.sprites or not all(btn.sprites
+                                             for btn in self.buttons):
             return
 
-        fond_w, fond_h = fond.sprites[0].get_size()
-        dessin = self.buttons[0].sprites[0].get_bounding_rect()
-        ecart = dessin.height * 7 // 5.5
-        total = dessin.height + ecart * (len(self.buttons) - 1)
-        haut = fond.pos[1] + (fond_h - total) // 2
+        bg_w, bg_h = background.sprites[0].get_size()
+        drawing = self.buttons[0].sprites[0].get_bounding_rect()
+        spacing = drawing.height * 7 // 5.5
+        total = drawing.height + spacing * (len(self.buttons) - 1)
+        top = background.pos[1] + (bg_h - total) // 2
 
         for index, btn in enumerate(self.buttons):
-            dessin = btn.sprites[0].get_bounding_rect()
-            pos_x = fond.pos[0] + (fond_w - dessin.width) // 2 - dessin.x
+            drawing = btn.sprites[0].get_bounding_rect()
+            pos_x = background.pos[0] + (bg_w - drawing.width) // 2 - drawing.x
             self.buttons[index].pos = (int(pos_x),
-                                       int(haut + index * ecart - dessin.y))
+                                       int(top + index * spacing - drawing.y))
 
 
 class ResolutionPage(MenuPage):
@@ -109,13 +110,12 @@ class ResolutionPage(MenuPage):
         screen_h = gameloop.height if gameloop else 1080
         center_x = (screen_w - current_size*3) // 2
 
-        fond = UISprite(
-                        name='Main_menu_bg',
-                        pos=(center_x/1.6, int(screen_h)*0.2),
-                        asset_size=self.context.game_data.get("asset_size", 64),
+        background = UISprite(
+                    name='Main_menu_bg',
+                    pos=(center_x/1.6, int(screen_h)*0.2),
+                    asset_size=self.context.game_data.get("asset_size", 64),
                     )
-        
-        self.decorations.append(fond)
+        self.decorations.append(background)
 
         self.decorations.append(
             UISprite(
@@ -148,28 +148,29 @@ class ResolutionPage(MenuPage):
                 asset_size=current_size,
             )
         )
-        self._center_buttons(fond)
-    
-    def _center_buttons(self, fond: UISprite) -> None:
+        self._center_buttons(background)
+
+    def _center_buttons(self, background: UISprite) -> None:
         """Centre the button column inside the background frame.
 
         Args:
-            fond: background frame of the menu.
+            background: background frame of the menu.
         """
-        if not fond.sprites or not all(btn.sprites for btn in self.buttons):
+        if not background.sprites or not all(btn.sprites
+                                             for btn in self.buttons):
             return
 
-        fond_w, fond_h = fond.sprites[0].get_size()
-        dessin = self.buttons[0].sprites[0].get_bounding_rect()
-        ecart = dessin.height * 7 // 5.5
-        total = dessin.height + ecart * (len(self.buttons) - 1)
-        haut = fond.pos[1] + (fond_h - total) // 2
+        bg_w, bg_h = background.sprites[0].get_size()
+        drawing = self.buttons[0].sprites[0].get_bounding_rect()
+        spacing = drawing.height * 7 // 5.5
+        total = drawing.height + spacing * (len(self.buttons) - 1)
+        top = background.pos[1] + (bg_h - total) // 2
 
         for index, btn in enumerate(self.buttons):
-            dessin = btn.sprites[0].get_bounding_rect()
-            pos_x = fond.pos[0] + (fond_w - dessin.width) // 2 - dessin.x
+            drawing = btn.sprites[0].get_bounding_rect()
+            pos_x = background.pos[0] + (bg_w - drawing.width) // 2 - drawing.x
             self.buttons[index].pos = (int(pos_x),
-                                        int(haut + index * ecart - dessin.y))
+                                       int(top + index * spacing - drawing.y))
 
 
 class HighscorePage(MenuPage):
@@ -194,13 +195,11 @@ class HighscorePage(MenuPage):
         self.text_x = center_x + current_size*2
         self.screen_h = gameloop.height
 
-
-
         self.decorations.append(
             UISprite(
-                        name='Main_menu_bg',
-                        pos=(center_x/1.6, int(screen_h)*0.2),
-                        asset_size=self.context.game_data.get("asset_size", 64),
+                    name='Main_menu_bg',
+                    pos=(center_x/1.6, int(screen_h)*0.2),
+                    asset_size=self.context.game_data.get("asset_size", 64),
                     )
         )
         self.buttons.append(
@@ -387,9 +386,9 @@ class InstructionsPages(MenuPage):
 
         self.decorations.append(
             UISprite(
-                        name='Main_menu_bg',
-                        pos=(center_x/1.6, int(screen_h)*0.2),
-                        asset_size=self.context.game_data.get("asset_size", 64),
+                    name='Main_menu_bg',
+                    pos=(center_x/1.6, int(screen_h)*0.2),
+                    asset_size=self.context.game_data.get("asset_size", 64),
                     )
         )
         self.decorations.append(
