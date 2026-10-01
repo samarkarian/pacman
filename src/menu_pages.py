@@ -26,7 +26,7 @@ class MainMenuPage(MenuPage):
         self.buttons.append(
             UIButton(
                 name="play",
-                pos=(center_x, int(screen_h * 0.2)),
+                pos=(center_x, int(screen_h * 0.9)),
                 action=lambda: SceneID.GAME,
                 asset_size=self.context.game_data.get("asset_size", 64),
             )
@@ -34,7 +34,7 @@ class MainMenuPage(MenuPage):
         self.buttons.append(
                 UIButton(
                     name="score",
-                    pos=(center_x, int(gameloop.height * 0.5)),
+                    pos=(center_x, int(gameloop.height * 0.55)),
                     action=lambda: self.context.push_page(
                         HighscorePage(self.context)),
                     asset_size=current_size,
@@ -86,7 +86,7 @@ class MainMenuPage(MenuPage):
 
         fond_w, fond_h = fond.sprites[0].get_size()
         dessin = self.buttons[0].sprites[0].get_bounding_rect()
-        ecart = dessin.height * 7 // 4
+        ecart = dessin.height * 7 // 5.5
         total = dessin.height + ecart * (len(self.buttons) - 1)
         haut = fond.pos[1] + (fond_h - total) // 2
 
@@ -109,13 +109,14 @@ class ResolutionPage(MenuPage):
         screen_h = gameloop.height if gameloop else 1080
         center_x = (screen_w - current_size*3) // 2
 
-        self.decorations.append(
-            UISprite(
+        fond = UISprite(
                         name='Main_menu_bg',
                         pos=(center_x/1.6, int(screen_h)*0.2),
                         asset_size=self.context.game_data.get("asset_size", 64),
                     )
-        )
+        
+        self.decorations.append(fond)
+
         self.decorations.append(
             UISprite(
                 name='Title',
@@ -147,6 +148,28 @@ class ResolutionPage(MenuPage):
                 asset_size=current_size,
             )
         )
+        self._center_buttons(fond)
+    
+    def _center_buttons(self, fond: UISprite) -> None:
+        """Centre the button column inside the background frame.
+
+        Args:
+            fond: background frame of the menu.
+        """
+        if not fond.sprites or not all(btn.sprites for btn in self.buttons):
+            return
+
+        fond_w, fond_h = fond.sprites[0].get_size()
+        dessin = self.buttons[0].sprites[0].get_bounding_rect()
+        ecart = dessin.height * 7 // 5.5
+        total = dessin.height + ecart * (len(self.buttons) - 1)
+        haut = fond.pos[1] + (fond_h - total) // 2
+
+        for index, btn in enumerate(self.buttons):
+            dessin = btn.sprites[0].get_bounding_rect()
+            pos_x = fond.pos[0] + (fond_w - dessin.width) // 2 - dessin.x
+            self.buttons[index].pos = (int(pos_x),
+                                        int(haut + index * ecart - dessin.y))
 
 
 class HighscorePage(MenuPage):

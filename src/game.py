@@ -55,8 +55,8 @@ class Game:
 
         self.ghost_timer_ms: int = 0
         self.player_timer_ms: int = 0
-        self.player_step_ms: int = 150
-        self.ghost_step_ms: int = 200
+        self.player_step_ms: int = 175
+        self.ghost_step_ms: int = 275
 
         self.vulnerable_seconds: int = 6
         self.vulnerable_steps: int = (self.vulnerable_seconds * 1000
