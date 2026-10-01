@@ -186,7 +186,7 @@ class PlayerController:
         self.direction = None
         self.next_direction = None
 
-    def move(self, direction: str) -> str | None:
+    def move(self, direction: str) -> None:
         """Move one cell in direction if no wall blocks the way.
 
         Args:
@@ -213,7 +213,7 @@ class PlayerController:
 
         self.next_direction = direction
 
-    def step(self) -> str | None:
+    def step(self) -> None:
         """Turn if the wanted direction is free, then move one cell.
 
         Returns:
