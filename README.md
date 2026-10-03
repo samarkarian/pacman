@@ -109,7 +109,6 @@ a message.
 | `level[].width` | 15 | 14 to 23 |
 | `level[].height` | 11 | 10 to 21 |
 | `lives` | 3 | at least 1 |
-| `pacgum` | 42 | at least 0 (validated but not used: every free cell gets a pac-gum) |
 | `points_per_pacgum` | 10 | at least 0 |
 | `points_per_super_pacgum` | 50 | at least 0 |
 | `points_per_ghost` | 200 | at least 0 |
