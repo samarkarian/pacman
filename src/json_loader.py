@@ -84,7 +84,6 @@ class Config(BaseModel):
     level: list[Level] = Field(
         default_factory=lambda: [Level() for _ in range(10)])
     lives: int = 3
-    pacgum: int = 42
     points_per_pacgum: int = 10
     points_per_super_pacgum: int = 50
     points_per_ghost: int = 200
@@ -92,7 +91,6 @@ class Config(BaseModel):
     level_max_time: int = 90
 
     @field_validator(
-        "pacgum",
         "points_per_pacgum",
         "points_per_super_pacgum",
         "points_per_ghost",
