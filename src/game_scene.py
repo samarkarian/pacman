@@ -133,6 +133,8 @@ class GameScene(Scene):
         if field is not None and field is not self.loaded_field:
             self.mazedisplayer.next_level(field)
             self.load_sprites()
+            self.hud_container = HUDContainer(game=self.game,
+                                              asset_size=self.asset_size)
             self.loaded_field = field
 
         if self.game.is_over():
